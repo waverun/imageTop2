@@ -296,11 +296,11 @@ struct ContentView: View {
                 url.stopAccessingSecurityScopedResource()
             }
         }
-//        .onReceive(customAppDelegate.$showWindow, perform: { _ in
-//            //            DispatchQueue.main.async {
-//            showApp()
-//            //            }
-//        })
+        .onReceive(appDelegate.$showWindow, perform: { _ in
+            //            DispatchQueue.main.async {
+            showApp()
+            //            }
+        })
         .onReceive(appDelegate.$startTimer, perform: { _ in
             setupScreenChangeTimer()
         })

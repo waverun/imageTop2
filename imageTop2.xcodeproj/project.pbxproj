@@ -7,13 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5079FD6C2A10C8890066EC08 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD6B2A10C8890066EC08 /* AppDelegate.swift */; };
 		5079FD6E2A10C8890066EC08 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD6D2A10C8890066EC08 /* ViewController.swift */; };
 		5079FD702A10C88B0066EC08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5079FD6F2A10C88B0066EC08 /* Assets.xcassets */; };
 		5079FD732A10C88B0066EC08 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5079FD712A10C88B0066EC08 /* Main.storyboard */; };
 		5079FD7B2A10D2390066EC08 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD7A2A10D2390066EC08 /* ContentView.swift */; };
 		5079FD7E2A10D4D40066EC08 /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = 5079FD7D2A10D4D40066EC08 /* HotKey */; };
-		5079FD802A10D5180066EC08 /* CustomAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD7F2A10D5170066EC08 /* CustomAppDelegate.swift */; };
+		5079FD802A10D5180066EC08 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD7F2A10D5170066EC08 /* AppDelegate.swift */; };
 		5079FD832A10D5B50066EC08 /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD822A10D5B50066EC08 /* Keyboard.swift */; };
 		5079FD8C2A10DB4E0066EC08 /* LoadableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD8B2A10DB4E0066EC08 /* LoadableImageView.swift */; };
 		5079FD8E2A10DB680066EC08 /* FocusableTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD8D2A10DB680066EC08 /* FocusableTextField.swift */; };
@@ -25,13 +24,12 @@
 
 /* Begin PBXFileReference section */
 		5079FD682A10C8890066EC08 /* imageTop2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imageTop2.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		5079FD6B2A10C8890066EC08 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5079FD6D2A10C8890066EC08 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5079FD6F2A10C88B0066EC08 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5079FD722A10C88B0066EC08 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5079FD742A10C88B0066EC08 /* imageTop2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = imageTop2.entitlements; sourceTree = "<group>"; };
 		5079FD7A2A10D2390066EC08 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		5079FD7F2A10D5170066EC08 /* CustomAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAppDelegate.swift; sourceTree = "<group>"; };
+		5079FD7F2A10D5170066EC08 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5079FD822A10D5B50066EC08 /* Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
 		5079FD8B2A10DB4E0066EC08 /* LoadableImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadableImageView.swift; sourceTree = "<group>"; };
 		5079FD8D2A10DB680066EC08 /* FocusableTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusableTextField.swift; sourceTree = "<group>"; };
@@ -75,13 +73,12 @@
 				5079FD8F2A10DBAF0066EC08 /* Views */,
 				5079FD8A2A10DB320066EC08 /* Structs */,
 				5079FD812A10D59F0066EC08 /* Classes */,
-				5079FD6B2A10C8890066EC08 /* AppDelegate.swift */,
 				5079FD6D2A10C8890066EC08 /* ViewController.swift */,
 				5079FD6F2A10C88B0066EC08 /* Assets.xcassets */,
 				5079FD712A10C88B0066EC08 /* Main.storyboard */,
 				5079FD742A10C88B0066EC08 /* imageTop2.entitlements */,
 				5079FD7A2A10D2390066EC08 /* ContentView.swift */,
-				5079FD7F2A10D5170066EC08 /* CustomAppDelegate.swift */,
+				5079FD7F2A10D5170066EC08 /* AppDelegate.swift */,
 				5079FD942A10DE360066EC08 /* ImageTopApp.swift */,
 			);
 			path = imageTop2;
@@ -195,10 +192,9 @@
 				5079FD8E2A10DB680066EC08 /* FocusableTextField.swift in Sources */,
 				5079FD952A10DE360066EC08 /* ImageTopApp.swift in Sources */,
 				5079FD932A10DBC30066EC08 /* SettingsView.swift in Sources */,
-				5079FD802A10D5180066EC08 /* CustomAppDelegate.swift in Sources */,
+				5079FD802A10D5180066EC08 /* AppDelegate.swift in Sources */,
 				50B646642A111162002CA82E /* WindowManager.swift in Sources */,
 				5079FD832A10D5B50066EC08 /* Keyboard.swift in Sources */,
-				5079FD6C2A10C8890066EC08 /* AppDelegate.swift in Sources */,
 				5079FD8C2A10DB4E0066EC08 /* LoadableImageView.swift in Sources */,
 				5079FD7B2A10D2390066EC08 /* ContentView.swift in Sources */,
 			);
