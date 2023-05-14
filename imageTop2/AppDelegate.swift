@@ -11,27 +11,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var showWindow: Bool = false // Add this line
     @Published var startTimer: Bool = false // Add this line
 
-//    var mainWindow: NSWindow?
+    //    var mainWindow: NSWindow?
     var statusBarItem: NSStatusItem!
     var settingsWindow: NSWindow!
 
     func windowDidExitFullScreen(_ notification: Notification) {
-//        for window in WindowManager.shared.windows {
-//            window.orderOut(nil)
-//            print("window.orderOut")
-//        }
+        //        for window in WindowManager.shared.windows {
+        //            window.orderOut(nil)
+        //            print("window.orderOut")
+        //        }
 
-//        if let window = NSApplication.shared.windows.first {
-//            window.orderOut(nil)
-//        }
+        //        if let window = NSApplication.shared.windows.first {
+        //            window.orderOut(nil)
+        //        }
 
         if let window = notification.object as? NSWindow {
             window.orderOut(nil)
             print("window.orderOut")
             startInactivityTimer()
-//            for window in NSApplication.shared.windows {
-//                print(window.title)
-//            }
+            //            for window in NSApplication.shared.windows {
+            //                print(window.title)
+            //            }
         }
 
         self.isMainWindowVisible = false
@@ -46,17 +46,25 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var prevSeconds: CFTimeInterval = 0
     var inactivityTimer: Timer!
 
+    func getLastEventTime() -> CFTimeInterval {
+        let keyUpLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .keyUp)
+        let mouseMoveLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .mouseMoved)
+        let mouseDownLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .leftMouseDown)
+
+        return min(keyUpLastTime, mouseMoveLastTime, mouseDownLastTime)
+    }
+
     func startInactivityTimer() {
         if let inactivityTimer = inactivityTimer {
             inactivityTimer.invalidate()
         }
 
-        prevSeconds = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .null)
-            inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
-            let currentSeconds = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .null)
+        prevSeconds = getLastEventTime()
+        inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
+            let currentSeconds = getLastEventTime()
             let secondsSinceLastEvent = currentSeconds - prevSeconds
             print("Seconds since last event: \(secondsSinceLastEvent)")
-            if secondsSinceLastEvent > 4.0 { // check if the user has been inactive for more than 60 seconds
+            if secondsSinceLastEvent > 60.0 { // check if the user hasz been inactive for more than 60 seconds
                 self.showWindow.toggle() // call your method that brings the window to the front
             }
         }
