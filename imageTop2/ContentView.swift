@@ -103,7 +103,7 @@ struct ContentView: View {
     }
 
     private func showApp() {
-//        NSWindow.setFullScreen()
+        WindowManager.shared.enterFullScreen()
         setupScreenChangeTimer()
     }
 
@@ -199,7 +199,7 @@ struct ContentView: View {
 
     private func hideApp() {
 //        NSWindow.exitFullScreen()
-
+        WindowManager.shared.exitFullScreen()
         if imageOrBackgroundChangeTimer == nil {
             return
         }
