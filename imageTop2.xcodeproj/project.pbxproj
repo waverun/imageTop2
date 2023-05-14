@@ -350,6 +350,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.imageTop2.imageTop2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -377,6 +378,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.imageTop2.imageTop2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

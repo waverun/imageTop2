@@ -1,6 +1,7 @@
 import Cocoa
 import SwiftUI
 import ServiceManagement
+import Quartz
 
 var gIgnoreHideCount = 0
 
@@ -27,10 +28,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         if let window = notification.object as? NSWindow {
             window.orderOut(nil)
             print("window.orderOut")
-
-            for window in NSApplication.shared.windows {
-                print(window.title)
-            }
+            startInactivityTimer()
+//            for window in NSApplication.shared.windows {
+//                print(window.title)
+//            }
         }
 
         self.isMainWindowVisible = false
@@ -38,8 +39,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     func windowDidEnterFullScreen(_ notification: Notification) {
         print("windowDidEnterFullScreen")
-        
+        inactivityTimer?.invalidate()
         startTimer.toggle()
+    }
+
+    var prevSeconds: CFTimeInterval = 0
+    var inactivityTimer: Timer!
+
+    func startInactivityTimer() {
+        if let inactivityTimer = inactivityTimer {
+            inactivityTimer.invalidate()
+        }
+
+        prevSeconds = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .null)
+            inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
+            let currentSeconds = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .null)
+            let secondsSinceLastEvent = currentSeconds - prevSeconds
+            print("Seconds since last event: \(secondsSinceLastEvent)")
+            if secondsSinceLastEvent > 4.0 { // check if the user has been inactive for more than 60 seconds
+                self.showWindow.toggle() // call your method that brings the window to the front
+            }
+        }
+
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -128,5 +149,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         settingsWindow.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
         settingsWindow.makeFirstResponder(nil)
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        inactivityTimer.invalidate()
     }
 }
