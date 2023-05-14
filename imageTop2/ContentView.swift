@@ -16,7 +16,7 @@ private func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
 }
 
 struct ContentView: View {
-    @EnvironmentObject var customAppDelegate: CustomAppDelegate
+    @EnvironmentObject var customAppDelegate: AppDelegate
 //    @EnvironmentObject var appDelegate: CustomAppDelegate
 
 

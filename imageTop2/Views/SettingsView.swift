@@ -2,7 +2,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct SettingsView: View {
-    @EnvironmentObject var appDelegate: CustomAppDelegate
+    @EnvironmentObject var appDelegate: AppDelegate
 
     @AppStorage("replaceImageAfter") private var replaceImageAfter: TimeInterval = 10
     @AppStorage("selectedFolderPath") private var storedFolderPath: String = ""

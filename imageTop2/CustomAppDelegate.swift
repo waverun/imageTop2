@@ -4,7 +4,8 @@ import ServiceManagement
 
 var gIgnoreHideCount = 0
 
-class CustomAppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
+@main
+class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
     @Published var isMainWindowVisible: Bool = true // Add this line
     @Published var showWindow: Bool = false // Add this line
     @Published var startTimer: Bool = false // Add this line
@@ -14,9 +15,9 @@ class CustomAppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWi
     var settingsWindow: NSWindow!
 
     func windowDidExitFullScreen(_ notification: Notification) {
-        if let window = notification.object as? NSWindow, window == mainWindow {
+        if let window = notification.object as? NSWindow {
             DispatchQueue.main.async {
-                self.mainWindow?.orderOut(nil)
+                window.orderOut(nil)
                 self.isMainWindowVisible = false
             }
         }
@@ -28,10 +29,12 @@ class CustomAppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWi
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        mainWindow = NSApplication.shared.windows.first
-        if let window = mainWindow {
-            window.setFrame(NSScreen.main?.frame ?? NSRect.zero, display: true, animate: true)
-        }
+//        mainWindow = NSApplication.shared.windows.first
+//        if let window = mainWindow {
+//            window.setFrame(NSScreen.main?.frame ?? NSRect.zero, display: true, animate: true)
+//        }
+//
+        createWindows()
 
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusBarItem.button {
@@ -63,6 +66,26 @@ class CustomAppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWi
         settingsWindow.isReleasedWhenClosed = false // Add this line
 
 //        NSWindow.setFullScreen()
+    }
+
+    func createWindows() {
+        var i = -1
+        for screen in NSScreen.screens {
+            i += 1
+            let contentView = ContentView()
+            let window = NSWindow(contentRect: screen.frame,
+                                  styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
+                                  backing: .buffered, defer: false, screen: screen)
+            window.delegate = self // assign the delegate
+            window.center()
+            window.setFrame(screen.frame, display: true)
+            window.contentView = NSHostingView(rootView: contentView)
+            window.makeKeyAndOrderFront(nil)
+            //            window.toggleFullScreen(nil) // Add this line
+
+            WindowManager.shared.windows.append(window)
+        }
+        WindowManager.shared.enterFullScreen()
     }
 
     @objc func openLoginItemsPreferences() {
