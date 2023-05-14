@@ -16,7 +16,7 @@ private func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
 }
 
 struct ContentView: View {
-    @EnvironmentObject var customAppDelegate: AppDelegate
+    @EnvironmentObject var appDelegate: AppDelegate
 //    @EnvironmentObject var appDelegate: CustomAppDelegate
 
 
@@ -301,9 +301,9 @@ struct ContentView: View {
 //            showApp()
 //            //            }
 //        })
-//        .onReceive(customAppDelegate.$startTimer, perform: { _ in
-//            setupScreenChangeTimer()
-//        })
+        .onReceive(appDelegate.$startTimer, perform: { _ in
+            setupScreenChangeTimer()
+        })
     }
 }
 

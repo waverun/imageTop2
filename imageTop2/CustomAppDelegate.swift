@@ -15,16 +15,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var settingsWindow: NSWindow!
 
     func windowDidExitFullScreen(_ notification: Notification) {
-        if let window = notification.object as? NSWindow {
-            DispatchQueue.main.async {
+//        if let window = notification.object as? NSWindow {
+//        DispatchQueue.main.async {
+            for window in WindowManager.shared.windows {
                 window.orderOut(nil)
                 self.isMainWindowVisible = false
             }
-        }
+//        }
+//        }
     }
 
     func windowDidEnterFullScreen(_ notification: Notification) {
         print("windowDidEnterFullScreen")
+        
         startTimer.toggle()
     }
 
@@ -72,7 +75,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         var i = -1
         for screen in NSScreen.screens {
             i += 1
-            let contentView = ContentView()
+            let contentView = ContentView().environmentObject(self)
             let window = NSWindow(contentRect: screen.frame,
                                   styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
                                   backing: .buffered, defer: false, screen: screen)
