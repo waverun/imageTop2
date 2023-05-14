@@ -10,19 +10,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var showWindow: Bool = false // Add this line
     @Published var startTimer: Bool = false // Add this line
 
-    var mainWindow: NSWindow?
+//    var mainWindow: NSWindow?
     var statusBarItem: NSStatusItem!
     var settingsWindow: NSWindow!
 
     func windowDidExitFullScreen(_ notification: Notification) {
-//        if let window = notification.object as? NSWindow {
-//        DispatchQueue.main.async {
-            for window in WindowManager.shared.windows {
-                window.orderOut(nil)
-                self.isMainWindowVisible = false
+//        for window in WindowManager.shared.windows {
+//            window.orderOut(nil)
+//            print("window.orderOut")
+//        }
+
+//        if let window = NSApplication.shared.windows.first {
+//            window.orderOut(nil)
+//        }
+
+        if let window = notification.object as? NSWindow {
+            window.orderOut(nil)
+            print("window.orderOut")
+
+            for window in NSApplication.shared.windows {
+                print(window.title)
             }
-//        }
-//        }
+        }
+
+        self.isMainWindowVisible = false
     }
 
     func windowDidEnterFullScreen(_ notification: Notification) {
@@ -37,8 +48,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 //            window.setFrame(NSScreen.main?.frame ?? NSRect.zero, display: true, animate: true)
 //        }
 //
-        createWindows()
 
+        for window in NSApplication.shared.windows {
+            if window.title == "Window" {
+                window.orderOut(nil)
+            }
+        }
+        
+        createWindows()
+//        showMainWindow()
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusBarItem.button {
             button.image = NSImage(named: "imageTop-16")

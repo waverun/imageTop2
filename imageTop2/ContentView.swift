@@ -33,6 +33,7 @@ struct ContentView: View {
     @AppStorage("modifierKeyString1") private var keyString1: String = "command"
     @AppStorage("modifierKeyString2") private var keyString2: String = "control"
 
+    @State private var appIsShown = true
     @State private var imageName: String?
     @State private var timer: Timer? = nil
     @State private var imageNames: [String] = []
@@ -105,6 +106,7 @@ struct ContentView: View {
     private func showApp() {
         WindowManager.shared.enterFullScreen()
         setupScreenChangeTimer()
+        appIsShown = true
     }
 
     private func hotkeyPressed() {
@@ -199,7 +201,9 @@ struct ContentView: View {
 
     private func hideApp() {
 //        NSWindow.exitFullScreen()
-        WindowManager.shared.exitFullScreen()
+        if !appIsShown {
+            return
+        }
         if imageOrBackgroundChangeTimer == nil {
             return
         }
@@ -208,6 +212,8 @@ struct ContentView: View {
             gIgnoreHideCount -= 1
             return
         }
+        WindowManager.shared.exitFullScreen()
+        appIsShown = false
         imageOrBackgroundChangeTimer?.invalidate()
     }
 
