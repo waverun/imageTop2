@@ -72,15 +72,33 @@ struct ContentView: View {
         }
     }
 
+//    private func startMonitoring() {
+//        print("startMonitoring")
+//        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
+//            print("in startMonitoring")
+//            self.hideApp()
+//            return event
+//        }
+//    }
+
     private func startMonitoring() {
+        print("startMonitoring")
+
+        if eventMonitor != nil {
+            stopMonitoring()
+        }
+
         eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
+            print("in startMonitoring")
             self.hideApp()
             return event
         }
     }
 
+
     private func stopMonitoring() {
         if let monitor = eventMonitor {
+            print("stopMonitoring")
             NSEvent.removeMonitor(monitor)
             eventMonitor = nil
         }
