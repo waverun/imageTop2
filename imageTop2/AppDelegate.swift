@@ -65,7 +65,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
             let currentSeconds = getLastEventTime()
             let secondsSinceLastEvent = currentSeconds - prevSeconds
-            print("Seconds since last event: \(secondsSinceLastEvent)")
+//            print("Seconds since last event: \(secondsSinceLastEvent)")
             if secondsSinceLastEvent > startAfter { // check if the user hasz been inactive for more than 60 seconds
                 self.showWindow.toggle() // call your method that brings the window to the front
             }

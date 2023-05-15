@@ -140,7 +140,7 @@ struct SettingsView: View {
                 }
             }
         }
-        .frame(width: 350, height: 250)
+        .frame(width: 350, height: 275)
         .onAppear {
             selectedFolderPath = storedFolderPath
         }
