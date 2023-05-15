@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ImageTopApp: App {
     var body: some Scene {
-        WindowGroup {
+        Settings {
 //            ContentView()
         }
     }

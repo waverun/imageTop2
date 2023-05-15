@@ -3,7 +3,7 @@ import SwiftUI
 import ServiceManagement
 import Quartz
 
-var gIgnoreHideCount = 0
+//var gIgnoreHideCount = 0
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
@@ -13,27 +13,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var showWindow: Bool = false // Add this line
     @Published var startTimer: Bool = false // Add this line
 
-    //    var mainWindow: NSWindow?
     var statusBarItem: NSStatusItem!
     var settingsWindow: NSWindow!
 
     func windowDidExitFullScreen(_ notification: Notification) {
-        //        for window in WindowManager.shared.windows {
-        //            window.orderOut(nil)
-        //            print("window.orderOut")
-        //        }
-
-        //        if let window = NSApplication.shared.windows.first {
-        //            window.orderOut(nil)
-        //        }
 
         if let window = notification.object as? NSWindow {
             window.orderOut(nil)
             print("window.orderOut")
             startInactivityTimer()
-            //            for window in NSApplication.shared.windows {
-            //                print(window.title)
-            //            }
         }
 
         self.isMainWindowVisible = false
@@ -148,8 +136,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     @objc func showMainWindow() {
-        showWindow.toggle() // To cause to call showApp.
         settingsWindow.orderOut(nil)
+        WindowManager.shared.enterFullScreen()
+        DispatchQueue.main.async {
+            self.showWindow.toggle() // To cause to call showApp.
+        }
     }
 
     @objc func quitApp() {

@@ -3,29 +3,31 @@ import SwiftUI
 class WindowManager: ObservableObject {
     static let shared = WindowManager()
     var windows: [NSWindow] = []
-    var fullScreen = false
+//    var fullScreen = false
 
-    func toggleFullScreen() {
+    func toggleFullScreen(_ exitFullStcreen: Bool) {
         for window in windows {
             if window.styleMask.contains(.fullScreen) {
-                window.toggleFullScreen(nil)
+                if exitFullStcreen {
+                    window.toggleFullScreen(nil)
+                }
             } else {
-                window.toggleFullScreen(nil)
+                if !exitFullStcreen {
+                    window.toggleFullScreen(nil)
+                }
             }
         }
     }
 
     func enterFullScreen() {
-        if !fullScreen {
-            fullScreen = true
-            toggleFullScreen()
+        if !windows[0].styleMask.contains(.fullScreen) {
+            toggleFullScreen(false)
         }
     }
 
     func exitFullScreen() {
-        if fullScreen {
-            fullScreen = false
-            toggleFullScreen()
+        if windows[0].styleMask.contains(.fullScreen) {
+            toggleFullScreen(true)
         }
     }
 }

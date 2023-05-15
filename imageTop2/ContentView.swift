@@ -86,6 +86,10 @@ struct ContentView: View {
 //    }
 
     private func startMonitoring() {
+        if index > 0 {
+            return
+        }
+
         print("startMonitoring")
 
         if eventMonitor != nil {
@@ -130,6 +134,9 @@ struct ContentView: View {
     }
 
     private func updateHotKey() {
+        if index > 0 {
+            return
+        }
         if let key = Key(string: hotKeyString) {
             var modifiers: NSEvent.ModifierFlags = []
             if let modifier = Keyboard.stringToModifier(keyString1) {
@@ -146,13 +153,14 @@ struct ContentView: View {
 
     private func showApp() {
         startMonitoring()
-        WindowManager.shared.enterFullScreen()
+//        WindowManager.shared.enterFullScreen()
         setupScreenChangeTimer()
     }
 
     private func hotkeyPressed() {
         print("hotkey pressed")
         showApp()
+        WindowManager.shared.enterFullScreen()
     }
 
     private func resetImageOrBackgroundChangeTimer() {
@@ -241,16 +249,15 @@ struct ContentView: View {
     }
 
     private func hideApp() {
-//        NSWindow.exitFullScreen()
-
         if imageOrBackgroundChangeTimer == nil {
             return
         }
+
         print("hideApp")
-        if gIgnoreHideCount > 0 {
-            gIgnoreHideCount -= 1
-            return
-        }
+//        if gIgnoreHideCount > 0 {
+//            gIgnoreHideCount -= 1
+//            return
+//        }
         WindowManager.shared.exitFullScreen()
         imageOrBackgroundChangeTimer?.invalidate()
         stopMonitoring()
@@ -347,9 +354,7 @@ struct ContentView: View {
             }
         }
         .onReceive(appDelegate.$showWindow, perform: { _ in
-            //            DispatchQueue.main.async {
             showApp()
-            //            }
         })
         .onReceive(appDelegate.$startTimer, perform: { _ in
             setupScreenChangeTimer()
