@@ -5,6 +5,7 @@ struct SettingsView: View {
     @EnvironmentObject var appDelegate: AppDelegate
 
     @AppStorage("replaceImageAfter") private var replaceImageAfter: TimeInterval = 10
+    @AppStorage("startAfter") private var startAfter: TimeInterval = 600
     @AppStorage("selectedFolderPath") private var storedFolderPath: String = ""
     @AppStorage("imageTopFolderBookmark") private var imageTopFolderBookmarkData: Data?
     @AppStorage("hotKeyString") private var keyString: String = "Escape"
@@ -96,13 +97,27 @@ struct SettingsView: View {
                         }.padding(.leading)
 
                         HStack {
-                            Text("Replace Image After")
+                            Text("Replace Image After (seconds)")
                                 .frame(width: geometry.size.width * 0.635, alignment: .leading)
                             FocusableTextField(text: Binding(get: {
                                 String(replaceImageAfter)
                             }, set: { newValue in
                                 if let value = TimeInterval(newValue) {
                                     replaceImageAfter = value
+                                }
+                            }), formatter: NumberFormatter())
+                                .multilineTextAlignment(.trailing)
+                                .frame(width: 50)
+                            Spacer()
+                        }.padding(.leading)
+                        HStack {
+                            Text("Start after (seconds)")
+                                .frame(width: geometry.size.width * 0.635, alignment: .leading)
+                            FocusableTextField(text: Binding(get: {
+                                String(startAfter)
+                            }, set: { newValue in
+                                if let value = TimeInterval(newValue) {
+                                    startAfter = value
                                 }
                             }), formatter: NumberFormatter())
                                 .multilineTextAlignment(.trailing)

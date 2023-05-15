@@ -7,6 +7,8 @@ var gIgnoreHideCount = 0
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
+    @AppStorage("startAfter") private var startAfter: TimeInterval = 600
+
     @Published var isMainWindowVisible: Bool = true // Add this line
     @Published var showWindow: Bool = false // Add this line
     @Published var startTimer: Bool = false // Add this line
@@ -64,7 +66,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             let currentSeconds = getLastEventTime()
             let secondsSinceLastEvent = currentSeconds - prevSeconds
             print("Seconds since last event: \(secondsSinceLastEvent)")
-            if secondsSinceLastEvent > 60.0 { // check if the user hasz been inactive for more than 60 seconds
+            if secondsSinceLastEvent > startAfter { // check if the user hasz been inactive for more than 60 seconds
                 self.showWindow.toggle() // call your method that brings the window to the front
             }
         }

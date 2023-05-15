@@ -16,6 +16,8 @@ private func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
 }
 
 struct ContentView: View {
+    @State var eventMonitor: Any?
+
     @EnvironmentObject var appDelegate: AppDelegate
 //    @EnvironmentObject var appDelegate: CustomAppDelegate
 
@@ -33,7 +35,6 @@ struct ContentView: View {
     @AppStorage("modifierKeyString1") private var keyString1: String = "command"
     @AppStorage("modifierKeyString2") private var keyString2: String = "control"
 
-    @State private var appIsShown = true
     @State private var imageName: String?
     @State private var timer: Timer? = nil
     @State private var imageNames: [String] = []
@@ -64,6 +65,20 @@ struct ContentView: View {
             let (xValue, yValue) = calculateWatchPosition(parentSize: screenSize)
             _x = State(initialValue: xValue)
             _y = State(initialValue: yValue)
+        }
+    }
+
+    private func startMonitoring() {
+        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
+            self.hideApp()
+            return event
+        }
+    }
+
+    private func stopMonitoring() {
+        if let monitor = eventMonitor {
+            NSEvent.removeMonitor(monitor)
+            eventMonitor = nil
         }
     }
 
@@ -104,9 +119,9 @@ struct ContentView: View {
     }
 
     private func showApp() {
+        startMonitoring()
         WindowManager.shared.enterFullScreen()
         setupScreenChangeTimer()
-        appIsShown = true
     }
 
     private func hotkeyPressed() {
@@ -201,9 +216,7 @@ struct ContentView: View {
 
     private func hideApp() {
 //        NSWindow.exitFullScreen()
-        if !appIsShown {
-            return
-        }
+
         if imageOrBackgroundChangeTimer == nil {
             return
         }
@@ -213,8 +226,8 @@ struct ContentView: View {
             return
         }
         WindowManager.shared.exitFullScreen()
-        appIsShown = false
         imageOrBackgroundChangeTimer?.invalidate()
+        stopMonitoring()
     }
 
     private func loadImageNames() {
@@ -277,10 +290,11 @@ struct ContentView: View {
             backgroundColor = randomGentleColor()
             setupScreenChangeTimer()
             startAccessingFolder()
-            NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
-                hideApp()
-                return event
-            }
+//            NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
+//                hideApp()
+//                return event
+//            }
+            startMonitoring()
             updateHotKey()
         }
         .onChange(of: hotKeyString) { _ in
