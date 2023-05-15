@@ -19,6 +19,7 @@ struct DigitalWatchView: View {
             .position(watchPosition)
             .onAppear {
                 updateTime()
+                print("watchPosition: \(x!), \(y!)")
                 watchPosition = CGPoint(x: x ?? 100, y: y ?? 100)
             }
             .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in

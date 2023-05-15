@@ -4,7 +4,7 @@ import AppKit
 import GameplayKit
 import HotKey
 
-var gShowWatch = true
+//var gShowWatch = true
 
 private func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
     var seed = UInt64(Date().timeIntervalSince1970)
@@ -18,7 +18,9 @@ private func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
 }
 
 struct ContentView: View {
-    @State private var shouldDisplayWatch: Bool = false
+    var index: Int
+
+//    @State private var shouldDisplayWatch: Bool = false
 
     @State var eventMonitor: Any?
 
@@ -64,12 +66,14 @@ struct ContentView: View {
     }()
 
 
-    init() {
+    init(index: Int) {
         if let screenSize = NSScreen.main?.frame.size {
             let (xValue, yValue) = calculateWatchPosition(parentSize: screenSize)
             _x = State(initialValue: xValue)
             _y = State(initialValue: yValue)
+            print("_x, -Y (\(_x), \(_y)")
         }
+        self.index = index
     }
 
 //    private func startMonitoring() {
@@ -301,7 +305,7 @@ struct ContentView: View {
                         .animation(.linear(duration: 1), value: showSecondImage)
                 }
 
-                if shouldDisplayWatch {
+                if index == 0 {
                     DigitalWatchView(x: x, y: y)
                 }
             }
@@ -320,8 +324,8 @@ struct ContentView: View {
 //            }
             startMonitoring()
             updateHotKey()
-            shouldDisplayWatch = gShowWatch
-            gShowWatch = false
+//            shouldDisplayWatch = gShowWatch
+//            gShowWatch = false
         }
         .onChange(of: hotKeyString) { _ in
             updateHotKey()

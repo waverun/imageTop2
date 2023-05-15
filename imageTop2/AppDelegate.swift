@@ -124,10 +124,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         var i = -1
         for screen in NSScreen.screens {
             i += 1
-            let contentView = ContentView().environmentObject(self)
+            let contentView = ContentView(index: i).environmentObject(self)
             let window = NSWindow(contentRect: screen.frame,
                                   styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
                                   backing: .buffered, defer: false, screen: screen)
+            print("screen: \(screen.frame.size)")
             window.delegate = self // assign the delegate
             window.center()
             window.setFrame(screen.frame, display: true)
