@@ -55,7 +55,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             let secondsSinceLastEvent = currentSeconds - prevSeconds
 //            print("Seconds since last event: \(secondsSinceLastEvent)")
             if secondsSinceLastEvent > startAfter { // check if the user hasz been inactive for more than 60 seconds
-                self.showWindow = false // call your method that brings the window to the front
+                self.showWindow = true // call your method that brings the window to the front
+                WindowManager.shared.enterFullScreen()
             }
         }
 
@@ -135,11 +136,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
+    func hideSettings() {
+        if settingsWindow.isVisible {
+            settingsWindow.orderOut(nil)
+        }
+    }
+
     @objc func showMainWindow() {
-        settingsWindow.orderOut(nil)
         WindowManager.shared.enterFullScreen()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-            self.showWindow = true // To cause to call showApp.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
+            hideSettings()
+            showWindow = true // To cause to call showApp.
         }
     }
 

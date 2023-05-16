@@ -162,6 +162,7 @@ struct ContentView: View {
         print("hotkey pressed")
 //        showApp()
         appDelegate.showWindow = true
+        appDelegate.hideSettings()
         WindowManager.shared.enterFullScreen()
     }
 
