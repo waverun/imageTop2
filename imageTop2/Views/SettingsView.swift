@@ -167,7 +167,7 @@ struct SettingsView: View {
                     storedFolderPath = selectedFolderPath
 //                    appDelegate.cont
                 } catch {
-                    print("Error creating security-scoped bookmark: \(error)")
+                    debugPrint("Error creating security-scoped bookmark: \(error)")
                 }
             }
         }

@@ -71,15 +71,15 @@ struct ContentView: View {
             let (xValue, yValue) = calculateWatchPosition(parentSize: screenSize)
             _x = State(initialValue: xValue)
             _y = State(initialValue: yValue)
-            print("_x, -Y (\(_x), \(_y)")
+            debugPrint("_x, -Y (\(_x), \(_y)")
         }
         self.index = index
     }
 
 //    private func startMonitoring() {
-//        print("startMonitoring")
+//        debugPrint("startMonitoring")
 //        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
-//            print("in startMonitoring")
+//            debugPrint("in startMonitoring")
 //            self.hideApp()
 //            return event
 //        }
@@ -90,14 +90,14 @@ struct ContentView: View {
             return
         }
 
-        print("startMonitoring")
+        debugPrint("startMonitoring")
 
         if eventMonitor != nil {
             stopMonitoring()
         }
 
         eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
-            print("in startMonitoring showWindow: \(appDelegate.$showWindow)")
+            debugPrint("in startMonitoring showWindow: \(appDelegate.$showWindow)")
 //            self.hideApp()
             appDelegate.showWindow = false
             return event
@@ -107,7 +107,7 @@ struct ContentView: View {
 
     private func stopMonitoring() {
         if let monitor = eventMonitor {
-            print("stopMonitoring")
+            debugPrint("stopMonitoring")
             NSEvent.removeMonitor(monitor)
             eventMonitor = nil
         }
@@ -119,17 +119,17 @@ struct ContentView: View {
                 var isStale = false
                 let url = try URL(resolvingBookmarkData: bookmarkData, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale)
                 if isStale {
-                    print("Bookmark data is stale")
+                    debugPrint("Bookmark data is stale")
                 } else {
                     if url.startAccessingSecurityScopedResource() {
-                        print("Successfully accessed security-scoped resource")
+                        debugPrint("Successfully accessed security-scoped resource")
                         loadImageNames()
                     } else {
-                        print("Error accessing security-scoped resource")
+                        debugPrint("Error accessing security-scoped resource")
                     }
                 }
             } catch {
-                print("Error resolving security-scoped bookmark: \(error)")
+                debugPrint("Error resolving security-scoped bookmark: \(error)")
             }
         }
     }
@@ -159,7 +159,7 @@ struct ContentView: View {
     }
 
     private func hotkeyPressed() {
-        print("hotkey pressed")
+        debugPrint("hotkey pressed")
 //        showApp()
         appDelegate.showWindow = true
         appDelegate.hideSettings()
@@ -208,30 +208,30 @@ struct ContentView: View {
         }
         withAnimation(.linear(duration: 1)) {
             showFadeColor.toggle()
-            print("backgroundColor: \(backgroundColor) fadeColor: \(fadeColor)")
+            debugPrint("backgroundColor: \(backgroundColor) fadeColor: \(fadeColor)")
         }
     }
 
     private func setupScreenChangeTimer() {
         if imageOrBackgroundChangeTimer != nil {
-            print("invalidate existing timer")
+            debugPrint("invalidate existing timer")
             imageOrBackgroundChangeTimer?.invalidate()
             imageOrBackgroundChangeTimer = nil
         }
 
-        print("setupScreenChangeTimer")
+        debugPrint("setupScreenChangeTimer")
         imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter, repeats: true) { [self] _ in
             changeScreenImageOrColor()
         }
     }
 
     private func changeScreenImageOrColor() {
-        print("changeScreenImageOrColor")
+        debugPrint("changeScreenImageOrColor")
         _ = imageMode ? loadRandomImage() : changeBackgroundColor()
     }
 
     private func loadRandomImage() {
-        print("loadRandomImage")
+        debugPrint("loadRandomImage")
         var newRandomImageName: String? = nil
         let imageFolder = selectedFolderPath
         var newRandomImagePath = ""
@@ -252,7 +252,7 @@ struct ContentView: View {
     }
 
     private func hideApp() {
-        print("hideApp")
+        debugPrint("hideApp")
         WindowManager.shared.exitFullScreen()
         imageOrBackgroundChangeTimer?.invalidate()
         imageOrBackgroundChangeTimer = nil
@@ -260,7 +260,7 @@ struct ContentView: View {
     }
 
     private func loadImageNames() {
-        print("loadImageNames")
+        debugPrint("loadImageNames")
         let imageFolder = selectedFolderPath
         let folderURL = URL(fileURLWithPath: imageFolder)
         let fileManager = FileManager.default
@@ -269,9 +269,9 @@ struct ContentView: View {
             let contents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             imageNames = []
             imageNames = contents.compactMap { $0.pathExtension.lowercased() == "webp" || $0.pathExtension.lowercased() == "avif" || $0.pathExtension.lowercased() == "jpeg" || $0.pathExtension.lowercased() == "jpg" || $0.pathExtension.lowercased() == "png" ? $0.lastPathComponent : nil }
-            print("imageNames: \(imageNames)")
+            debugPrint("imageNames: \(imageNames)")
             imageMode = imageNames.count >= 2
-            print("imageMode: \(imageMode)")
+            debugPrint("imageMode: \(imageMode)")
             if !imageMode {
                 imageName = nil
                 secondImageName = nil
@@ -280,7 +280,7 @@ struct ContentView: View {
             //                changeScreenImageOrColor()
             //            }
         } catch {
-            print("Error loading image names: \(error)")
+            debugPrint("Error loading image names: \(error)")
         }
         //        Causes to timer not working after removeing image from folder and starting from menu:
         //        resetImageOrBackgroundChangeTimer()

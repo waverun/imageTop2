@@ -20,7 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
         if let window = notification.object as? NSWindow {
             window.orderOut(nil)
-            print("window.orderOut")
+            debugPrint("window.orderOut")
             startInactivityTimer()
         }
 
@@ -53,7 +53,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
             let currentSeconds = getLastEventTime()
             let secondsSinceLastEvent = currentSeconds - prevSeconds
-//            print("Seconds since last event: \(secondsSinceLastEvent)")
             if secondsSinceLastEvent > startAfter { // check if the user hasz been inactive for more than 60 seconds
                 self.showWindow = true // call your method that brings the window to the front
                 WindowManager.shared.enterFullScreen()
@@ -102,26 +101,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 //        NSWindow.setFullScreen()
     }
 
-//    func createWindows() {
-//        var i = -1
-//        for screen in NSScreen.screens {
-//            i += 1
-//            let contentView = ContentView(index: i).environmentObject(self)
-//            let window = CustomWindow(contentRect: screen.frame,
-//                                  styleMask: [],
-//                                  backing: .buffered, defer: false, screen: screen)
-//            print("screen: \(screen.frame.size)")
-//            window.delegate = self // assign the delegate
-//            window.center()
-//            window.setFrame(screen.frame, display: true)
-//            window.contentView = NSHostingView(rootView: contentView)
-//            window.makeKeyAndOrderFront(nil)
-//            //            window.toggleFullScreen(nil) // Add this line
-//
-//            WindowManager.shared.windows.append(window)
-//        }
-//        WindowManager.shared.enterFullScreen()
-//    }
 
     func createWindows() {
         for (index, screen) in NSScreen.screens.enumerated() {
