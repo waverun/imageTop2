@@ -97,8 +97,9 @@ struct ContentView: View {
         }
 
         eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
-            print("in startMonitoring")
-            self.hideApp()
+            print("in startMonitoring showWindow: \(appDelegate.$showWindow)")
+//            self.hideApp()
+            appDelegate.showWindow = false
             return event
         }
     }
@@ -159,7 +160,8 @@ struct ContentView: View {
 
     private func hotkeyPressed() {
         print("hotkey pressed")
-        showApp()
+//        showApp()
+        appDelegate.showWindow = true
         WindowManager.shared.enterFullScreen()
     }
 
@@ -249,9 +251,9 @@ struct ContentView: View {
     }
 
     private func hideApp() {
-        if imageOrBackgroundChangeTimer == nil {
-            return
-        }
+//        if imageOrBackgroundChangeTimer == nil {
+//            return
+//        }
 
         print("hideApp")
 //        if gIgnoreHideCount > 0 {
@@ -260,6 +262,7 @@ struct ContentView: View {
 //        }
         WindowManager.shared.exitFullScreen()
         imageOrBackgroundChangeTimer?.invalidate()
+        imageOrBackgroundChangeTimer = nil
         stopMonitoring()
     }
 
@@ -353,8 +356,12 @@ struct ContentView: View {
                 url.stopAccessingSecurityScopedResource()
             }
         }
-        .onReceive(appDelegate.$showWindow, perform: { _ in
-            showApp()
+        .onReceive(appDelegate.$showWindow, perform: { showWindow in
+            if showWindow {
+                showApp()
+            } else {
+                hideApp()
+            }
         })
         .onReceive(appDelegate.$startTimer, perform: { _ in
             setupScreenChangeTimer()

@@ -10,7 +10,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @AppStorage("startAfter") private var startAfter: TimeInterval = 600
 
     @Published var isMainWindowVisible: Bool = true // Add this line
-    @Published var showWindow: Bool = false // Add this line
+    @Published var showWindow: Bool = true // Add this line
     @Published var startTimer: Bool = false // Add this line
 
     var statusBarItem: NSStatusItem!
@@ -55,7 +55,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             let secondsSinceLastEvent = currentSeconds - prevSeconds
 //            print("Seconds since last event: \(secondsSinceLastEvent)")
             if secondsSinceLastEvent > startAfter { // check if the user hasz been inactive for more than 60 seconds
-                self.showWindow.toggle() // call your method that brings the window to the front
+                self.showWindow = false // call your method that brings the window to the front
             }
         }
 
@@ -138,8 +138,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @objc func showMainWindow() {
         settingsWindow.orderOut(nil)
         WindowManager.shared.enterFullScreen()
-        DispatchQueue.main.async {
-            self.showWindow.toggle() // To cause to call showApp.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            self.showWindow = true // To cause to call showApp.
         }
     }
 
