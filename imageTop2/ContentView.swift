@@ -252,15 +252,7 @@ struct ContentView: View {
     }
 
     private func hideApp() {
-//        if imageOrBackgroundChangeTimer == nil {
-//            return
-//        }
-
         print("hideApp")
-//        if gIgnoreHideCount > 0 {
-//            gIgnoreHideCount -= 1
-//            return
-//        }
         WindowManager.shared.exitFullScreen()
         imageOrBackgroundChangeTimer?.invalidate()
         imageOrBackgroundChangeTimer = nil

@@ -63,12 +63,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-//        mainWindow = NSApplication.shared.windows.first
-//        if let window = mainWindow {
-//            window.setFrame(NSScreen.main?.frame ?? NSRect.zero, display: true, animate: true)
-//        }
-//
-
         for window in NSApplication.shared.windows {
             if window.title == "Window" {
                 window.orderOut(nil)
@@ -76,7 +70,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
         
         createWindows()
-//        showMainWindow()
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusBarItem.button {
             button.image = NSImage(named: "imageTop-16")
@@ -109,22 +102,51 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 //        NSWindow.setFullScreen()
     }
 
-    func createWindows() {
-        var i = -1
-        for screen in NSScreen.screens {
-            i += 1
-            let contentView = ContentView(index: i).environmentObject(self)
-            let window = NSWindow(contentRect: screen.frame,
-                                  styleMask: [],
-                                  backing: .buffered, defer: false, screen: screen)
-            print("screen: \(screen.frame.size)")
-            window.delegate = self // assign the delegate
-            window.center()
-            window.setFrame(screen.frame, display: true)
-            window.contentView = NSHostingView(rootView: contentView)
-            window.makeKeyAndOrderFront(nil)
-            //            window.toggleFullScreen(nil) // Add this line
+//    func createWindows() {
+//        var i = -1
+//        for screen in NSScreen.screens {
+//            i += 1
+//            let contentView = ContentView(index: i).environmentObject(self)
+//            let window = CustomWindow(contentRect: screen.frame,
+//                                  styleMask: [],
+//                                  backing: .buffered, defer: false, screen: screen)
+//            print("screen: \(screen.frame.size)")
+//            window.delegate = self // assign the delegate
+//            window.center()
+//            window.setFrame(screen.frame, display: true)
+//            window.contentView = NSHostingView(rootView: contentView)
+//            window.makeKeyAndOrderFront(nil)
+//            //            window.toggleFullScreen(nil) // Add this line
+//
+//            WindowManager.shared.windows.append(window)
+//        }
+//        WindowManager.shared.enterFullScreen()
+//    }
 
+    func createWindows() {
+        for (index, screen) in NSScreen.screens.enumerated() {
+            let contentView = ContentView(index: index).environmentObject(self)
+
+            let window = NSWindow(
+                contentRect: screen.frame,
+                styleMask: [.borderless, .fullSizeContentView],
+                backing: .buffered,
+                defer: false,
+                screen: screen
+            )
+
+            window.isOpaque = false
+            window.backgroundColor = NSColor.clear
+            window.hasShadow = false
+            window.ignoresMouseEvents = false
+            window.level = .normal
+            window.collectionBehavior = [.fullScreenPrimary, .stationary, .canJoinAllSpaces, .ignoresCycle]
+            window.delegate = self
+
+            window.contentView = NSHostingView(rootView: contentView)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                window.makeKeyAndOrderFront(nil)
+            }
             WindowManager.shared.windows.append(window)
         }
         WindowManager.shared.enterFullScreen()
