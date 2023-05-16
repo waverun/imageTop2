@@ -115,7 +115,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             i += 1
             let contentView = ContentView(index: i).environmentObject(self)
             let window = NSWindow(contentRect: screen.frame,
-                                  styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
+                                  styleMask: [],
                                   backing: .buffered, defer: false, screen: screen)
             print("screen: \(screen.frame.size)")
             window.delegate = self // assign the delegate
@@ -160,7 +160,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         settingsWindow.makeFirstResponder(nil)
     }
 
-    func applicationWillTerminate(_ notification: Notification) {
-        inactivityTimer.invalidate()
-    }
+//    func applicationWillTerminate(_ notification: Notification) {
+//        inactivityTimer.invalidate()
+//    }
 }
