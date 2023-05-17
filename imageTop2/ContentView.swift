@@ -231,7 +231,7 @@ struct ContentView: View {
     }
 
     private func loadRandomImage() {
-        debugPrint("loadRandomImage")
+        debugPrint("loadRandomImage \(index)")
         var newRandomImageName: String? = nil
         let imageFolder = selectedFolderPath
         var newRandomImagePath = ""
@@ -242,21 +242,21 @@ struct ContentView: View {
         || (newRandomImagePath == secondImageName && showSecondImage)
 
         if let randomImageName = newRandomImageName {
-            if showSecondImage {
-                imageName = "\(imageFolder)/\(randomImageName)"
-            } else {
-                secondImageName = "\(imageFolder)/\(randomImageName)"
-            }
-            showSecondImage.toggle()
+                if showSecondImage {
+                    imageName = "\(imageFolder)/\(randomImageName)"
+                } else {
+                    secondImageName = "\(imageFolder)/\(randomImageName)"
+                }
+                showSecondImage.toggle()
         }
     }
 
     private func hideApp() {
-        debugPrint("hideApp")
-        WindowManager.shared.exitFullScreen()
+        debugPrint("hideApp \(index)")
         imageOrBackgroundChangeTimer?.invalidate()
         imageOrBackgroundChangeTimer = nil
         stopMonitoring()
+        WindowManager.shared.exitFullScreen()
     }
 
     private func loadImageNames() {
@@ -276,14 +276,9 @@ struct ContentView: View {
                 imageName = nil
                 secondImageName = nil
             }
-            //            DispatchQueue.main.async {
-            //                changeScreenImageOrColor()
-            //            }
         } catch {
             debugPrint("Error loading image names: \(error)")
         }
-        //        Causes to timer not working after removeing image from folder and starting from menu:
-        //        resetImageOrBackgroundChangeTimer()
     }
 
     var body: some View {
@@ -321,14 +316,8 @@ struct ContentView: View {
             backgroundColor = randomGentleColor()
             setupScreenChangeTimer()
             startAccessingFolder()
-//            NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
-//                hideApp()
-//                return event
-//            }
             startMonitoring()
             updateHotKey()
-//            shouldDisplayWatch = gShowWatch
-//            gShowWatch = false
         }
         .onChange(of: hotKeyString) { _ in
             updateHotKey()
