@@ -30,6 +30,8 @@ struct ContentView: View {
 
 //    @NSApplicationDelegateAdaptor(CustomAppDelegate.self) var appDelegate
 
+    @State private var loadingImage = true
+
     @State private var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 
     @State private var testText: String = ""
@@ -242,13 +244,26 @@ struct ContentView: View {
         || (newRandomImagePath == secondImageName && showSecondImage)
 
         if let randomImageName = newRandomImageName {
-                if showSecondImage {
-                    imageName = "\(imageFolder)/\(randomImageName)"
-                } else {
-                    secondImageName = "\(imageFolder)/\(randomImageName)"
-                }
-                showSecondImage.toggle()
+            loadingImage = true
+            if showSecondImage {
+                imageName = "\(imageFolder)/\(randomImageName)"
+            } else {
+                secondImageName = "\(imageFolder)/\(randomImageName)"
+            }
+            self.showSecondImage.toggle()
+            self.loadingImage = false
         }
+
+//        if let randomImageName = newRandomImageName {
+//                if showSecondImage {
+//                    imageName = "\(imageFolder)/\(randomImageName)"
+//                } else {
+//                    secondImageName = "\(imageFolder)/\(randomImageName)"
+//                }
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                showSecondImage.toggle()
+//            }
+//        }
     }
 
     private func hideApp() {
@@ -291,17 +306,31 @@ struct ContentView: View {
                     .opacity(showFadeColor ? 1 : 0)
                     .edgesIgnoringSafeArea(.all)
 
-                if let imageName = imageName {
-                    LoadableImage(imagePath: imageName, onError: loadImageNames)
-                        .opacity(showSecondImage ? 0 : 1)
-                        .animation(.linear(duration: 1), value: showSecondImage)
+                if !loadingImage {
+                    if let imageName = imageName {
+                        LoadableImage(imagePath: imageName, onError: loadImageNames, isLoading: loadingImage)
+                            .opacity(showSecondImage ? 0 : 1)
+                            .animation(.linear(duration: 1), value: showSecondImage)
+                    }
+
+                    if let secondImageName = secondImageName {
+                        LoadableImage(imagePath: secondImageName, onError: loadImageNames, isLoading: loadingImage)
+                            .opacity(showSecondImage ? 1 : 0)
+                            .animation(.linear(duration: 1), value: showSecondImage)
+                    }
                 }
 
-                if let secondImageName = secondImageName {
-                    LoadableImage(imagePath: secondImageName, onError: loadImageNames)
-                        .opacity(showSecondImage ? 1 : 0)
-                        .animation(.linear(duration: 1), value: showSecondImage)
-                }
+//                if let imageName = imageName {
+//                    LoadableImage(imagePath: imageName, onError: loadImageNames)
+//                        .opacity(showSecondImage ? 0 : 1)
+//                        .animation(.linear(duration: 1), value: showSecondImage)
+//                }
+//
+//                if let secondImageName = secondImageName {
+//                    LoadableImage(imagePath: secondImageName, onError: loadImageNames)
+//                        .opacity(showSecondImage ? 1 : 0)
+//                        .animation(.linear(duration: 1), value: showSecondImage)
+//                }
 
                 if index == 0 {
                     DigitalWatchView(x: x, y: y)
