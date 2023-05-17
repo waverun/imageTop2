@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:">
+      location = "self:/Users/shyem/Desktop/imageTop2/imageTop.xcodeproj">
    </FileRef>
 </Workspace>

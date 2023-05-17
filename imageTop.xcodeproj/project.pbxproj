@@ -24,7 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5079FD682A10C8890066EC08 /* imageTop2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imageTop2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5079FD682A10C8890066EC08 /* imageTop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imageTop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5079FD6D2A10C8890066EC08 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5079FD6F2A10C88B0066EC08 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5079FD722A10C88B0066EC08 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -64,7 +64,7 @@
 		5079FD692A10C8890066EC08 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5079FD682A10C8890066EC08 /* imageTop2.app */,
+				5079FD682A10C8890066EC08 /* imageTop.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -125,9 +125,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5079FD672A10C8890066EC08 /* imageTop2 */ = {
+		5079FD672A10C8890066EC08 /* imageTop */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5079FD772A10C88B0066EC08 /* Build configuration list for PBXNativeTarget "imageTop2" */;
+			buildConfigurationList = 5079FD772A10C88B0066EC08 /* Build configuration list for PBXNativeTarget "imageTop" */;
 			buildPhases = (
 				5079FD642A10C8890066EC08 /* Sources */,
 				5079FD652A10C8890066EC08 /* Frameworks */,
@@ -137,12 +137,12 @@
 			);
 			dependencies = (
 			);
-			name = imageTop2;
+			name = imageTop;
 			packageProductDependencies = (
 				5079FD7D2A10D4D40066EC08 /* HotKey */,
 			);
 			productName = imageTop2;
-			productReference = 5079FD682A10C8890066EC08 /* imageTop2.app */;
+			productReference = 5079FD682A10C8890066EC08 /* imageTop.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -160,7 +160,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5079FD632A10C8890066EC08 /* Build configuration list for PBXProject "imageTop2" */;
+			buildConfigurationList = 5079FD632A10C8890066EC08 /* Build configuration list for PBXProject "imageTop" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -176,7 +176,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5079FD672A10C8890066EC08 /* imageTop2 */,
+				5079FD672A10C8890066EC08 /* imageTop */,
 			);
 		};
 /* End PBXProject section */
@@ -347,7 +347,7 @@
 				CODE_SIGN_ENTITLEMENTS = imageTop2/imageTop2.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = NRTGJB9J65;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -376,7 +376,7 @@
 				CODE_SIGN_ENTITLEMENTS = imageTop2/imageTop2.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = NRTGJB9J65;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -400,7 +400,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5079FD632A10C8890066EC08 /* Build configuration list for PBXProject "imageTop2" */ = {
+		5079FD632A10C8890066EC08 /* Build configuration list for PBXProject "imageTop" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5079FD752A10C88B0066EC08 /* Debug */,
@@ -409,7 +409,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5079FD772A10C88B0066EC08 /* Build configuration list for PBXNativeTarget "imageTop2" */ = {
+		5079FD772A10C88B0066EC08 /* Build configuration list for PBXNativeTarget "imageTop" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5079FD782A10C88B0066EC08 /* Debug */,

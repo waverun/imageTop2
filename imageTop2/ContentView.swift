@@ -165,7 +165,9 @@ struct ContentView: View {
 //        showApp()
         appDelegate.showWindow = true
         appDelegate.hideSettings()
-        WindowManager.shared.enterFullScreen()
+        if index == 0 {
+            WindowManager.shared.enterFullScreen()
+        }
     }
 
     private func resetImageOrBackgroundChangeTimer() {
@@ -271,7 +273,9 @@ struct ContentView: View {
         imageOrBackgroundChangeTimer?.invalidate()
         imageOrBackgroundChangeTimer = nil
         stopMonitoring()
-        WindowManager.shared.exitFullScreen()
+        if index == 0 {
+            WindowManager.shared.exitFullScreen()
+        }
     }
 
     private func loadImageNames() {
