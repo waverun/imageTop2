@@ -20,17 +20,17 @@ private func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
 struct ContentView: View {
     var index: Int
 
-//    @State private var shouldDisplayWatch: Bool = false
-
     @State var eventMonitor: Any?
 
     @EnvironmentObject var appDelegate: AppDelegate
-//    @EnvironmentObject var appDelegate: CustomAppDelegate
-
-
-//    @NSApplicationDelegateAdaptor(CustomAppDelegate.self) var appDelegate
 
     @State private var loadingImage = true
+
+    @State private var firstImage: NSImage? = nil
+    @State private var secondImage: NSImage? = nil
+    @State private var firstImagePath = ""
+    @State private var secondImagePath = ""
+
 
     @State private var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 
@@ -236,37 +236,57 @@ struct ContentView: View {
 
     private func loadRandomImage() {
         debugPrint("loadRandomImage \(index)")
-        var newRandomImageName: String? = nil
         let imageFolder = selectedFolderPath
-        var newRandomImagePath = ""
-        repeat {
-            newRandomImageName = imageNames.randomElement()
-            newRandomImagePath = "\(imageFolder)/\(newRandomImageName!)"
-        } while (newRandomImagePath == imageName && !showSecondImage)
-        || (newRandomImagePath == secondImageName && showSecondImage)
 
-        if let randomImageName = newRandomImageName {
-            loadingImage = true
-            if showSecondImage {
-                imageName = "\(imageFolder)/\(randomImageName)"
-            } else {
-                secondImageName = "\(imageFolder)/\(randomImageName)"
+        DispatchQueue.global(qos: .userInitiated).async {
+            var newRandomImagePath = ""
+            repeat {
+                if let newRandomImageName = imageNames.randomElement() {
+                    newRandomImagePath = "\(imageFolder)/\(newRandomImageName)"
+                }
+            } while (newRandomImagePath == firstImagePath && !showSecondImage)
+            || (newRandomImagePath == secondImagePath && showSecondImage)
+
+            if let nsImage = NSImage(contentsOfFile: newRandomImagePath) {
+                self.showSecondImage.toggle()
+                DispatchQueue.main.async {
+                    self.loadingImage = true
+                    if showSecondImage {
+                        self.firstImagePath = newRandomImagePath
+                        self.firstImage = nsImage
+                    } else {
+                        self.secondImagePath = newRandomImagePath
+                        self.secondImage = nsImage
+                    }
+                    self.showSecondImage.toggle()
+                    self.loadingImage = false
+                }
             }
-            self.showSecondImage.toggle()
-            self.loadingImage = false
         }
-
-//        if let randomImageName = newRandomImageName {
-//                if showSecondImage {
-//                    imageName = "\(imageFolder)/\(randomImageName)"
-//                } else {
-//                    secondImageName = "\(imageFolder)/\(randomImageName)"
-//                }
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                showSecondImage.toggle()
-//            }
-//        }
     }
+
+//    private func loadRandomImage() {
+//        debugPrint("loadRandomImage \(index)")
+//        var newRandomImageName: String? = nil
+//        let imageFolder = selectedFolderPath
+//        var newRandomImagePath = ""
+//        repeat {
+//            newRandomImageName = imageNames.randomElement()
+//            newRandomImagePath = "\(imageFolder)/\(newRandomImageName!)"
+//        } while (newRandomImagePath == imageName && !showSecondImage)
+//        || (newRandomImagePath == secondImageName && showSecondImage)
+//
+//        if let randomImageName = newRandomImageName {
+//            loadingImage = true
+//            if showSecondImage {
+//                imageName = "\(imageFolder)/\(randomImageName)"
+//            } else {
+//                secondImageName = "\(imageFolder)/\(randomImageName)"
+//            }
+//            self.showSecondImage.toggle()
+//            self.loadingImage = false
+//        }
+//    }
 
     private func hideApp() {
         debugPrint("hideApp \(index)")
@@ -310,32 +330,41 @@ struct ContentView: View {
                     .opacity(showFadeColor ? 1 : 0)
                     .edgesIgnoringSafeArea(.all)
 
+                // Inside your ContentView body
                 if !loadingImage {
-                    if let imageName = imageName {
-                        LoadableImage(imagePath: imageName, onError: loadImageNames, isLoading: loadingImage)
+                    if let image = firstImage {
+                        Image(nsImage: image)
+                            .resizable()
+                            .clipped()
+                            .edgesIgnoringSafeArea(.all)
                             .opacity(showSecondImage ? 0 : 1)
                             .animation(.linear(duration: 1), value: showSecondImage)
                     }
 
-                    if let secondImageName = secondImageName {
-                        LoadableImage(imagePath: secondImageName, onError: loadImageNames, isLoading: loadingImage)
+                    if let image = secondImage {
+                        Image(nsImage: image)
+                            .resizable()
+                            .clipped()
+                            .edgesIgnoringSafeArea(.all)
                             .opacity(showSecondImage ? 1 : 0)
                             .animation(.linear(duration: 1), value: showSecondImage)
                     }
                 }
 
-//                if let imageName = imageName {
-//                    LoadableImage(imagePath: imageName, onError: loadImageNames)
-//                        .opacity(showSecondImage ? 0 : 1)
-//                        .animation(.linear(duration: 1), value: showSecondImage)
+//                if !loadingImage {
+//                    if let imageName = imageName {
+//                        LoadableImage(imagePath: imageName, onError: loadImageNames, isLoading: loadingImage)
+//                            .opacity(showSecondImage ? 0 : 1)
+//                            .animation(.linear(duration: 1), value: showSecondImage)
+//                    }
+//
+//                    if let secondImageName = secondImageName {
+//                        LoadableImage(imagePath: secondImageName, onError: loadImageNames, isLoading: loadingImage)
+//                            .opacity(showSecondImage ? 1 : 0)
+//                            .animation(.linear(duration: 1), value: showSecondImage)
+//                    }
 //                }
 //
-//                if let secondImageName = secondImageName {
-//                    LoadableImage(imagePath: secondImageName, onError: loadImageNames)
-//                        .opacity(showSecondImage ? 1 : 0)
-//                        .animation(.linear(duration: 1), value: showSecondImage)
-//                }
-
                 if index == 0 {
                     DigitalWatchView(x: x, y: y)
                 }
