@@ -16,6 +16,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var statusBarItem: NSStatusItem!
     var settingsWindow: NSWindow!
 
+    func windowWillClose(_ notification: Notification) {
+        showMainWindow()
+    }
+
     func windowDidExitFullScreen(_ notification: Notification) {
 
         if let window = notification.object as? NSWindow {
@@ -97,6 +101,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         settingsWindow.level = .floating
         settingsWindow.center()
         settingsWindow.isReleasedWhenClosed = false // Add this line
+        settingsWindow.delegate = self
 
 //        NSWindow.setFullScreen()
     }

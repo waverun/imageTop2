@@ -195,9 +195,6 @@ struct ContentView: View {
     }
 
     private func changeBackgroundColor() {
-//        imageName = nil
-//        secondImageName = nil
-
         var newColor: Color? = nil
 
         repeat {
