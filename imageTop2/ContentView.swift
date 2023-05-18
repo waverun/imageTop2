@@ -43,7 +43,7 @@ struct ContentView: View {
     @AppStorage("modifierKeyString1") private var keyString1: String = "command"
     @AppStorage("modifierKeyString2") private var keyString2: String = "control"
 
-    @State private var imageName: String?
+//    @State private var imageName: String?
     @State private var timer: Timer? = nil
     @State private var imageNames: [String] = []
     @State private var imageOrBackgroundChangeTimer: Timer? = nil
@@ -51,7 +51,7 @@ struct ContentView: View {
     @State private var imageMode = false
     @State private var fadeColor: Color = Color.clear
     @State private var showFadeColor: Bool = false
-    @State private var secondImageName: String?
+//    @State private var secondImageName: String?
     @State private var showSecondImage: Bool = false
     @State private var x: CGFloat = {
         if let screenSize = NSScreen.main?.frame.size {
@@ -195,8 +195,8 @@ struct ContentView: View {
     }
 
     private func changeBackgroundColor() {
-        imageName = nil
-        secondImageName = nil
+//        imageName = nil
+//        secondImageName = nil
 
         var newColor: Color? = nil
 
@@ -247,20 +247,24 @@ struct ContentView: View {
             } while (newRandomImagePath == firstImagePath && !showSecondImage)
             || (newRandomImagePath == secondImagePath && showSecondImage)
 
-            if let nsImage = NSImage(contentsOfFile: newRandomImagePath) {
-                self.showSecondImage.toggle()
-                DispatchQueue.main.async {
-                    self.loadingImage = true
-                    if showSecondImage {
-                        self.firstImagePath = newRandomImagePath
-                        self.firstImage = nsImage
-                    } else {
-                        self.secondImagePath = newRandomImagePath
-                        self.secondImage = nsImage
-                    }
-                    self.showSecondImage.toggle()
-                    self.loadingImage = false
+            guard let nsImage = NSImage(contentsOfFile: newRandomImagePath)
+            else {
+                loadImageNames()
+                loadingImage = true
+                return
+            }
+            self.showSecondImage.toggle()
+            DispatchQueue.main.async {
+                self.loadingImage = true
+                if showSecondImage {
+                    self.firstImagePath = newRandomImagePath
+                    self.firstImage = nsImage
+                } else {
+                    self.secondImagePath = newRandomImagePath
+                    self.secondImage = nsImage
                 }
+                self.showSecondImage.toggle()
+                self.loadingImage = false
             }
         }
     }
@@ -312,8 +316,8 @@ struct ContentView: View {
             imageMode = imageNames.count >= 2
             debugPrint("imageMode: \(imageMode)")
             if !imageMode {
-                imageName = nil
-                secondImageName = nil
+                firstImage = nil
+                secondImage = nil
             }
         } catch {
             debugPrint("Error loading image names: \(error)")
@@ -339,6 +343,8 @@ struct ContentView: View {
                             .edgesIgnoringSafeArea(.all)
                             .opacity(showSecondImage ? 0 : 1)
                             .animation(.linear(duration: 1), value: showSecondImage)
+                    } else {
+                        Color.clear
                     }
 
                     if let image = secondImage {
@@ -348,6 +354,8 @@ struct ContentView: View {
                             .edgesIgnoringSafeArea(.all)
                             .opacity(showSecondImage ? 1 : 0)
                             .animation(.linear(duration: 1), value: showSecondImage)
+                    }  else {
+                        Color.clear
                     }
                 }
 
