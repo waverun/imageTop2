@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		50627A862A167148009BA1FC /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50627A852A167148009BA1FC /* DirectoryWatcher.swift */; };
 		5079FD6E2A10C8890066EC08 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD6D2A10C8890066EC08 /* ViewController.swift */; };
 		5079FD702A10C88B0066EC08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5079FD6F2A10C88B0066EC08 /* Assets.xcassets */; };
 		5079FD732A10C88B0066EC08 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5079FD712A10C88B0066EC08 /* Main.storyboard */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		50627A852A167148009BA1FC /* DirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
 		5079FD682A10C8890066EC08 /* imageTop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imageTop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5079FD6D2A10C8890066EC08 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5079FD6F2A10C88B0066EC08 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 			children = (
 				5079FD822A10D5B50066EC08 /* Keyboard.swift */,
 				50B646632A111162002CA82E /* WindowManager.swift */,
+				50627A852A167148009BA1FC /* DirectoryWatcher.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -206,6 +209,7 @@
 				5079FD802A10D5180066EC08 /* AppDelegate.swift in Sources */,
 				50B646642A111162002CA82E /* WindowManager.swift in Sources */,
 				5079FD832A10D5B50066EC08 /* Keyboard.swift in Sources */,
+				50627A862A167148009BA1FC /* DirectoryWatcher.swift in Sources */,
 				5079FD8C2A10DB4E0066EC08 /* LoadableImageView.swift in Sources */,
 				5079FD7B2A10D2390066EC08 /* ContentView.swift in Sources */,
 				50EC4A9C2A1404BF00C4D327 /* DebugPrint.swift in Sources */,

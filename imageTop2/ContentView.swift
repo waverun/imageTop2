@@ -20,6 +20,8 @@ private func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
 struct ContentView: View {
     var index: Int
 
+    @State private var directoryWatcher: DirectoryWatcher?
+
     @State var eventMonitor: Any?
 
     @EnvironmentObject var appDelegate: AppDelegate
@@ -302,6 +304,7 @@ struct ContentView: View {
     private func loadImageNames() {
         debugPrint("loadImageNames")
         let imageFolder = selectedFolderPath
+        directoryWatcher = DirectoryWatcher(directoryPath: imageFolder, onChange: loadImageNames)
         let folderURL = URL(fileURLWithPath: imageFolder)
         let fileManager = FileManager.default
         imageMode = false
