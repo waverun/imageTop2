@@ -1,12 +1,16 @@
 import Foundation
 
+enum DirectoryWatcherError: Error {
+    case unableToOpenDirectory(String)
+}
+
 class DirectoryWatcher {
     var source: DispatchSourceFileSystemObject?
 
-    init(directoryPath: String, onChange: @escaping () -> Void) {
+    init(directoryPath: String, onChange: @escaping () -> Void) throws {
         let fileDescriptor = open(directoryPath, O_EVTONLY)
         if fileDescriptor < 0 {
-            fatalError("Failed to open path: \(directoryPath)")
+            throw DirectoryWatcherError.unableToOpenDirectory(directoryPath)
         }
 
         let queue = DispatchQueue.global()
@@ -15,7 +19,6 @@ class DirectoryWatcher {
         source?.setEventHandler {
             print("Directory contents changed.")
             onChange()
-            // Handle the directory change (reload data, etc.)
         }
 
         source?.setCancelHandler {
