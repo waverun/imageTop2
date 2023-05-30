@@ -3,8 +3,6 @@ import SwiftUI
 import ServiceManagement
 import Quartz
 
-//var gIgnoreHideCount = 0
-
 @main
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
     @AppStorage("startAfter") private var startAfter: TimeInterval = 600
@@ -15,6 +13,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     var statusBarItem: NSStatusItem!
     var settingsWindow: NSWindow!
+    var externalDisplayCount: Int = 0
 
     func windowWillClose(_ notification: Notification) {
         showMainWindow()
@@ -103,9 +102,38 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         settingsWindow.isReleasedWhenClosed = false // Add this line
         settingsWindow.delegate = self
 
-//        NSWindow.setFullScreen()
+        // setup the screen change notification
+        externalDisplayCount = NSScreen.screens.count
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleDisplayConnection),
+            name: NSApplication.didChangeScreenParametersNotification,
+            object: nil
+        )
     }
 
+    @objc func handleDisplayConnection(notification: Notification) {
+        if externalDisplayCount != NSScreen.screens.count {
+            print("A screen was added or removed.")
+            // Remove all current windows
+            
+            WindowManager.shared.windows.removeAll()
+
+            // Recreate windows for the new screen configuration
+            createWindows()
+
+            externalDisplayCount = NSScreen.screens.count
+        } else {
+            print("A display configuration change occurred.")
+            // Handle any other display configuration changes if needed
+        }
+    }
+
+    // This is just a placeholder function, replace it with your actual restart logic
+    func restartApplication() {
+        print("Restarting application...")
+        // TODO: Implement your application restart logic here
+    }
 
     func createWindows() {
         for (index, screen) in NSScreen.screens.enumerated() {
@@ -165,8 +193,4 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         NSApp.activate(ignoringOtherApps: true)
         settingsWindow.makeFirstResponder(nil)
     }
-
-//    func applicationWillTerminate(_ notification: Notification) {
-//        inactivityTimer.invalidate()
-//    }
 }
