@@ -14,6 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var statusBarItem: NSStatusItem!
     var settingsWindow: NSWindow!
     var externalDisplayCount: Int = 0
+    var screenChangeDetected: Bool = false
 
     func windowWillClose(_ notification: Notification) {
         showMainWindow()
@@ -36,8 +37,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         startTimer.toggle()
     }
 
+    func wasWindowDidEnterFullScreen() {
+        print("windowDidEnterFullScreen")
+        inactivityTimer?.invalidate()
+        startTimer.toggle()
+    }
+
     var prevSeconds: CFTimeInterval = 0
     var inactivityTimer: Timer!
+    var inactivityAfterLockTimer: Timer!
 
     func getLastEventTime() -> CFTimeInterval {
         let keyUpLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .keyUp)
@@ -56,7 +64,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
             let currentSeconds = getLastEventTime()
             let secondsSinceLastEvent = currentSeconds - prevSeconds
-            if secondsSinceLastEvent > startAfter { // check if the user hasz been inactive for more than 60 seconds
+            if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
                 self.showWindow = true // call your method that brings the window to the front
                 WindowManager.shared.enterFullScreen()
             }
@@ -70,8 +78,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                 window.orderOut(nil)
             }
         }
+
+//        WindowManager.shared.appDelegate = self
         
         createWindows()
+
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusBarItem.button {
             button.image = NSImage(named: "imageTop-16")
@@ -117,22 +128,52 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             print("A screen was added or removed.")
             // Remove all current windows
             
-            WindowManager.shared.windows.removeAll()
+            restartApplication()
 
-            // Recreate windows for the new screen configuration
-            createWindows()
-
-            externalDisplayCount = NSScreen.screens.count
+            screenChangeDetected = true // used to create windows again on user input to prevent problem when the screen was locked
         } else {
             print("A display configuration change occurred.")
             // Handle any other display configuration changes if needed
         }
     }
 
+    func startWaitingForUserInputAfterLockTimer() {
+        inactivityAfterLockTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
+            let currentSeconds = getLastEventTime()
+            let secondsSinceLastEvent = currentSeconds - prevSeconds
+            if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
+                if screenChangeDetected {
+                    // Wait until user input is detected
+                    if getLastEventTime() < prevSeconds {
+                        // User input detected, restart the application
+                        restartApplication()
+                        screenChangeDetected = false
+                        inactivityAfterLockTimer.invalidate()
+                    }
+                }
+//                else {
+//                    self.showWindow = true // call your method that brings the window to the front
+//                    WindowManager.shared.enterFullScreen()
+//                }
+            }
+        }
+    }
+
+
     // This is just a placeholder function, replace it with your actual restart logic
     func restartApplication() {
         print("Restarting application...")
-        // TODO: Implement your application restart logic here
+
+        if WindowManager.shared.isFullScreen() {
+
+        }
+        
+        WindowManager.shared.windows.removeAll()
+
+        // Recreate windows for the new screen configuration
+        createWindows()
+
+        externalDisplayCount = NSScreen.screens.count
     }
 
     func createWindows() {
