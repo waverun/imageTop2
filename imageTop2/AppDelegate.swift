@@ -2,6 +2,7 @@ import Cocoa
 import SwiftUI
 import ServiceManagement
 import Quartz
+//import Combine
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
@@ -72,6 +73,26 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     }
 
+    func startDetectLockedScreen() {
+        let nc = NotificationCenter.default
+
+        // Add observer for screen lock
+        nc.addObserver(self, selector: #selector(screenDidLock), name: NSNotification.Name(rawValue: "com.apple.screenIsLocked"), object: nil)
+
+        // Add observer for screen unlock
+        nc.addObserver(self, selector: #selector(screenDidUnlock), name: NSNotification.Name(rawValue: "com.apple.screenIsUnlocked"), object: nil)
+    }
+
+    // Method called when screen locks
+    @objc func screenDidLock() {
+        ScreenLockStatus.shared.isLocked = true
+    }
+
+    // Method called when screen unlocks
+    @objc func screenDidUnlock() {
+        ScreenLockStatus.shared.isLocked = false
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         for window in NSApplication.shared.windows {
             if window.title == "Window" {
@@ -79,6 +100,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             }
         }
 
+        startDetectLockedScreen()
 //        WindowManager.shared.appDelegate = self
         
         createWindows()

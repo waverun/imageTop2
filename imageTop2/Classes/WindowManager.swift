@@ -33,14 +33,14 @@ class WindowManager: ObservableObject {
 
         // Create a new timer
         enterFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
-            var invalideTimerRequired = true
+            var invalidetTimerRequired = true
             for window in windows {
                 if !window.styleMask.contains(.fullScreen) {
                     window.toggleFullScreen(nil)
-                    invalideTimerRequired = false
+                    invalidetTimerRequired = false
                 }
             }
-            if invalideTimerRequired {
+            if invalidetTimerRequired {
                 timer.invalidate()
             }
         }
@@ -56,13 +56,14 @@ class WindowManager: ObservableObject {
 
         // Create a new timer
         exitFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
-            var invalideTimerRequired = true
+            var invalidetTimerRequired = true
             for window in windows {
                 if window.styleMask.contains(.fullScreen) {
                     window.toggleFullScreen(nil)
+                    invalidetTimerRequired = false
                 }
             }
-            if invalideTimerRequired {
+            if invalidetTimerRequired {
                 timer.invalidate()
             }
         }
