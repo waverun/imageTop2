@@ -22,7 +22,7 @@ struct ContentView: View {
 
     @State private var directoryWatcher: DirectoryWatcher?
 
-    @State var eventMonitor: Any?
+//    @State var eventMonitor: Any?
 
     @EnvironmentObject var appDelegate: AppDelegate
 
@@ -96,24 +96,26 @@ struct ContentView: View {
 
         debugPrint("startMonitoring")
 
-        if eventMonitor != nil {
+        if appDelegate.eventMonitor != nil {
             stopMonitoring()
         }
 
-        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
+        appDelegate.eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
             debugPrint("in startMonitoring showWindow: \(appDelegate.$showWindow)")
 //            self.hideApp()
-            appDelegate.showWindow = false
+            if !appDelegate.ignoreMonitor {
+                appDelegate.showWindow = false
+                print("show - startMonitoring")
+            }
             return event
         }
     }
 
-
     private func stopMonitoring() {
-        if let monitor = eventMonitor {
+        if let monitor = appDelegate.eventMonitor {
             debugPrint("stopMonitoring")
             NSEvent.removeMonitor(monitor)
-            eventMonitor = nil
+            appDelegate.eventMonitor = nil
         }
     }
 
@@ -410,11 +412,13 @@ struct ContentView: View {
             startAccessingFolder()
         }
         .onDisappear {
+            print("before onDisapear")
             timer?.invalidate()
             imageOrBackgroundChangeTimer?.invalidate()
             if let url = URL(string: selectedFolderPath) {
                 url.stopAccessingSecurityScopedResource()
             }
+            print("after onDisapear")
         }
         .onReceive(appDelegate.$showWindow, perform: { showWindow in
             if showWindow {

@@ -11,11 +11,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var isMainWindowVisible: Bool = true // Add this line
     @Published var showWindow: Bool = true // Add this line
     @Published var startTimer: Bool = false // Add this line
+    @Published var eventMonitor: Any?
 
     var statusBarItem: NSStatusItem!
     var settingsWindow: NSWindow!
     var externalDisplayCount: Int = 0
     var screenChangeDetected: Bool = false
+    var ignoreMonitor = false // To ignore key after Show menu
 
     func windowWillClose(_ notification: Notification) {
         showMainWindow()
@@ -37,11 +39,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         startTimer.toggle()
     }
 
-    func wasWindowDidEnterFullScreen() {
-        print("windowDidEnterFullScreen")
-        inactivityTimer?.invalidate()
-        startTimer.toggle()
-    }
+//    func wasWindowDidEnterFullScreen() {
+//        print("windowDidEnterFullScreen")
+//        inactivityTimer?.invalidate()
+//        startTimer.toggle()
+//    }
 
     var prevSeconds: CFTimeInterval = 0
     var inactivityTimer: Timer!
@@ -196,12 +198,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         //
         //        }
         
-        WindowManager.shared.windows.removeAll()
-        
-        // Recreate windows for the new screen configuration
-        createWindows()
-        
-        externalDisplayCount = NSScreen.screens.count
+        WindowManager.shared.removeAllWindows() { [self] in
+            // Recreate windows for the new screen configuration
+            print("before createWindows")
+            createWindows()
+            print("after createWindows")
+
+            externalDisplayCount = NSScreen.screens.count
+        }
         //        }
     }
 
@@ -229,7 +233,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 window.makeKeyAndOrderFront(nil)
             }
-            WindowManager.shared.windows.append(window)
+            WindowManager.shared.addWindow(window)
         }
         WindowManager.shared.enterFullScreen()
     }
@@ -251,6 +255,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
             hideSettings()
             showWindow = true // To cause to call showApp.
+            print("showMainWindow")
+            ignoreMonitor = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [self] in
+                ignoreMonitor = false
+            }
         }
     }
 
