@@ -41,6 +41,8 @@ class WindowManager: ObservableObject {
         if !ScreenLockStatus.shared.isLocked {
             return
         }
+
+        print("enterFullScreen - not locked")
 //         Invalidate the timer if it exists
         exitFullScreenTimer?.invalidate()
 
@@ -71,6 +73,7 @@ class WindowManager: ObservableObject {
                 completion()
                 return
             }
+            return
         }
         // Invalidate the timer if it exists
         enterFullScreenTimer?.invalidate()
