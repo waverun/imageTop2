@@ -144,6 +144,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
         // setup the screen change notification
         externalDisplayCount = NSScreen.screens.count
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleDisplayConnection),
@@ -154,6 +155,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     @objc func handleDisplayConnection(notification: Notification) {
         if externalDisplayCount != NSScreen.screens.count {
+            externalDisplayCount = NSScreen.screens.count
+
             print("A screen was added or removed.")
             // Remove all current windows
             
@@ -166,30 +169,32 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
-    func startWaitingForUserInputAfterLockTimer() {
-        inactivityAfterLockTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
-            let currentSeconds = getLastEventTime()
-            let secondsSinceLastEvent = currentSeconds - prevSeconds
-            if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
-                if screenChangeDetected {
-                    // Wait until user input is detected
-                    if getLastEventTime() < prevSeconds {
-                        // User input detected, restart the application
-                        restartApplication()
-                        screenChangeDetected = false
-                        inactivityAfterLockTimer.invalidate()
-                    }
-                }
-//                else {
-//                    self.showWindow = true // call your method that brings the window to the front
-//                    WindowManager.shared.enterFullScreen()
+//    func startWaitingForUserInputAfterLockTimer() {
+//        inactivityAfterLockTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
+//            let currentSeconds = getLastEventTime()
+//            let secondsSinceLastEvent = currentSeconds - prevSeconds
+//            if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
+//                if screenChangeDetected {
+//                    // Wait until user input is detected
+//                    if getLastEventTime() < prevSeconds {
+//                        // User input detected, restart the application
+//                        restartApplication()
+//                        screenChangeDetected = false
+//                        inactivityAfterLockTimer.invalidate()
+//                    }
 //                }
-            }
-        }
-    }
+////                else {
+////                    self.showWindow = true // call your method that brings the window to the front
+////                    WindowManager.shared.enterFullScreen()
+////                }
+//            }
+//        }
+//    }
 
 
     // This is just a placeholder function, replace it with your actual restart logic
+    var createWindowsPlease = true
+
     func restartApplication() {
         print("Restarting application...")
         
@@ -201,10 +206,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         WindowManager.shared.removeAllWindows() { [self] in
             // Recreate windows for the new screen configuration
             print("before createWindows")
-            createWindows()
-            print("after createWindows")
-
-            externalDisplayCount = NSScreen.screens.count
+            //??:
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
+                if createWindowsPlease {
+                    print("NSScreen.screens.count before createWindow: \(NSScreen.screens.count) ")
+                    createWindows()
+//                    createWindowsPlease.toggle()
+                }
+                print("after createWindows")
+            }
         }
         //        }
     }

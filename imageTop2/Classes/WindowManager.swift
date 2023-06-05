@@ -23,6 +23,7 @@ class WindowManager: ObservableObject {
         for window in windows {
             if window.styleMask.contains(.fullScreen) {
                 if exitFullStcreen {
+                    window.orderOut(nil) //??
                     window.toggleFullScreen(nil)
                 }
             } else {
@@ -64,9 +65,9 @@ class WindowManager: ObservableObject {
     }
 
     func exitFullScreen(completion: (() -> Void)? = nil) {
-        if windows[0].styleMask.contains(.fullScreen) {
-            toggleFullScreen(true)
-        }
+//        if windows[0].styleMask.contains(.fullScreen) {
+        toggleFullScreen(true)
+//        }
 
         if !ScreenLockStatus.shared.isLocked {
             if let completion = completion {
