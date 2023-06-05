@@ -22,7 +22,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     func windowDidExitFullScreen(_ notification: Notification) {
-
         if let window = notification.object as? NSWindow {
             window.orderOut(nil)
             debugPrint("window.orderOut")
@@ -74,24 +73,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     func startDetectLockedScreen() {
-        let nc = NotificationCenter.default
+        let dnc = DistributedNotificationCenter.default()
 
-        // Add observer for screen lock
-        nc.addObserver(self, selector: #selector(screenDidLock), name: NSNotification.Name(rawValue: "com.apple.screenIsLocked"), object: nil)
+        _ = dnc.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { _ in
+            print("Screen Locked")
+            ScreenLockStatus.shared.isLocked = true
+        }
 
-        // Add observer for screen unlock
-        nc.addObserver(self, selector: #selector(screenDidUnlock), name: NSNotification.Name(rawValue: "com.apple.screenIsUnlocked"), object: nil)
+        _ = dnc.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { _ in
+            print("Screen Unlocked")
+            ScreenLockStatus.shared.isLocked = false
+        }
     }
 
-    // Method called when screen locks
-    @objc func screenDidLock() {
-        ScreenLockStatus.shared.isLocked = true
-    }
-
-    // Method called when screen unlocks
-    @objc func screenDidUnlock() {
-        ScreenLockStatus.shared.isLocked = false
-    }
+//    // Method called when screen locks
+//    @objc func screenDidLock() {
+//        print("Screen is locked")
+//        ScreenLockStatus.shared.isLocked = true
+//    }
+//
+//    // Method called when screen unlocks
+//    @objc func screenDidUnlock() {
+//        print("Screen is unlocked")
+//        ScreenLockStatus.shared.isLocked = false
+//    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         for window in NSApplication.shared.windows {
@@ -185,17 +190,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     // This is just a placeholder function, replace it with your actual restart logic
     func restartApplication() {
         print("Restarting application...")
-
-        if WindowManager.shared.isFullScreen() {
-
-        }
+        
+        //        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [self] in // to prevent 1 bip when opening the lid with lock. Probably the lock status is set after opening the screen.
+        //        if WindowManager.shared.isFullScreen() {
+        //
+        //        }
         
         WindowManager.shared.windows.removeAll()
-
+        
         // Recreate windows for the new screen configuration
         createWindows()
-
+        
         externalDisplayCount = NSScreen.screens.count
+        //        }
     }
 
     func createWindows() {

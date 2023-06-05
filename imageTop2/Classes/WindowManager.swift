@@ -10,6 +10,9 @@ class WindowManager: ObservableObject {
 //    var fullScreen = false
 
     func toggleFullScreen(_ exitFullStcreen: Bool) {
+//        if ScreenLockStatus.shared.isLocked {
+//            return
+//        }
         for window in windows {
             if window.styleMask.contains(.fullScreen) {
                 if exitFullStcreen {
@@ -33,15 +36,17 @@ class WindowManager: ObservableObject {
 
         // Create a new timer
         enterFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
-            var invalidetTimerRequired = true
-            for window in windows {
-                if !window.styleMask.contains(.fullScreen) {
-                    window.toggleFullScreen(nil)
-                    invalidetTimerRequired = false
+            if !ScreenLockStatus.shared.isLocked {
+                var invalidetTimerRequired = true
+                for window in windows {
+                    if !window.styleMask.contains(.fullScreen) {
+                        window.toggleFullScreen(nil)
+                        invalidetTimerRequired = false
+                    }
                 }
-            }
-            if invalidetTimerRequired {
-                timer.invalidate()
+                if invalidetTimerRequired {
+                    timer.invalidate()
+                }
             }
         }
     }

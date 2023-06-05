@@ -229,6 +229,9 @@ struct ContentView: View {
     }
 
     private func changeScreenImageOrColor() {
+        if ScreenLockStatus.shared.isLocked {
+            return
+        }
         debugPrint("changeScreenImageOrColor")
         _ = imageMode ? loadRandomImage() : changeBackgroundColor()
     }
