@@ -89,33 +89,33 @@ struct ContentView: View {
 //        }
 //    }
 
-    private func startMonitoring() {
+    private func startMonitoringUserInput() {
         if index > 0 {
             return
         }
 
         debugPrint("startMonitoring")
 
-        if appDelegate.eventMonitor != nil {
-            stopMonitoring()
+        if appDelegate.keyAndMouseEventMonitor != nil {
+            return
         }
 
-        appDelegate.eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
-            debugPrint("in startMonitoring showWindow: \(appDelegate.$showWindow)")
+        appDelegate.keyAndMouseEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
+            debugPrint("in startMonitoringUserInput showWindow: \(appDelegate.$showWindow)")
 //            self.hideApp()
             if !appDelegate.ignoreMonitor {
                 appDelegate.showWindow = false
-                print("show - startMonitoring")
+                debugPrint("show - startMonitoringUserInput")
             }
             return event
         }
     }
 
-    private func stopMonitoring() {
-        if let monitor = appDelegate.eventMonitor {
-            debugPrint("stopMonitoring")
+    private func stopMonitoringUserInput() {
+        if let monitor = appDelegate.keyAndMouseEventMonitor {
+            debugPrint("stopMonitoringUserInput")
             NSEvent.removeMonitor(monitor)
-            appDelegate.eventMonitor = nil
+            appDelegate.keyAndMouseEventMonitor = nil
         }
     }
 
@@ -159,7 +159,7 @@ struct ContentView: View {
     }
 
     private func showApp() {
-        startMonitoring()
+        startMonitoringUserInput()
 //        WindowManager.shared.enterFullScreen()
         setupScreenChangeTimer()
     }
@@ -231,9 +231,9 @@ struct ContentView: View {
     }
 
     private func changeScreenImageOrColor() {
-        if ScreenLockStatus.shared.isLocked {
-            return
-        }
+//        if ScreenLockStatus.shared.isLocked {
+//            return
+//        }
         debugPrint("changeScreenImageOrColor")
         _ = imageMode ? loadRandomImage() : changeBackgroundColor()
     }
@@ -300,7 +300,7 @@ struct ContentView: View {
         debugPrint("hideApp \(index)")
         imageOrBackgroundChangeTimer?.invalidate()
         imageOrBackgroundChangeTimer = nil
-        stopMonitoring()
+        stopMonitoringUserInput()
         if index == 0 {
             WindowManager.shared.exitFullScreen()
         }
@@ -396,7 +396,7 @@ struct ContentView: View {
             backgroundColor = randomGentleColor()
             setupScreenChangeTimer()
             startAccessingFolder()
-            startMonitoring()
+            startMonitoringUserInput()
             updateHotKey()
         }
         .onChange(of: hotKeyString) { _ in

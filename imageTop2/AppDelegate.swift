@@ -11,7 +11,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var isMainWindowVisible: Bool = true // Add this line
     @Published var showWindow: Bool = true // Add this line
     @Published var startTimer: Bool = false // Add this line
-    @Published var eventMonitor: Any?
+    @Published var keyAndMouseEventMonitor: Any?
 
     var statusBarItem: NSStatusItem!
     var settingsWindow: NSWindow!
@@ -67,7 +67,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             let currentSeconds = getLastEventTime()
             let secondsSinceLastEvent = currentSeconds - prevSeconds
             if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
-                self.showWindow = true // call your method that brings the window to the front
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
+                    self.showWindow = true // call your method that brings the window to the front
+                }
                 WindowManager.shared.enterFullScreen()
             }
         }

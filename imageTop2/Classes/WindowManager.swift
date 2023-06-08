@@ -23,11 +23,13 @@ class WindowManager: ObservableObject {
         for window in windows {
             if window.styleMask.contains(.fullScreen) {
                 if exitFullStcreen {
+                    print("exitFullScreend - toggle")
                     window.orderOut(nil) //??
                     window.toggleFullScreen(nil)
                 }
             } else {
                 if !exitFullStcreen {
+                    print("enterFullScreend - toggle")
                     window.toggleFullScreen(nil)
                 }
             }
