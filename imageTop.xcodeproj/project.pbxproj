@@ -76,17 +76,17 @@
 		5079FD6A2A10C8890066EC08 /* imageTop2 */ = {
 			isa = PBXGroup;
 			children = (
-				50EC4A9A2A1404A600C4D327 /* Functions */,
-				5079FD8F2A10DBAF0066EC08 /* Views */,
-				5079FD8A2A10DB320066EC08 /* Structs */,
-				5079FD812A10D59F0066EC08 /* Classes */,
-				5079FD6D2A10C8890066EC08 /* ViewController.swift */,
-				5079FD6F2A10C88B0066EC08 /* Assets.xcassets */,
-				5079FD712A10C88B0066EC08 /* Main.storyboard */,
-				5079FD742A10C88B0066EC08 /* imageTop2.entitlements */,
-				5079FD7A2A10D2390066EC08 /* ContentView.swift */,
 				5079FD7F2A10D5170066EC08 /* AppDelegate.swift */,
+				5079FD6F2A10C88B0066EC08 /* Assets.xcassets */,
+				5079FD812A10D59F0066EC08 /* Classes */,
+				5079FD7A2A10D2390066EC08 /* ContentView.swift */,
+				50EC4A9A2A1404A600C4D327 /* Functions */,
+				5079FD742A10C88B0066EC08 /* imageTop2.entitlements */,
 				5079FD942A10DE360066EC08 /* ImageTopApp.swift */,
+				5079FD712A10C88B0066EC08 /* Main.storyboard */,
+				5079FD8A2A10DB320066EC08 /* Structs */,
+				5079FD6D2A10C8890066EC08 /* ViewController.swift */,
+				5079FD8F2A10DBAF0066EC08 /* Views */,
 			);
 			path = imageTop2;
 			sourceTree = "<group>";

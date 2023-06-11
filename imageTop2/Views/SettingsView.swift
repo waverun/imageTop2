@@ -11,9 +11,11 @@ struct SettingsView: View {
     @AppStorage("hotKeyString") private var keyString: String = "Escape"
     @AppStorage("modifierKeyString1") private var keyString1: String = "command"
     @AppStorage("modifierKeyString2") private var keyString2: String = "control"
+    @AppStorage("usePhotosFromPexels") private var usePhotosFromPexels: Bool = false
 
+    @State private var isOn: Bool = false
     @State private var selectedFolderPath = ""
-    
+
     private let allKeyNames = Keyboard.keyNames
     private let modKeyNames = Keyboard.modKeyNames
 
@@ -27,14 +29,14 @@ struct SettingsView: View {
             Text("Settings")
                 .font(.title)
                 .padding()
-            
+
             GeometryReader { geometry in
                 Form {
                     VStack {
                         HStack {
                             Text("Hot key")
                                 .frame(width: geometry.size.width * 0.35, alignment: .leading)
-                            
+
                             if !filteredKeys.isEmpty {
                                 Menu {
                                     ForEach(filteredKeys, id: \.self) { key in
@@ -46,7 +48,7 @@ struct SettingsView: View {
                                     }
                                 } label: {
                                     Text("Keys")
-                              }.frame(width: 60)
+                                }.frame(width: 60)
 
                             }
                             TextField("", text: $keyString)
@@ -58,17 +60,17 @@ struct SettingsView: View {
                         HStack {
                             Text("Modifier key 1")
                                 .frame(width: geometry.size.width * 0.35, alignment: .leading)
-                                Menu {
-                                    ForEach(modKeyNames, id: \.self) { mod in
-                                        Button(action: {
-                                            keyString1 = mod
-                                        }, label: {
-                                            Text(mod)
-                                        })
-                                    }
-                                } label: {
-                                      Text("Mods")
-                                }.frame(width: 62)
+                            Menu {
+                                ForEach(modKeyNames, id: \.self) { mod in
+                                    Button(action: {
+                                        keyString1 = mod
+                                    }, label: {
+                                        Text(mod)
+                                    })
+                                }
+                            } label: {
+                                Text("Mods")
+                            }.frame(width: 62)
                             TextField("", text: $keyString1)
                                 .frame(width: 120)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -78,17 +80,17 @@ struct SettingsView: View {
                         HStack {
                             Text("Modifier key 2")
                                 .frame(width: geometry.size.width * 0.35, alignment: .leading)
-                                Menu {
-                                    ForEach(modKeyNames, id: \.self) { mod in
-                                        Button(action: {
-                                            keyString2 = mod
-                                        }, label: {
-                                            Text(mod)
-                                        })
-                                    }
-                                } label: {
-                                      Text("Mods")
-                                }.frame(width: 62)
+                            Menu {
+                                ForEach(modKeyNames, id: \.self) { mod in
+                                    Button(action: {
+                                        keyString2 = mod
+                                    }, label: {
+                                        Text(mod)
+                                    })
+                                }
+                            } label: {
+                                Text("Mods")
+                            }.frame(width: 62)
                             TextField("", text: $keyString2)
                                 .frame(width: 120)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -106,8 +108,8 @@ struct SettingsView: View {
                                     replaceImageAfter = value
                                 }
                             }), formatter: NumberFormatter())
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 50)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 50)
                             Spacer()
                         }.padding(.leading)
                         HStack {
@@ -120,8 +122,8 @@ struct SettingsView: View {
                                     startAfter = value
                                 }
                             }), formatter: NumberFormatter())
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 50)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 50)
                             Spacer()
                         }.padding(.leading)
                         HStack {
@@ -136,16 +138,29 @@ struct SettingsView: View {
                             .foregroundColor(.gray)
                             .lineLimit(1)
                             .truncationMode(.middle)
+                        HStack {
+                            Image("pexels")
+                                .resizable()
+                                .frame(width: 32, height: 32)
+                            Toggle("Photos from Pexels", isOn: $isOn)
+                            Spacer()
+                        }
+                        .padding(.leading)
                     }
                 }
             }
         }
-        .frame(width: 350, height: 275)
+        .onChange(of: isOn) { newValue in
+            print("isOn: \(isOn)")
+            usePhotosFromPexels = isOn
+        }
+        .frame(width: 350, height: 325)
         .onAppear {
             selectedFolderPath = storedFolderPath
+            isOn = usePhotosFromPexels
         }
     }
-        
+
     private func openFolderPicker() {
         appDelegate.settingsWindow.level = .normal
 
@@ -165,7 +180,6 @@ struct SettingsView: View {
                     imageTopFolderBookmarkData = bookmarkData
                     selectedFolderPath = url.path
                     storedFolderPath = selectedFolderPath
-//                    appDelegate.cont
                 } catch {
                     debugPrint("Error creating security-scoped bookmark: \(error)")
                 }
@@ -174,8 +188,8 @@ struct SettingsView: View {
     }
 }
 
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
-    }
-}
+//struct SettingsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SettingsView()
+//    }
+//}
