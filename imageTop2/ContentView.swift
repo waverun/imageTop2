@@ -22,7 +22,7 @@ struct ContentView: View {
 
     @State private var directoryWatcher: DirectoryWatcher?
 
-//    @State var eventMonitor: Any?
+    //    @State var eventMonitor: Any?
 
     @EnvironmentObject var appDelegate: AppDelegate
 
@@ -44,8 +44,9 @@ struct ContentView: View {
     @AppStorage("hotKeyString") private var hotKeyString: String = "escape"
     @AppStorage("modifierKeyString1") private var keyString1: String = "command"
     @AppStorage("modifierKeyString2") private var keyString2: String = "control"
+    @AppStorage("usePhotosFromPexels") private var usePhotosFromPexels: Bool = false
 
-//    @State private var imageName: String?
+    //    @State private var imageName: String?
     @State private var timer: Timer? = nil
     @State private var imageNames: [String] = []
     @State private var imageOrBackgroundChangeTimer: Timer? = nil
@@ -53,7 +54,7 @@ struct ContentView: View {
     @State private var imageMode = false
     @State private var fadeColor: Color = Color.clear
     @State private var showFadeColor: Bool = false
-//    @State private var secondImageName: String?
+    //    @State private var secondImageName: String?
     @State private var showSecondImage: Bool = false
     @State private var x: CGFloat = {
         if let screenSize = NSScreen.main?.frame.size {
@@ -69,6 +70,23 @@ struct ContentView: View {
         return 0
     }()
 
+    //    let appSupportUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+
+    var pexelsDirectoryUrl: URL? {
+        let appSupportUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+        let pexelsUrl = appSupportUrl?.appendingPathComponent("pexels")
+
+        if let url = pexelsUrl {
+            do {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("Error creating pexels directory: \(error)")
+                return nil
+            }
+        }
+
+        return pexelsUrl
+    }
 
     init(index: Int) {
         if let screenSize = NSScreen.main?.frame.size {
@@ -80,14 +98,14 @@ struct ContentView: View {
         self.index = index
     }
 
-//    private func startMonitoring() {
-//        debugPrint("startMonitoring")
-//        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
-//            debugPrint("in startMonitoring")
-//            self.hideApp()
-//            return event
-//        }
-//    }
+    //    private func startMonitoring() {
+    //        debugPrint("startMonitoring")
+    //        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
+    //            debugPrint("in startMonitoring")
+    //            self.hideApp()
+    //            return event
+    //        }
+    //    }
 
     private func startMonitoringUserInput() {
         if index > 0 {
@@ -102,7 +120,7 @@ struct ContentView: View {
 
         appDelegate.keyAndMouseEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
             debugPrint("in startMonitoringUserInput showWindow: \(appDelegate.$showWindow)")
-//            self.hideApp()
+            //            self.hideApp()
             if !appDelegate.ignoreMonitor {
                 appDelegate.showWindow = false
                 debugPrint("show - startMonitoringUserInput")
@@ -160,13 +178,13 @@ struct ContentView: View {
 
     private func showApp() {
         startMonitoringUserInput()
-//        WindowManager.shared.enterFullScreen()
+        //        WindowManager.shared.enterFullScreen()
         setupScreenChangeTimer()
     }
 
     private func hotkeyPressed() {
         debugPrint("hotkey pressed")
-//        showApp()
+        //        showApp()
         appDelegate.showWindow = true
         appDelegate.hideSettings()
         if index == 0 {
@@ -231,9 +249,9 @@ struct ContentView: View {
     }
 
     private func changeScreenImageOrColor() {
-//        if ScreenLockStatus.shared.isLocked {
-//            return
-//        }
+        //        if ScreenLockStatus.shared.isLocked {
+        //            return
+        //        }
         debugPrint("changeScreenImageOrColor")
         _ = imageMode ? loadRandomImage() : changeBackgroundColor()
     }
@@ -273,28 +291,28 @@ struct ContentView: View {
         }
     }
 
-//    private func loadRandomImage() {
-//        debugPrint("loadRandomImage \(index)")
-//        var newRandomImageName: String? = nil
-//        let imageFolder = selectedFolderPath
-//        var newRandomImagePath = ""
-//        repeat {
-//            newRandomImageName = imageNames.randomElement()
-//            newRandomImagePath = "\(imageFolder)/\(newRandomImageName!)"
-//        } while (newRandomImagePath == imageName && !showSecondImage)
-//        || (newRandomImagePath == secondImageName && showSecondImage)
-//
-//        if let randomImageName = newRandomImageName {
-//            loadingImage = true
-//            if showSecondImage {
-//                imageName = "\(imageFolder)/\(randomImageName)"
-//            } else {
-//                secondImageName = "\(imageFolder)/\(randomImageName)"
-//            }
-//            self.showSecondImage.toggle()
-//            self.loadingImage = false
-//        }
-//    }
+    //    private func loadRandomImage() {
+    //        debugPrint("loadRandomImage \(index)")
+    //        var newRandomImageName: String? = nil
+    //        let imageFolder = selectedFolderPath
+    //        var newRandomImagePath = ""
+    //        repeat {
+    //            newRandomImageName = imageNames.randomElement()
+    //            newRandomImagePath = "\(imageFolder)/\(newRandomImageName!)"
+    //        } while (newRandomImagePath == imageName && !showSecondImage)
+    //        || (newRandomImagePath == secondImageName && showSecondImage)
+    //
+    //        if let randomImageName = newRandomImageName {
+    //            loadingImage = true
+    //            if showSecondImage {
+    //                imageName = "\(imageFolder)/\(randomImageName)"
+    //            } else {
+    //                secondImageName = "\(imageFolder)/\(randomImageName)"
+    //            }
+    //            self.showSecondImage.toggle()
+    //            self.loadingImage = false
+    //        }
+    //    }
 
     private func hideApp() {
         debugPrint("hideApp \(index)")
@@ -369,20 +387,20 @@ struct ContentView: View {
                     }
                 }
 
-//                if !loadingImage {
-//                    if let imageName = imageName {
-//                        LoadableImage(imagePath: imageName, onError: loadImageNames, isLoading: loadingImage)
-//                            .opacity(showSecondImage ? 0 : 1)
-//                            .animation(.linear(duration: 1), value: showSecondImage)
-//                    }
-//
-//                    if let secondImageName = secondImageName {
-//                        LoadableImage(imagePath: secondImageName, onError: loadImageNames, isLoading: loadingImage)
-//                            .opacity(showSecondImage ? 1 : 0)
-//                            .animation(.linear(duration: 1), value: showSecondImage)
-//                    }
-//                }
-//
+                //                if !loadingImage {
+                //                    if let imageName = imageName {
+                //                        LoadableImage(imagePath: imageName, onError: loadImageNames, isLoading: loadingImage)
+                //                            .opacity(showSecondImage ? 0 : 1)
+                //                            .animation(.linear(duration: 1), value: showSecondImage)
+                //                    }
+                //
+                //                    if let secondImageName = secondImageName {
+                //                        LoadableImage(imagePath: secondImageName, onError: loadImageNames, isLoading: loadingImage)
+                //                            .opacity(showSecondImage ? 1 : 0)
+                //                            .animation(.linear(duration: 1), value: showSecondImage)
+                //                    }
+                //                }
+                //
                 if index == 0 {
                     DigitalWatchView(x: x, y: y)
                 }
@@ -398,6 +416,10 @@ struct ContentView: View {
             startAccessingFolder()
             startMonitoringUserInput()
             updateHotKey()
+            if usePhotosFromPexels,
+               let pexelsDirectoryUrl = pexelsDirectoryUrl {
+                downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl)
+            }
         }
         .onChange(of: hotKeyString) { _ in
             updateHotKey()
