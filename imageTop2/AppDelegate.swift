@@ -53,9 +53,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         let keyUpLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .keyUp)
         let mouseMoveLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .mouseMoved)
         let mouseDownLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .leftMouseDown)
+        let scrollLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .scrollWheel)
 
-        return min(keyUpLastTime, mouseMoveLastTime, mouseDownLastTime)
+        return min(keyUpLastTime, mouseMoveLastTime, mouseDownLastTime, scrollLastTime)
     }
+
+    var prevEventTime: CFTimeInterval = 0
 
     func startInactivityTimer() {
         if let inactivityTimer = inactivityTimer {
@@ -65,6 +68,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         prevSeconds = getLastEventTime()
         inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
             let currentSeconds = getLastEventTime()
+            if prevEventTime != currentSeconds {
+                print("startInactivityTimer \(prevSeconds) \(currentSeconds)")
+                prevEventTime = currentSeconds
+            }
             let secondsSinceLastEvent = currentSeconds - prevSeconds
             if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
@@ -73,7 +80,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                 WindowManager.shared.enterFullScreen()
             }
         }
-
     }
 
     func startDetectLockedScreen() {
