@@ -14,6 +14,11 @@ func downloadPexelPhotos(pexelsFolder: URL) {
             let decoder = JSONDecoder()
             do {
                 let pexelsResponse = try decoder.decode(PexelsResponse.self, from: data)
+                print("pexelsResponse photos: \(pexelsResponse.photos.count)")
+                for photo in pexelsResponse.photos {
+                    downloadPhoto(from: photo.src.landscape, photographer: photo.photographer, to: pexelsFolder)
+                }
+
                 // Use pexelsResponse here
             } catch {
                 print("Error decoding JSON: \(error)")
