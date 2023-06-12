@@ -3,7 +3,7 @@ import Foundation
 func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
     let apiKey = "haMLbq5Kxq01WHqDfOZhVrcYqTbBD1nakMA9CVPgd5qqKNKU6bV1Ljl2"
 
-    let url = URL(string: "https://api.pexels.com/v1/search?query=nature&per_page=10")!
+    let url = URL(string: "https://api.pexels.com/v1/search?query=nature&per_page=80")!
     var request = URLRequest(url: url)
     request.setValue(apiKey, forHTTPHeaderField: "Authorization")
 

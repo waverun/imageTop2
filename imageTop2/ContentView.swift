@@ -304,12 +304,12 @@ struct ContentView: View {
                 pexelDownloadSemaphore.wait()
                 if pexelsImages.count == 0 {
                     downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
-                        let loadedPexelsImages = loadImageNames(from: pexelsDirectoryUrl)
-                        DispatchQueue.main.async {
-                            imageNames = loadedPexelsImages
+//                        let loadedPexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+//                        DispatchQueue.main.async {
+                            pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
                             pexelDownloadSemaphore.signal()
                             appDelegate.loadImages.toggle()
-                        }
+//                        }
                     }
                 } else {
                     pexelDownloadSemaphore.signal()
