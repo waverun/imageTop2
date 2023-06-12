@@ -32,7 +32,7 @@ struct ContentView: View {
     @State private var secondImage: NSImage? = nil
     @State private var firstImagePath = ""
     @State private var secondImagePath = ""
-
+    @State private var photographer = ""
 
     @State private var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 
@@ -47,7 +47,7 @@ struct ContentView: View {
     @AppStorage("usePhotosFromPexels") private var usePhotosFromPexels: Bool = false
 
     //    @State private var imageName: String?
-//    @State private var timer: Timer? = nil
+    //    @State private var timer: Timer? = nil
     @State private var imageNames: [String] = []
     @State private var pexelsImages: [String] = []
     @State private var imageOrBackgroundChangeTimer: Timer? = nil
@@ -220,6 +220,7 @@ struct ContentView: View {
     }
 
     private func changeBackgroundColor() {
+        photographer = ""
         var newColor: Color? = nil
 
         repeat {
@@ -259,14 +260,23 @@ struct ContentView: View {
     }
 
     private func loadRandomImage() {
+        func extractNameFromFilePath(filePath: String) -> String {
+            let components = filePath.components(separatedBy: "/")
+            if let pexelsIndex = components.firstIndex(of: "pexels") {
+                let fileName = components[pexelsIndex + 1]
+                let nameComponents = fileName.components(separatedBy: "_")
+                return nameComponents[0]
+            }
+            return ""
+        }
         debugPrint("loadRandomImage \(index)")
-//        let imageFolder = selectedFolderPath
+        //        let imageFolder = selectedFolderPath
 
         DispatchQueue.global(qos: .userInitiated).async {
             var newRandomImagePath = ""
             repeat {
                 if let newRandomImageName = imageNames.randomElement() {
-//                    newRandomImagePath = "\(imageFolder)/\(newRandomImageName)"
+                    //                    newRandomImagePath = "\(imageFolder)/\(newRandomImageName)"
                     newRandomImagePath = "\(newRandomImageName)"
                 }
             } while (newRandomImagePath == firstImagePath && !showSecondImage)
@@ -278,6 +288,13 @@ struct ContentView: View {
                 loadingImage = true
                 return
             }
+
+            if newRandomImagePath.contains("/pexels/") {
+                photographer = extractNameFromFilePath(filePath: newRandomImagePath)
+            } else {
+                photographer = ""
+            }
+
             self.showSecondImage.toggle()
             DispatchQueue.main.async {
                 self.loadingImage = true
@@ -297,19 +314,19 @@ struct ContentView: View {
     private func handlePexelsPhotos() {
         print("handlePexelsPhotos: \(index)")
         if usePhotosFromPexels,
-//           pexelDownloadSemaphore.wait(timeout: .now()) == .success,
+           //           pexelDownloadSemaphore.wait(timeout: .now()) == .success,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
             pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
             DispatchQueue.global().async {
                 pexelDownloadSemaphore.wait()
                 if pexelsImages.count == 0 {
                     downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
-//                        let loadedPexelsImages = loadImageNames(from: pexelsDirectoryUrl)
-//                        DispatchQueue.main.async {
-                            pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
-                            pexelDownloadSemaphore.signal()
-                            appDelegate.loadImages.toggle()
-//                        }
+                        //                        let loadedPexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+                        //                        DispatchQueue.main.async {
+                        pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+                        pexelDownloadSemaphore.signal()
+                        appDelegate.loadImages.toggle()
+                        //                        }
                     }
                 } else {
                     pexelDownloadSemaphore.signal()
@@ -393,6 +410,20 @@ struct ContentView: View {
                             .resizable()
                             .clipped()
                             .edgesIgnoringSafeArea(.all)
+                            .overlay(
+                                VStack {
+                                    Spacer()
+                                    HStack {
+                                        Text(photographer)
+                                            .foregroundColor(.white)
+                                            .font(.custom("Noteworthy", size: 20))
+                                            .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                            .padding(.bottom, 50)
+                                            .padding(.leading, 50)
+                                        Spacer()
+                                    }
+                                }
+                            )
                             .opacity(showSecondImage ? 0 : 1)
                             .animation(.linear(duration: 1), value: showSecondImage)
                     } else {
@@ -466,13 +497,13 @@ struct ContentView: View {
                     clearFolder(folderPath: pexelsDirectoryUrl.path)
                     pexelsImages = []
                     imageNames = loadImageNames()
-//                    appDelegate.loadImages.toggle()
+                    //                    appDelegate.loadImages.toggle()
                 }
             }
         }
         .onDisappear {
             print("before onDisapear")
-//            timer?.invalidate()
+            //            timer?.invalidate()
             stopChangeTimer()
             if let url = URL(string: selectedFolderPath) {
                 url.stopAccessingSecurityScopedResource()
