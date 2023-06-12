@@ -324,11 +324,15 @@ struct ContentView: View {
         }
     }
 
-    private func loadImageNames() {
+    private func callLoadImageNames() {
+        loadImageNames()
+    }
+
+    private func loadImageNames(from: URL? = nil) {
         debugPrint("loadImageNames")
         let imageFolder = selectedFolderPath
         do {
-            try directoryWatcher = DirectoryWatcher(directoryPath: imageFolder, onChange: loadImageNames)
+            try directoryWatcher = DirectoryWatcher(directoryPath: imageFolder, onChange: callLoadImageNames)
         } catch let error {
             print("failed to watch directory: \(imageFolder) - \(error.localizedDescription)")
         }
