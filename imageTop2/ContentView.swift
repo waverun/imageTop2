@@ -147,7 +147,7 @@ struct ContentView: View {
                 } else {
                     if url.startAccessingSecurityScopedResource() {
                         debugPrint("Successfully accessed security-scoped resource")
-                        loadImageNames()
+                        imageNames = loadImageNames()
                     } else {
                         debugPrint("Error accessing security-scoped resource")
                     }
@@ -272,7 +272,7 @@ struct ContentView: View {
 
             guard let nsImage = NSImage(contentsOfFile: newRandomImagePath)
             else {
-                loadImageNames()
+                imageNames = loadImageNames()
                 loadingImage = true
                 return
             }
@@ -326,24 +326,27 @@ struct ContentView: View {
     }
 
     private func callLoadImageNames() {
-        loadImageNames()
+        imageNames = loadImageNames()
     }
 
-    private func loadImageNames(from: URL? = nil) {
-        debugPrint("loadImageNames")
-        let imageFolder = selectedFolderPath
+    private func startWatchingFolder(imageFolder: String) {
         do {
             try directoryWatcher = DirectoryWatcher(directoryPath: imageFolder, onChange: callLoadImageNames)
         } catch let error {
             print("failed to watch directory: \(imageFolder) - \(error.localizedDescription)")
         }
+    }
+
+    private func loadImageNames(from: URL? = nil) -> [String] {
+        debugPrint("loadImageNames")
+        let imageFolder = selectedFolderPath
 
         let folderURL = URL(fileURLWithPath: imageFolder)
         let fileManager = FileManager.default
         imageMode = false
+        var imageNames: [String] = []
         do {
             let contents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            imageNames = []
             imageNames = contents.compactMap { $0.pathExtension.lowercased() == "webp" || $0.pathExtension.lowercased() == "avif" || $0.pathExtension.lowercased() == "jpeg" || $0.pathExtension.lowercased() == "jpg" || $0.pathExtension.lowercased() == "png" ? $0.lastPathComponent : nil }
             imageNames = imageNames.map { image in
                 imageFolder + "/" + image
@@ -358,6 +361,7 @@ struct ContentView: View {
         } catch {
             debugPrint("Error loading image names: \(error)")
         }
+        return imageNames
     }
 
     var body: some View {
@@ -440,6 +444,7 @@ struct ContentView: View {
         }
         .onChange(of: selectedFolderPath) { _ in
             startAccessingFolder()
+            startWatchingFolder(imageFolder: selectedFolderPath)
         }
         .onDisappear {
             print("before onDisapear")
