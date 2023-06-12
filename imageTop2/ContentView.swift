@@ -258,13 +258,14 @@ struct ContentView: View {
 
     private func loadRandomImage() {
         debugPrint("loadRandomImage \(index)")
-        let imageFolder = selectedFolderPath
+//        let imageFolder = selectedFolderPath
 
         DispatchQueue.global(qos: .userInitiated).async {
             var newRandomImagePath = ""
             repeat {
                 if let newRandomImageName = imageNames.randomElement() {
-                    newRandomImagePath = "\(imageFolder)/\(newRandomImageName)"
+//                    newRandomImagePath = "\(imageFolder)/\(newRandomImageName)"
+                    newRandomImagePath = "\(newRandomImageName)"
                 }
             } while (newRandomImagePath == firstImagePath && !showSecondImage)
             || (newRandomImagePath == secondImagePath && showSecondImage)
@@ -344,6 +345,9 @@ struct ContentView: View {
             let contents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             imageNames = []
             imageNames = contents.compactMap { $0.pathExtension.lowercased() == "webp" || $0.pathExtension.lowercased() == "avif" || $0.pathExtension.lowercased() == "jpeg" || $0.pathExtension.lowercased() == "jpg" || $0.pathExtension.lowercased() == "png" ? $0.lastPathComponent : nil }
+            imageNames = imageNames.map { image in
+                imageFolder + "/" + image
+            }
             debugPrint("imageNames: \(imageNames)")
             imageMode = imageNames.count >= 2
             debugPrint("imageMode: \(imageMode)")
