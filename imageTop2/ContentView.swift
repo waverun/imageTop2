@@ -458,6 +458,18 @@ struct ContentView: View {
             startAccessingFolder()
             startWatchingFolder(imageFolder: selectedFolderPath)
         }
+        .onChange(of: usePhotosFromPexels) { newValue in
+            if newValue {
+                handlePexelsPhotos()
+            } else {
+                if let pexelsDirectoryUrl = pexelsDirectoryUrl {
+                    clearFolder(folderPath: pexelsDirectoryUrl.path)
+                    pexelsImages = []
+                    imageNames = loadImageNames()
+//                    appDelegate.loadImages.toggle()
+                }
+            }
+        }
         .onDisappear {
             print("before onDisapear")
 //            timer?.invalidate()
