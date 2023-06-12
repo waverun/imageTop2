@@ -47,8 +47,9 @@ struct ContentView: View {
     @AppStorage("usePhotosFromPexels") private var usePhotosFromPexels: Bool = false
 
     //    @State private var imageName: String?
-    @State private var timer: Timer? = nil
+//    @State private var timer: Timer? = nil
     @State private var imageNames: [String] = []
+    @State private var pexelsImages: [String] = []
     @State private var imageOrBackgroundChangeTimer: Timer? = nil
     @State private var backgroundColor: Color = Color.clear
     @State private var imageMode = false
@@ -71,6 +72,8 @@ struct ContentView: View {
     }()
 
     //    let appSupportUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+
+    let pexelDownloadSemaphore = DispatchSemaphore(value: 1)
 
     var pexelsDirectoryUrl: URL? {
         let appSupportUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
@@ -238,8 +241,7 @@ struct ContentView: View {
     private func setupScreenChangeTimer() {
         if imageOrBackgroundChangeTimer != nil {
             debugPrint("invalidate existing timer")
-            imageOrBackgroundChangeTimer?.invalidate()
-            imageOrBackgroundChangeTimer = nil
+            stopChangeTimer()
         }
 
         debugPrint("setupScreenChangeTimer")
@@ -292,33 +294,36 @@ struct ContentView: View {
         }
     }
 
-    //    private func loadRandomImage() {
-    //        debugPrint("loadRandomImage \(index)")
-    //        var newRandomImageName: String? = nil
-    //        let imageFolder = selectedFolderPath
-    //        var newRandomImagePath = ""
-    //        repeat {
-    //            newRandomImageName = imageNames.randomElement()
-    //            newRandomImagePath = "\(imageFolder)/\(newRandomImageName!)"
-    //        } while (newRandomImagePath == imageName && !showSecondImage)
-    //        || (newRandomImagePath == secondImageName && showSecondImage)
-    //
-    //        if let randomImageName = newRandomImageName {
-    //            loadingImage = true
-    //            if showSecondImage {
-    //                imageName = "\(imageFolder)/\(randomImageName)"
-    //            } else {
-    //                secondImageName = "\(imageFolder)/\(randomImageName)"
-    //            }
-    //            self.showSecondImage.toggle()
-    //            self.loadingImage = false
-    //        }
-    //    }
+    private func handlePexelsPhotos() {
+        print("handlePexelsPhotos: \(index)")
+        if usePhotosFromPexels,
+           pexelDownloadSemaphore.wait(timeout: .now()) == .success,
+           let pexelsDirectoryUrl = pexelsDirectoryUrl {
+            pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+//            pexelDownloadSemaphore.wait()
+            if pexelsImages.count == 0 {
+                downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
+                    pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+                    pexelDownloadSemaphore.signal()
+                    appDelegate.loadImages.toggle()
+                }
+            } else {
+                pexelDownloadSemaphore.signal()
+            }
+            //                stopChangeTimer()
+            //                imageNames.append(contentsOf: pexelImages)
+            //                setupScreenChangeTimer()
+        }
+    }
+
+    private func stopChangeTimer () {
+        imageOrBackgroundChangeTimer?.invalidate()
+        imageOrBackgroundChangeTimer = nil
+    }
 
     private func hideApp() {
         debugPrint("hideApp \(index)")
-        imageOrBackgroundChangeTimer?.invalidate()
-        imageOrBackgroundChangeTimer = nil
+        stopChangeTimer()
         stopMonitoringUserInput()
         if index == 0 {
             WindowManager.shared.exitFullScreen()
@@ -341,15 +346,20 @@ struct ContentView: View {
         debugPrint("loadImageNames")
         let imageFolder = selectedFolderPath
 
-        let folderURL = URL(fileURLWithPath: imageFolder)
+        let folderURL = from == nil ? URL(fileURLWithPath: imageFolder) : from!
         let fileManager = FileManager.default
         imageMode = false
         var imageNames: [String] = []
         do {
             let contents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             imageNames = contents.compactMap { $0.pathExtension.lowercased() == "webp" || $0.pathExtension.lowercased() == "avif" || $0.pathExtension.lowercased() == "jpeg" || $0.pathExtension.lowercased() == "jpg" || $0.pathExtension.lowercased() == "png" ? $0.lastPathComponent : nil }
+            let folderString = folderURL.path
             imageNames = imageNames.map { image in
-                imageFolder + "/" + image
+                folderString + "/" + image
+            }
+            if from == nil {
+                imageNames.append(contentsOf: pexelsImages)
+                print("pexelImages: \(pexelsImages.count)")
             }
             debugPrint("imageNames: \(imageNames)")
             imageMode = imageNames.count >= 2
@@ -423,14 +433,14 @@ struct ContentView: View {
             resetImageOrBackgroundChangeTimer()
         }
         .onAppear {
+            print("selectedFolderPath: \(selectedFolderPath)")
+            startMonitoringUserInput()
             backgroundColor = randomGentleColor()
             setupScreenChangeTimer()
             startAccessingFolder()
-            startMonitoringUserInput()
             updateHotKey()
-            if usePhotosFromPexels,
-               let pexelsDirectoryUrl = pexelsDirectoryUrl {
-                downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl)
+            if index == 0 {
+                handlePexelsPhotos()
             }
         }
         .onChange(of: hotKeyString) { _ in
@@ -448,8 +458,8 @@ struct ContentView: View {
         }
         .onDisappear {
             print("before onDisapear")
-            timer?.invalidate()
-            imageOrBackgroundChangeTimer?.invalidate()
+//            timer?.invalidate()
+            stopChangeTimer()
             if let url = URL(string: selectedFolderPath) {
                 url.stopAccessingSecurityScopedResource()
             }
@@ -464,6 +474,13 @@ struct ContentView: View {
         })
         .onReceive(appDelegate.$startTimer, perform: { _ in
             setupScreenChangeTimer()
+        })
+        .onReceive(appDelegate.$loadImages, perform: { _ in
+            print("loadImages: \(index)")
+            if index > 0 {
+                pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+            }
+            imageNames = loadImageNames()
         })
     }
 }

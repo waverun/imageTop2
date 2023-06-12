@@ -8,9 +8,10 @@ import Quartz
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
     @AppStorage("startAfter") private var startAfter: TimeInterval = 600
 
-    @Published var isMainWindowVisible: Bool = true // Add this line
-    @Published var showWindow: Bool = true // Add this line
-    @Published var startTimer: Bool = false // Add this line
+    @Published var isMainWindowVisible: Bool = true
+    @Published var showWindow: Bool = true
+    @Published var loadImages: Bool = false
+    @Published var startTimer: Bool = false
     @Published var keyAndMouseEventMonitor: Any?
 
     var statusBarItem: NSStatusItem!
