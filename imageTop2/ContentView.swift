@@ -297,22 +297,24 @@ struct ContentView: View {
     private func handlePexelsPhotos() {
         print("handlePexelsPhotos: \(index)")
         if usePhotosFromPexels,
-           pexelDownloadSemaphore.wait(timeout: .now()) == .success,
+//           pexelDownloadSemaphore.wait(timeout: .now()) == .success,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
             pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
-//            pexelDownloadSemaphore.wait()
-            if pexelsImages.count == 0 {
-                downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
-                    pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+            DispatchQueue.global().async {
+                pexelDownloadSemaphore.wait()
+                if pexelsImages.count == 0 {
+                    downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
+                        let loadedPexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+                        DispatchQueue.main.async {
+                            imageNames = loadedPexelsImages
+                            pexelDownloadSemaphore.signal()
+                            appDelegate.loadImages.toggle()
+                        }
+                    }
+                } else {
                     pexelDownloadSemaphore.signal()
-                    appDelegate.loadImages.toggle()
                 }
-            } else {
-                pexelDownloadSemaphore.signal()
             }
-            //                stopChangeTimer()
-            //                imageNames.append(contentsOf: pexelImages)
-            //                setupScreenChangeTimer()
         }
     }
 
