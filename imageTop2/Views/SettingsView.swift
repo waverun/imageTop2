@@ -139,9 +139,16 @@ struct SettingsView: View {
                             .lineLimit(1)
                             .truncationMode(.middle)
                         HStack {
-                            Image("pexels")
-                                .resizable()
-                                .frame(width: 32, height: 32)
+                            Button(action: {
+                                if let url = URL(string: "https://www.pexels.com") {
+                                    NSWorkspace.shared.open(url)
+                                }
+                            }) {
+                                Image("pexels")
+                                    .resizable()
+                                    .frame(width: 32, height: 32)
+                            }
+                            .buttonStyle(PlainButtonStyle())
                             Toggle("Photos from Pexels", isOn: $isOn)
                             Spacer()
                         }
