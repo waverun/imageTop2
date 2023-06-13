@@ -180,7 +180,7 @@ struct ContentView: View {
     }
 
     private func showApp() {
-        startMonitoringUserInput()
+//        startMonitoringUserInput()
         //        WindowManager.shared.enterFullScreen()
         setupScreenChangeTimer()
     }
@@ -467,7 +467,7 @@ struct ContentView: View {
         }
         .onAppear {
             print("selectedFolderPath: \(selectedFolderPath)")
-            startMonitoringUserInput()
+//            startMonitoringUserInput()
             backgroundColor = randomGentleColor()
             setupScreenChangeTimer()
             startAccessingFolder()
@@ -513,6 +513,7 @@ struct ContentView: View {
             print("after onDisapear")
         }
         .onReceive(appDelegate.$showWindow, perform: { showWindow in
+            print("received showWindow \(showWindow)")
             if showWindow {
                 showApp()
             } else {
@@ -521,6 +522,7 @@ struct ContentView: View {
         })
         .onReceive(appDelegate.$startTimer, perform: { _ in
             setupScreenChangeTimer()
+            startMonitoringUserInput()
         })
         .onReceive(appDelegate.$loadImages, perform: { _ in
             print("loadImages: \(index)")
