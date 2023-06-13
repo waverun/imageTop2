@@ -491,10 +491,12 @@ struct ContentView: View {
         }
         .onChange(of: usePhotosFromPexels) { newValue in
             if newValue {
-                handlePexelsPhotos()
+                if index == 0 {
+                    handlePexelsPhotos()
+                }
             } else {
                 if let pexelsDirectoryUrl = pexelsDirectoryUrl {
-                    clearFolder(folderPath: pexelsDirectoryUrl.path)
+                    clearFolder(folderPath: pexelsDirectoryUrl.path, fileToKeep: ".imageTop")
                     pexelsImages = []
                     imageNames = loadImageNames()
                     //                    appDelegate.loadImages.toggle()

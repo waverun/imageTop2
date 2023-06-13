@@ -5,7 +5,7 @@ func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
         print("Not enough space to download Pexels photos")
         return
     }
-    
+
     let apiKey = "haMLbq5Kxq01WHqDfOZhVrcYqTbBD1nakMA9CVPgd5qqKNKU6bV1Ljl2"
 
     let url = URL(string: "https://api.pexels.com/v1/search?query=nature&per_page=80")!
@@ -23,7 +23,7 @@ func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
 
                 // Create a dispatch group
                 let group = DispatchGroup()
-
+                writeFile(directoryURL: pexelsFolder, fileName: ".imageTop", contents: String(pexelsResponse.totalResults))
                 for photo in pexelsResponse.photos {
                     // Enter group before each download
                     group.enter()

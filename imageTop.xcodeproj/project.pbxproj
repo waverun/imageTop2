@@ -28,6 +28,7 @@
 		50B9EA9B2A365450002BCB4B /* sanitizeFileName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EA9A2A365450002BCB4B /* sanitizeFileName.swift */; };
 		50B9EA9D2A377061002BCB4B /* ClearFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EA9C2A377061002BCB4B /* ClearFolder.swift */; };
 		50B9EA9F2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EA9E2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift */; };
+		50B9EAA12A386A1E002BCB4B /* WriteFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EAA02A386A1E002BCB4B /* WriteFile.swift */; };
 		50C499182A2D173F00797C12 /* ScreenLockStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C499172A2D173F00797C12 /* ScreenLockStatus.swift */; };
 		50EC4A9C2A1404BF00C4D327 /* debugPrint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EC4A9B2A1404BF00C4D327 /* debugPrint.swift */; };
 /* End PBXBuildFile section */
@@ -55,6 +56,7 @@
 		50B9EA9A2A365450002BCB4B /* sanitizeFileName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sanitizeFileName.swift; sourceTree = "<group>"; };
 		50B9EA9C2A377061002BCB4B /* ClearFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearFolder.swift; sourceTree = "<group>"; };
 		50B9EA9E2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isFreeSpaceMoreThan.swift; sourceTree = "<group>"; };
+		50B9EAA02A386A1E002BCB4B /* WriteFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteFile.swift; sourceTree = "<group>"; };
 		50C499172A2D173F00797C12 /* ScreenLockStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenLockStatus.swift; sourceTree = "<group>"; };
 		50EC4A9B2A1404BF00C4D327 /* debugPrint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = debugPrint.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -145,6 +147,7 @@
 				50B9EA9A2A365450002BCB4B /* sanitizeFileName.swift */,
 				50B9EA9C2A377061002BCB4B /* ClearFolder.swift */,
 				50B9EA9E2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift */,
+				50B9EAA02A386A1E002BCB4B /* WriteFile.swift */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -229,6 +232,7 @@
 				50B9EA972A364CA2002BCB4B /* checkIfUrlExists.swift in Sources */,
 				5079FD922A10DBC30066EC08 /* DigitalWatchView.swift in Sources */,
 				50B9EA952A364929002BCB4B /* downloadPexelPhotos.swift in Sources */,
+				50B9EAA12A386A1E002BCB4B /* WriteFile.swift in Sources */,
 				50B9EA9F2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift in Sources */,
 				5079FD8E2A10DB680066EC08 /* FocusableTextField.swift in Sources */,
 				50B9EA9D2A377061002BCB4B /* ClearFolder.swift in Sources */,
