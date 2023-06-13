@@ -1,6 +1,24 @@
 import Foundation
 
 func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
+    func getPageNumber(itemsPerPage: Int) -> Int? {
+        func getNumberOfItems() -> Int? {
+            if let numberOfItems = readFileContents(atPath: pexelsFolder.path + "/.imageTop") {
+                return Int(numberOfItems)
+            }
+            return nil
+        }
+        if let numberOfItems = getNumberOfItems() {
+            if numberOfItems > itemsPerPage * 2 {
+                let numberOfPages = numberOfItems / itemsPerPage
+                let random = Int.random(in: 1...numberOfPages)
+                return random
+            }
+        }
+
+        return nil
+    }
+
     if !isFreeSpaceMoreThan(gigabytes: 1) {
         print("Not enough space to download Pexels photos")
         return
@@ -8,7 +26,12 @@ func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
 
     let apiKey = "haMLbq5Kxq01WHqDfOZhVrcYqTbBD1nakMA9CVPgd5qqKNKU6bV1Ljl2"
 
-    let url = URL(string: "https://api.pexels.com/v1/search?query=nature&per_page=80")!
+    var pageNumberParam = ""
+    if let pageNumber = getPageNumber(itemsPerPage: 80) {
+        pageNumberParam = "&page=" + String(pageNumber)
+    }
+
+    let url = URL(string: "https://api.pexels.com/v1/search?query=nature&per_page=80" + pageNumberParam)!
     var request = URLRequest(url: url)
     request.setValue(apiKey, forHTTPHeaderField: "Authorization")
 
