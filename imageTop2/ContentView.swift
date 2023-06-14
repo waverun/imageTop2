@@ -60,6 +60,7 @@ struct ContentView: View {
     @State  var showFadeColor: Bool = false
     //    @State  var secondImageName: String?
     @State  var showSecondImage: Bool = false
+    @State  var showSecondVideo: Bool = false
     @State  var x: CGFloat = {
         if let screenSize = NSScreen.main?.frame.size {
             return calculateWatchPosition(parentSize: screenSize).0
@@ -119,8 +120,8 @@ struct ContentView: View {
                     VideoPlayerView(url: url, index: index) {
                         loadRandomImage()
                     }
-                    .opacity(showVideo ? 1 : 0)
-                    .animation(.linear(duration: 1), value: showSecondImage)
+                    .opacity(showVideo && !showSecondVideo ? 1 : 0)
+                    .animation(.linear(duration: 1), value: showSecondVideo)
                     .edgesIgnoringSafeArea(.all)
                 }
 
@@ -129,8 +130,8 @@ struct ContentView: View {
                     VideoPlayerView(url: url, index: index) {
                         loadRandomImage()
                     }
-                    .opacity(showVideo ? 0 : 1)
-                    .animation(.linear(duration: 1), value: showSecondImage)
+                    .opacity(showVideo && showSecondVideo ? 1 : 0)
+                    .animation(.linear(duration: 1), value: showSecondVideo)
                     .edgesIgnoringSafeArea(.all)
                 }
 
@@ -419,19 +420,25 @@ struct ContentView: View {
 //        secondVideoPath = "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0="
 
         DispatchQueue.global(qos: .userInitiated).async {
-            var newRandomImagePath = ""
+            var newRandomImageOrVideoPath = ""
             repeat {
                 if let newRandomImageName = imageNames.randomElement() {
-                    newRandomImagePath = "\(newRandomImageName)"
+                    newRandomImageOrVideoPath = "\(newRandomImageName)"
                 }
-            } while (newRandomImagePath == firstImagePath && !showSecondImage)
-            || (newRandomImagePath == secondImagePath && showSecondImage)
-            || newRandomImagePath == firstVideoPath
+            } while (newRandomImageOrVideoPath == firstImagePath && !showSecondImage)
+            || (newRandomImageOrVideoPath == secondImagePath && showSecondImage)
+            || (newRandomImageOrVideoPath == firstVideoPath && !showSecondVideo)
+            || (newRandomImageOrVideoPath == secondVideoPath && showSecondVideo)
 
-            print("video newRandoImage \(newRandomImagePath) \(index)")
+            print("video newRandoImage \(newRandomImageOrVideoPath) \(index)")
 
-            if newRandomImagePath.starts(with: "https:") {
-                firstVideoPath = newRandomImagePath
+            if newRandomImageOrVideoPath.starts(with: "https:") {
+                if showSecondVideo {
+                    firstVideoPath = firstVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" : newRandomImageOrVideoPath
+                } else {
+                    secondVideoPath = secondVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" : newRandomImageOrVideoPath
+                }
+                showSecondVideo.toggle()
                 if !showVideo {
                     stopChangeTimer()
                     showVideo = true
@@ -439,15 +446,15 @@ struct ContentView: View {
                 return
             }
 
-            guard let nsImage = NSImage(contentsOfFile: newRandomImagePath)
+            guard let nsImage = NSImage(contentsOfFile: newRandomImageOrVideoPath)
             else {
                 imageNames = loadImageNames()
                 loadingImage = true
                 return
             }
 
-            if newRandomImagePath.contains("/pexels/") {
-                photographer = extractNameFromFilePath(filePath: newRandomImagePath)
+            if newRandomImageOrVideoPath.contains("/pexels/") {
+                photographer = extractNameFromFilePath(filePath: newRandomImageOrVideoPath)
             } else {
                 photographer = ""
             }
@@ -460,10 +467,10 @@ struct ContentView: View {
                 }
                 self.loadingImage = true
                 if showSecondImage {
-                    self.firstImagePath = newRandomImagePath
+                    self.firstImagePath = newRandomImageOrVideoPath
                     self.firstImage = nsImage
                 } else {
-                    self.secondImagePath = newRandomImagePath
+                    self.secondImagePath = newRandomImageOrVideoPath
                     self.secondImage = nsImage
                 }
                 self.showSecondImage.toggle()
@@ -541,6 +548,7 @@ struct ContentView: View {
                 imageNames.append(contentsOf: pexelsImages)
                 print("pexelImages: \(pexelsImages.count)")
             }
+            imageNames = []
             imageNames.append("https://player.vimeo.com/external/342571552.hd.mp4?s=6aa6f164de3812abadff3dde86d19f7a074a8a66&profile_id=175&oauth2_token_id=57447761")
             imageNames.append("https://player.vimeo.com/external/269971860.m3u8?s=ac08929c597387cc77ae3d88bfe2ad66a9c4d31f&oauth2_token_id=57447761")
             debugPrint("imageNames: \(imageNames)")
