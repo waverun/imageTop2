@@ -6,7 +6,7 @@ import HotKey
 
 //var gShowWatch = true
 
- func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
+func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
     var seed = UInt64(Date().timeIntervalSince1970)
     let seedData = Data(bytes: &seed, count: MemoryLayout<UInt64>.size)
     let generator = GKARC4RandomSource(seed: seedData)
@@ -113,51 +113,53 @@ struct ContentView: View {
                     .opacity(showFadeColor ? 1 : 0)
                     .edgesIgnoringSafeArea(.all)
 
-                // Inside your ContentView body
-                if showVideo {
+                if videoPath != "" {
                     VideoPlayerView(url: URL(string: videoPath)!, index: index) {
                         loadRandomImage()
                     }
+                    .opacity(showVideo ? 1 : 0)
+                    .animation(.linear(duration: 1), value: showSecondImage)
                     .edgesIgnoringSafeArea(.all)
-                } else {
-                    if !loadingImage {
-                        if let image = firstImage {
-                            Image(nsImage: image)
-                                .resizable()
-                                .clipped()
-                                .edgesIgnoringSafeArea(.all)
-                                .overlay(
-                                    VStack {
+                }
+                
+                if !loadingImage {
+                    if let image = firstImage {
+                        Image(nsImage: image)
+                            .resizable()
+                            .clipped()
+                            .edgesIgnoringSafeArea(.all)
+                            .overlay(
+                                VStack {
+                                    Spacer()
+                                    HStack {
+                                        Text(photographer)
+                                            .foregroundColor(.white)
+                                            .font(.custom("Noteworthy", size: 20))
+                                            .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                            .padding(.bottom, 50)
+                                            .padding(.leading, 50)
                                         Spacer()
-                                        HStack {
-                                            Text(photographer)
-                                                .foregroundColor(.white)
-                                                .font(.custom("Noteworthy", size: 20))
-                                                .shadow(color: .black, radius: 3, x: 0, y: 0)
-                                                .padding(.bottom, 50)
-                                                .padding(.leading, 50)
-                                            Spacer()
-                                        }
                                     }
-                                )
-                                .opacity(showSecondImage ? 0 : 1)
-                                .animation(.linear(duration: 1), value: showSecondImage)
-                        } else {
-                            Color.clear
-                        }
+                                }
+                            )
+                            .opacity(showSecondImage ? 0 : 1)
+                            .animation(.linear(duration: 1), value: showSecondImage)
+                    } else {
+                        Color.clear
+                    }
 
-                        if let image = secondImage {
-                            Image(nsImage: image)
-                                .resizable()
-                                .clipped()
-                                .edgesIgnoringSafeArea(.all)
-                                .opacity(showSecondImage ? 1 : 0)
-                                .animation(.linear(duration: 1), value: showSecondImage)
-                        }  else {
-                            Color.clear
-                        }
+                    if let image = secondImage {
+                        Image(nsImage: image)
+                            .resizable()
+                            .clipped()
+                            .edgesIgnoringSafeArea(.all)
+                            .opacity(showSecondImage ? 1 : 0)
+                            .animation(.linear(duration: 1), value: showSecondImage)
+                    }  else {
+                        Color.clear
                     }
                 }
+                //                }
                 if index == 0 {
                     DigitalWatchView(x: x, y: y)
                 }
@@ -242,7 +244,7 @@ struct ContentView: View {
     //        }
     //    }
 
-     func startMonitoringUserInput() {
+    func startMonitoringUserInput() {
         if index > 0 {
             return
         }
@@ -264,7 +266,7 @@ struct ContentView: View {
         }
     }
 
-     func stopMonitoringUserInput() {
+    func stopMonitoringUserInput() {
         if let monitor = appDelegate.keyAndMouseEventMonitor {
             debugPrint("stopMonitoringUserInput")
             NSEvent.removeMonitor(monitor)
@@ -272,7 +274,7 @@ struct ContentView: View {
         }
     }
 
-     func startAccessingFolder() {
+    func startAccessingFolder() {
         if let bookmarkData = imageTopFolderBookmarkData {
             do {
                 var isStale = false
@@ -293,7 +295,7 @@ struct ContentView: View {
         }
     }
 
-     func updateHotKey() {
+    func updateHotKey() {
         if index > 0 {
             return
         }
@@ -311,13 +313,13 @@ struct ContentView: View {
         }
     }
 
-     func showApp() {
-//        startMonitoringUserInput()
+    func showApp() {
+        //        startMonitoringUserInput()
         //        WindowManager.shared.enterFullScreen()
         startScreenChangeTimer()
     }
 
-     func hotkeyPressed() {
+    func hotkeyPressed() {
         debugPrint("hotkey pressed")
         //        showApp()
         appDelegate.showWindow = true
@@ -327,13 +329,13 @@ struct ContentView: View {
         }
     }
 
-     func resetImageOrBackgroundChangeTimer() {
+    func resetImageOrBackgroundChangeTimer() {
         imageOrBackgroundChangeTimer?.invalidate()
         imageOrBackgroundChangeTimer = nil
         startScreenChangeTimer()
     }
 
-     func randomGentleColor() -> Color {
+    func randomGentleColor() -> Color {
         let colors: [Color] = [
             Color(red: 0.96, green: 0.52, blue: 0.49),
             Color(red: 0.96, green: 0.81, blue: 0.48),
@@ -351,7 +353,7 @@ struct ContentView: View {
         return colors.randomElement() ?? Color.white
     }
 
-     func changeBackgroundColor() {
+    func changeBackgroundColor() {
         photographer = ""
         var newColor: Color? = nil
 
@@ -371,7 +373,7 @@ struct ContentView: View {
         }
     }
 
-     func startScreenChangeTimer() {
+    func startScreenChangeTimer() {
         if imageOrBackgroundChangeTimer != nil {
             debugPrint("invalidate existing timer")
             stopChangeTimer()
@@ -383,7 +385,7 @@ struct ContentView: View {
         }
     }
 
-     func changeScreenImageOrColor() {
+    func changeScreenImageOrColor() {
         //        if ScreenLockStatus.shared.isLocked {
         //            return
         //        }
@@ -410,8 +412,8 @@ struct ContentView: View {
                     newRandomImagePath = "\(newRandomImageName)"
                 }
             } while (newRandomImagePath == firstImagePath && !showSecondImage)
-                     || (newRandomImagePath == secondImagePath && showSecondImage)
-                     || newRandomImagePath == videoPath
+            || (newRandomImagePath == secondImagePath && showSecondImage)
+            || newRandomImagePath == videoPath
 
             print("video newRandoImage \(newRandomImagePath) \(index)")
 
@@ -457,7 +459,7 @@ struct ContentView: View {
         }
     }
 
-     func handlePexelsPhotos() {
+    func handlePexelsPhotos() {
         print("handlePexelsPhotos: \(index)")
         if usePhotosFromPexels,
            //           pexelDownloadSemaphore.wait(timeout: .now()) == .success,
@@ -481,12 +483,12 @@ struct ContentView: View {
         }
     }
 
-     func stopChangeTimer () {
+    func stopChangeTimer () {
         imageOrBackgroundChangeTimer?.invalidate()
         imageOrBackgroundChangeTimer = nil
     }
 
-     func hideApp() {
+    func hideApp() {
         debugPrint("hideApp \(index)")
         stopChangeTimer()
         stopMonitoringUserInput()
@@ -495,11 +497,11 @@ struct ContentView: View {
         }
     }
 
-     func callLoadImageNames() {
+    func callLoadImageNames() {
         imageNames = loadImageNames()
     }
 
-     func startWatchingFolder(imageFolder: String) {
+    func startWatchingFolder(imageFolder: String) {
         do {
             try directoryWatcher = DirectoryWatcher(directoryPath: imageFolder, onChange: callLoadImageNames)
         } catch let error {
@@ -507,7 +509,7 @@ struct ContentView: View {
         }
     }
 
-     func loadImageNames(from: URL? = nil) -> [String] {
+    func loadImageNames(from: URL? = nil) -> [String] {
         debugPrint("loadImageNames")
         let imageFolder = selectedFolderPath
 
