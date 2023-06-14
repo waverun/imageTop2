@@ -34,7 +34,8 @@ struct ContentView: View {
     @State  var secondImagePath = ""
     @State  var photographer = ""
     @State  var showVideo = false
-    @State  var videoPath = ""
+    @State  var firstVideoPath = ""
+    @State  var secondVideoPath = ""
 
     @State  var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 
@@ -113,8 +114,18 @@ struct ContentView: View {
                     .opacity(showFadeColor ? 1 : 0)
                     .edgesIgnoringSafeArea(.all)
 
-                if videoPath != "",
-                   let url = URL(string: videoPath) {
+                if firstVideoPath != "",
+                   let url = URL(string: firstVideoPath) {
+                    VideoPlayerView(url: url, index: index) {
+                        loadRandomImage()
+                    }
+                    .opacity(showVideo ? 1 : 0)
+                    .animation(.linear(duration: 1), value: showSecondImage)
+                    .edgesIgnoringSafeArea(.all)
+                }
+
+                if secondVideoPath != "",
+                   let url = URL(string: secondVideoPath) {
                     VideoPlayerView(url: url, index: index) {
                         loadRandomImage()
                     }
@@ -414,12 +425,12 @@ struct ContentView: View {
                 }
             } while (newRandomImagePath == firstImagePath && !showSecondImage)
             || (newRandomImagePath == secondImagePath && showSecondImage)
-            || newRandomImagePath == videoPath
+            || newRandomImagePath == firstVideoPath
 
             print("video newRandoImage \(newRandomImagePath) \(index)")
 
             if newRandomImagePath.starts(with: "https:") {
-                videoPath = newRandomImagePath
+                firstVideoPath = newRandomImagePath
                 if !showVideo {
                     stopChangeTimer()
                     showVideo = true
