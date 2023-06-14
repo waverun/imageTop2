@@ -129,7 +129,7 @@ struct ContentView: View {
                     VideoPlayerView(url: url, index: index) {
                         loadRandomImage()
                     }
-                    .opacity(showVideo ? 1 : 0)
+                    .opacity(showVideo ? 0 : 1)
                     .animation(.linear(duration: 1), value: showSecondImage)
                     .edgesIgnoringSafeArea(.all)
                 }
@@ -416,6 +416,7 @@ struct ContentView: View {
             return ""
         }
         debugPrint("video loadRandomImage \(index)")
+//        secondVideoPath = "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0="
 
         DispatchQueue.global(qos: .userInitiated).async {
             var newRandomImagePath = ""
