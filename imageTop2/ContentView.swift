@@ -113,8 +113,9 @@ struct ContentView: View {
                     .opacity(showFadeColor ? 1 : 0)
                     .edgesIgnoringSafeArea(.all)
 
-                if videoPath != "" {
-                    VideoPlayerView(url: URL(string: videoPath)!, index: index) {
+                if videoPath != "",
+                   let url = URL(string: videoPath) {
+                    VideoPlayerView(url: url, index: index) {
                         loadRandomImage()
                     }
                     .opacity(showVideo ? 1 : 0)
