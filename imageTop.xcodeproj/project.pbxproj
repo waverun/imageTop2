@@ -20,6 +20,7 @@
 		5079FD922A10DBC30066EC08 /* DigitalWatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD902A10DBC30066EC08 /* DigitalWatchView.swift */; };
 		5079FD932A10DBC30066EC08 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD912A10DBC30066EC08 /* SettingsView.swift */; };
 		5079FD952A10DE360066EC08 /* ImageTopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD942A10DE360066EC08 /* ImageTopApp.swift */; };
+		50A06A082A39C02100319BEA /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A06A072A39C02100319BEA /* VideoPlayerView.swift */; };
 		50B646642A111162002CA82E /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B646632A111162002CA82E /* WindowManager.swift */; };
 		50B9EA932A3648F6002BCB4B /* PexelsResource-photo-src.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EA922A3648F6002BCB4B /* PexelsResource-photo-src.swift */; };
 		50B9EA952A364929002BCB4B /* downloadPexelPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EA942A364929002BCB4B /* downloadPexelPhotos.swift */; };
@@ -49,6 +50,7 @@
 		5079FD902A10DBC30066EC08 /* DigitalWatchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DigitalWatchView.swift; sourceTree = "<group>"; };
 		5079FD912A10DBC30066EC08 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		5079FD942A10DE360066EC08 /* ImageTopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTopApp.swift; sourceTree = "<group>"; };
+		50A06A072A39C02100319BEA /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
 		50B646632A111162002CA82E /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
 		50B9EA922A3648F6002BCB4B /* PexelsResource-photo-src.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PexelsResource-photo-src.swift"; sourceTree = "<group>"; };
 		50B9EA942A364929002BCB4B /* downloadPexelPhotos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = downloadPexelPhotos.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 			children = (
 				5079FD902A10DBC30066EC08 /* DigitalWatchView.swift */,
 				5079FD912A10DBC30066EC08 /* SettingsView.swift */,
+				50A06A072A39C02100319BEA /* VideoPlayerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -253,6 +256,7 @@
 				5079FD7B2A10D2390066EC08 /* ContentView.swift in Sources */,
 				50EC4A9C2A1404BF00C4D327 /* debugPrint.swift in Sources */,
 				50C499182A2D173F00797C12 /* ScreenLockStatus.swift in Sources */,
+				50A06A082A39C02100319BEA /* VideoPlayerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

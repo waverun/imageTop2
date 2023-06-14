@@ -33,6 +33,7 @@ struct ContentView: View {
     @State private var firstImagePath = ""
     @State private var secondImagePath = ""
     @State private var photographer = ""
+    @State private var showVideo = false
 
     @State private var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 
@@ -404,58 +405,48 @@ struct ContentView: View {
                     .edgesIgnoringSafeArea(.all)
 
                 // Inside your ContentView body
-                if !loadingImage {
-                    if let image = firstImage {
-                        Image(nsImage: image)
-                            .resizable()
-                            .clipped()
-                            .edgesIgnoringSafeArea(.all)
-                            .overlay(
-                                VStack {
-                                    Spacer()
-                                    HStack {
-                                        Text(photographer)
-                                            .foregroundColor(.white)
-                                            .font(.custom("Noteworthy", size: 20))
-                                            .shadow(color: .black, radius: 3, x: 0, y: 0)
-                                            .padding(.bottom, 50)
-                                            .padding(.leading, 50)
+                if showVideo {
+                    VideoPlayerView(url: URL(string: "https://player.vimeo.com/external/291648067.sd.mp4?s=7f9ee1f8ec1e5376027e4a6d1d05d5738b2fbb29&profile_id=164&oauth2_token_id=57447761")!)
+                        .edgesIgnoringSafeArea(.all)
+                } else {
+                    if !loadingImage {
+                        if let image = firstImage {
+                            Image(nsImage: image)
+                                .resizable()
+                                .clipped()
+                                .edgesIgnoringSafeArea(.all)
+                                .overlay(
+                                    VStack {
                                         Spacer()
+                                        HStack {
+                                            Text(photographer)
+                                                .foregroundColor(.white)
+                                                .font(.custom("Noteworthy", size: 20))
+                                                .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                                .padding(.bottom, 50)
+                                                .padding(.leading, 50)
+                                            Spacer()
+                                        }
                                     }
-                                }
-                            )
-                            .opacity(showSecondImage ? 0 : 1)
-                            .animation(.linear(duration: 1), value: showSecondImage)
-                    } else {
-                        Color.clear
-                    }
+                                )
+                                .opacity(showSecondImage ? 0 : 1)
+                                .animation(.linear(duration: 1), value: showSecondImage)
+                        } else {
+                            Color.clear
+                        }
 
-                    if let image = secondImage {
-                        Image(nsImage: image)
-                            .resizable()
-                            .clipped()
-                            .edgesIgnoringSafeArea(.all)
-                            .opacity(showSecondImage ? 1 : 0)
-                            .animation(.linear(duration: 1), value: showSecondImage)
-                    }  else {
-                        Color.clear
+                        if let image = secondImage {
+                            Image(nsImage: image)
+                                .resizable()
+                                .clipped()
+                                .edgesIgnoringSafeArea(.all)
+                                .opacity(showSecondImage ? 1 : 0)
+                                .animation(.linear(duration: 1), value: showSecondImage)
+                        }  else {
+                            Color.clear
+                        }
                     }
                 }
-
-                //                if !loadingImage {
-                //                    if let imageName = imageName {
-                //                        LoadableImage(imagePath: imageName, onError: loadImageNames, isLoading: loadingImage)
-                //                            .opacity(showSecondImage ? 0 : 1)
-                //                            .animation(.linear(duration: 1), value: showSecondImage)
-                //                    }
-                //
-                //                    if let secondImageName = secondImageName {
-                //                        LoadableImage(imagePath: secondImageName, onError: loadImageNames, isLoading: loadingImage)
-                //                            .opacity(showSecondImage ? 1 : 0)
-                //                            .animation(.linear(duration: 1), value: showSecondImage)
-                //                    }
-                //                }
-                //
                 if index == 0 {
                     DigitalWatchView(x: x, y: y)
                 }
@@ -467,7 +458,6 @@ struct ContentView: View {
         }
         .onAppear {
             print("selectedFolderPath: \(selectedFolderPath)")
-//            startMonitoringUserInput()
             backgroundColor = randomGentleColor()
             setupScreenChangeTimer()
             startAccessingFolder()
@@ -533,12 +523,3 @@ struct ContentView: View {
         })
     }
 }
-
-//import SwiftUI
-//
-//struct ContentView: View {
-//    var body: some View {
-//        Text("Hello, World!")
-//            .frame(maxWidth: .infinity, maxHeight: .infinity)
-//    }
-//}
