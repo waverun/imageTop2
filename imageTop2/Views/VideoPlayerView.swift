@@ -4,8 +4,11 @@ import SwiftUI
 
 struct VideoPlayerView: NSViewRepresentable {
     let url: URL
+    let index: Int
+    let finishedPlaying: () -> Void
 
     func makeNSView(context: Context) -> NSView {
+        print("videoPlayerView \(url.path) on \(index)")
         let view = NSView()
 
         // create an AVPlayer
@@ -13,6 +16,13 @@ struct VideoPlayerView: NSViewRepresentable {
 
         // create a player layer
         let playerLayer = AVPlayerLayer(player: player)
+
+        // Add observer to get notified when the video finishes playing
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
+            print("Video finished playing. \(self.index)")
+            finishedPlaying()
+            // You could do additional things here like play the next video, show a replay button, etc.
+        }
 
         // make the player layer the same size as the view
         playerLayer.frame = view.bounds
@@ -25,30 +35,34 @@ struct VideoPlayerView: NSViewRepresentable {
 
         // play the video
         player.play()
-
+        print("Video started playing. \(self.index)")
         return view
     }
 
     func updateNSView(_ nsView: NSView, context: Context) {
-        // Nothing to do here
+        guard let playerLayer = nsView.layer as? AVPlayerLayer,
+              let player = playerLayer.player else {
+            return
+        }
+
+        // Check if the player's URL is different from the new URL
+        if let currentURL = player.currentItem?.asset as? AVURLAsset, currentURL.url != url {
+            // Remove observer from current item
+            NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
+
+            // Replace the player's current item with a new AVPlayerItem
+            let item = AVPlayerItem(url: url)
+            player.replaceCurrentItem(with: item)
+
+            // Add observer to new item
+            NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
+                print("Video finished playing. \(self.index)")
+                finishedPlaying()
+            }
+
+            // Play the video
+            player.play()
+            print("Video started playing. \(self.index)")
+        }
     }
 }
-
-//import AVKit
-//import SwiftUI
-//import AppKit
-//
-//struct VideoPlayerView: NSViewRepresentable {
-//    let url: String
-//
-//    func makeNSView(context: Context) -> NSView {
-//        let player = AVPlayer(url: URL(string: url)!)
-//        let controller = AVPlayerView()
-//        controller.player = player
-//        player.play()
-//        return controller
-//    }
-//
-//    func updateNSView(_ nsView: NSView, context: Context) {
-//    }
-//}
