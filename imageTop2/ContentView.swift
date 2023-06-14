@@ -121,7 +121,7 @@ struct ContentView: View {
                     .animation(.linear(duration: 1), value: showSecondImage)
                     .edgesIgnoringSafeArea(.all)
                 }
-                
+
                 if !loadingImage {
                     if let image = firstImage {
                         Image(nsImage: image)
@@ -142,8 +142,8 @@ struct ContentView: View {
                                     }
                                 }
                             )
-                            .opacity(showSecondImage ? 0 : 1)
-                            .animation(.linear(duration: 1), value: showSecondImage)
+                            .opacity(showSecondImage || showVideo ? 0 : 1)
+                            .animation(.linear(duration: 1), value: showSecondImage || showVideo)
                     } else {
                         Color.clear
                     }
@@ -153,8 +153,8 @@ struct ContentView: View {
                             .resizable()
                             .clipped()
                             .edgesIgnoringSafeArea(.all)
-                            .opacity(showSecondImage ? 1 : 0)
-                            .animation(.linear(duration: 1), value: showSecondImage)
+                            .opacity(showSecondImage && !showVideo ? 1 : 0)
+                            .animation(.linear(duration: 1), value: showSecondImage && !showVideo)
                     }  else {
                         Color.clear
                     }
