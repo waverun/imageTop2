@@ -17,6 +17,7 @@ struct VideoPlayerView: NSViewRepresentable {
 
         // create an AVPlayer
         let player = AVPlayer(url: url)
+        player .isMuted = true
         
         gPlayers[index] = player
         // create a player layer
