@@ -28,18 +28,19 @@ struct ContentView: View {
 
     @State  var loadingImage = true
 
-    @State  var firstImage: NSImage? = nil
-    @State  var secondImage: NSImage? = nil
-    @State  var firstImagePath = ""
-    @State  var secondImagePath = ""
-    @State  var photographer = ""
-    @State  var showVideo = false
-    @State  var firstVideoPath = ""
-    @State  var secondVideoPath = ""
+    @State var firstImage: NSImage? = nil
+    @State var secondImage: NSImage? = nil
+    @State var firstImagePath = ""
+    @State var secondImagePath = ""
+    @State var photographer = ""
+    @State var showVideo = false
+    @State var firstVideoPath = ""
+    @State var secondVideoPath = ""
+    @State var firstSetTimer = true
 
-    @State  var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
+    @State var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 
-    @State  var testText: String = ""
+    @State var testText: String = ""
 
     @AppStorage("replaceImageAfter")  var replaceImageAfter: TimeInterval = 10
     @AppStorage("selectedFolderPath")  var selectedFolderPath: String = ""
@@ -52,23 +53,23 @@ struct ContentView: View {
     //    @State  var imageName: String?
     //    @State  var timer: Timer? = nil
     @State var imageNames: [String] = []
-    @State  var pexelsImages: [String] = []
-    @State  var imageOrBackgroundChangeTimer: Timer? = nil
-    @State  var backgroundColor: Color = Color.clear
-    @State  var imageMode = false
-    @State  var fadeColor: Color = Color.clear
-    @State  var showFadeColor: Bool = false
+    @State var pexelsImages: [String] = []
+    @State var imageOrBackgroundChangeTimer: Timer? = nil
+    @State var backgroundColor: Color = Color.clear
+    @State var imageMode = false
+    @State var fadeColor: Color = Color.clear
+    @State var showFadeColor: Bool = false
     //    @State  var secondImageName: String?
-    @State  var showSecondImage: Bool = false
-    @State  var showSecondVideo: Bool = false
-    @State  var x: CGFloat = {
+    @State var showSecondImage: Bool = false
+    @State var showSecondVideo: Bool = false
+    @State var x: CGFloat = {
         if let screenSize = NSScreen.main?.frame.size {
             return calculateWatchPosition(parentSize: screenSize).0
         }
         return 0
     }()
 
-    @State  var y: CGFloat = {
+    @State var y: CGFloat = {
         if let screenSize = NSScreen.main?.frame.size {
             return calculateWatchPosition(parentSize: screenSize).1
         }
@@ -399,6 +400,11 @@ struct ContentView: View {
             stopChangeTimer()
         }
 
+        if firstSetTimer {
+            firstSetTimer = false
+            changeScreenImageOrColor()
+        }
+        
         print("startScreenChangeTimer \(index)")
 
         imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter, repeats: true) { [self] _ in
@@ -557,7 +563,7 @@ struct ContentView: View {
                 imageNames.append(contentsOf: pexelsImages)
                 print("pexelImages: \(pexelsImages.count)")
             }
-            imageNames = []
+//            imageNames = []
             imageNames.append("https://player.vimeo.com/external/342571552.hd.mp4?s=6aa6f164de3812abadff3dde86d19f7a074a8a66&profile_id=175&oauth2_token_id=57447761")
             imageNames.append("https://player.vimeo.com/external/269971860.m3u8?s=ac08929c597387cc77ae3d88bfe2ad66a9c4d31f&oauth2_token_id=57447761")
             debugPrint("imageNames: \(imageNames)")
