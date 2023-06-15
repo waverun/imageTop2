@@ -455,10 +455,12 @@ struct ContentView: View {
                 } else {
                     secondVideoPath = secondVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" : newRandomImageOrVideoPath
                 }
-                showSecondVideo.toggle()
+                    showSecondVideo.toggle()
                 if !showVideo {
                     stopChangeTimer()
-                    showVideo = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        showVideo = true
+                    }
                 }
                 return
             }
