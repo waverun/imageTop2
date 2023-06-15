@@ -18,7 +18,7 @@ struct VideoPlayerView: NSViewRepresentable {
         // create an AVPlayer
         let player = AVPlayer(url: url)
         player .isMuted = true
-        
+
         gPlayers[index] = player
         // create a player layer
         let playerLayer = AVPlayerLayer(player: player)
@@ -40,7 +40,9 @@ struct VideoPlayerView: NSViewRepresentable {
         view.layer = playerLayer
 
         // play the video
-        player.play()
+        if appDelegate.showWindow {
+            player.play()
+        }
         print("Video1 started playing. makeNSView \(self.index)")
         return view
     }
