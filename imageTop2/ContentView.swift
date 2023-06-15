@@ -122,7 +122,7 @@ struct ContentView: View {
                         loadRandomImage()
                     }
                     .opacity(showVideo && !showSecondVideo ? 1 : 0)
-                    .animation(.linear(duration: 1), value: showSecondVideo)
+                    .animation(.linear(duration: 1), value: showVideo && !showSecondVideo)
                     .edgesIgnoringSafeArea(.all)
                 }
 
@@ -132,7 +132,7 @@ struct ContentView: View {
                         loadRandomImage()
                     }
                     .opacity(showVideo && showSecondVideo ? 1 : 0)
-                    .animation(.linear(duration: 1), value: showSecondVideo)
+                    .animation(.linear(duration: 1), value: showVideo && !showSecondVideo)
                     .edgesIgnoringSafeArea(.all)
                 }
 
@@ -168,7 +168,7 @@ struct ContentView: View {
                             .clipped()
                             .edgesIgnoringSafeArea(.all)
                             .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
-                            .animation(.linear(duration: 1), value: showSecondImage || showVideo || loadingImage )
+                            .animation(.linear(duration: 1), value: showSecondImage && !showVideo && !loadingImage)
                     }  else {
                         Color.clear
                     }
