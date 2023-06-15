@@ -136,7 +136,7 @@ struct ContentView: View {
                     .edgesIgnoringSafeArea(.all)
                 }
 
-                if !loadingImage {
+//                if !loadingImage {
                     if let image = firstImage {
                         Image(nsImage: image)
                             .resizable()
@@ -156,8 +156,8 @@ struct ContentView: View {
                                     }
                                 }
                             )
-                            .opacity(showSecondImage || showVideo ? 0 : 1)
-                            .animation(.linear(duration: 1), value: showSecondImage || showVideo)
+                            .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
+                            .animation(.linear(duration: 1), value: showSecondImage || showVideo || loadingImage)
                     } else {
                         Color.clear
                     }
@@ -167,12 +167,12 @@ struct ContentView: View {
                             .resizable()
                             .clipped()
                             .edgesIgnoringSafeArea(.all)
-                            .opacity(showSecondImage && !showVideo ? 1 : 0)
-                            .animation(.linear(duration: 1), value: showSecondImage && !showVideo)
+                            .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
+                            .animation(.linear(duration: 1), value: showSecondImage || showVideo || loadingImage )
                     }  else {
                         Color.clear
                     }
-                }
+//                }
                 //                }
                 if index == 0 {
                     DigitalWatchView(x: x, y: y)
@@ -404,7 +404,7 @@ struct ContentView: View {
             firstSetTimer = false
             changeScreenImageOrColor()
         }
-        
+
         print("startScreenChangeTimer \(index)")
 
         imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter, repeats: true) { [self] _ in
