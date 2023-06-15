@@ -122,7 +122,7 @@ struct ContentView: View {
                         loadRandomImage()
                     }
                     .opacity(showVideo && !showSecondVideo ? 1 : 0)
-                    .animation(.linear(duration: 1), value: showVideo && !showSecondVideo)
+                    .animation(.linear(duration: 2), value: showVideo && !showSecondVideo)
                     .edgesIgnoringSafeArea(.all)
                 }
 
@@ -132,7 +132,7 @@ struct ContentView: View {
                         loadRandomImage()
                     }
                     .opacity(showVideo && showSecondVideo ? 1 : 0)
-                    .animation(.linear(duration: 1), value: showVideo && !showSecondVideo)
+                    .animation(.linear(duration: 2), value: showVideo && !showSecondVideo)
                     .edgesIgnoringSafeArea(.all)
                 }
 
@@ -240,7 +240,9 @@ struct ContentView: View {
             }
         })
         .onReceive(appDelegate.$startTimer, perform: { _ in
-            startScreenChangeTimer()
+            if !showVideo {
+                startScreenChangeTimer()
+            }
             startMonitoringUserInput()
         })
         .onReceive(appDelegate.$loadImages, perform: { _ in
