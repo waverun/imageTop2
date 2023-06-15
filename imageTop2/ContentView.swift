@@ -185,7 +185,9 @@ struct ContentView: View {
         .onAppear {
             print("selectedFolderPath: \(selectedFolderPath)")
             backgroundColor = randomGentleColor()
-            startScreenChangeTimer()
+//            if imageOrBackgroundChangeTimer == nil
+//            startScreenChangeTimer()
+//            }
             startAccessingFolder()
             updateHotKey()
             if index == 0 {
@@ -229,7 +231,7 @@ struct ContentView: View {
             print("after onDisapear")
         }
         .onReceive(appDelegate.$showWindow, perform: { showWindow in
-            print("received showWindow \(showWindow)")
+            print("received showWindow \(showWindow) \(index)")
             if showWindow {
                 showApp()
             } else {
@@ -329,6 +331,9 @@ struct ContentView: View {
     func showApp() {
         //        startMonitoringUserInput()
         //        WindowManager.shared.enterFullScreen()
+        if showVideo {
+            gPlayers[index]?.play()
+        }
         startScreenChangeTimer()
     }
 
@@ -392,7 +397,8 @@ struct ContentView: View {
             stopChangeTimer()
         }
 
-        debugPrint("setupScreenChangeTimer")
+        print("startScreenChangeTimer \(index)")
+
         imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter, repeats: true) { [self] _ in
             changeScreenImageOrColor()
         }
@@ -402,7 +408,7 @@ struct ContentView: View {
         //        if ScreenLockStatus.shared.isLocked {
         //            return
         //        }
-        debugPrint("changeScreenImageOrColor")
+        debugPrint("changeScreenImageOrColor \(index)")
         _ = imageMode ? loadRandomImage() : changeBackgroundColor()
     }
 
@@ -504,6 +510,7 @@ struct ContentView: View {
     }
 
     func stopChangeTimer () {
+        print("stopChangeTimer \(index)")
         imageOrBackgroundChangeTimer?.invalidate()
         imageOrBackgroundChangeTimer = nil
     }
@@ -512,6 +519,7 @@ struct ContentView: View {
         debugPrint("hideApp \(index)")
         stopChangeTimer()
         stopMonitoringUserInput()
+        gPlayers[index]?.pause()
         if index == 0 {
             WindowManager.shared.exitFullScreen()
         }

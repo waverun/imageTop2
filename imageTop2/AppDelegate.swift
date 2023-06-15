@@ -160,6 +160,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             name: NSApplication.didChangeScreenParametersNotification,
             object: nil
         )
+        showWindow = true
     }
 
     @objc func handleDisplayConnection(notification: Notification) {

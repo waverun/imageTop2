@@ -2,6 +2,8 @@ import AVFoundation
 import AppKit
 import SwiftUI
 
+var gPlayers: [Int: AVPlayer] = [:]
+
 struct VideoPlayerView: NSViewRepresentable {
     let url: URL
     let index: Int
@@ -13,7 +15,8 @@ struct VideoPlayerView: NSViewRepresentable {
 
         // create an AVPlayer
         let player = AVPlayer(url: url)
-
+        
+        gPlayers[index] = player
         // create a player layer
         let playerLayer = AVPlayerLayer(player: player)
 
