@@ -336,6 +336,7 @@ struct ContentView: View {
            let player = gPlayers[index] {
             print("video1 play \(index)")
             player.play()
+            return
         }
         startScreenChangeTimer()
     }
