@@ -6,10 +6,16 @@ class WindowManager: ObservableObject {
     var exitFullScreenTimer: Timer? = nil
 
     static let shared = WindowManager()
-    private var windows: [NSWindow] = []
+    var windows: [NSWindow] = []
+    var windowIndices: [NSWindow: Int] = [:] // new dictionary to hold window indices
+
+    func getIndex(for window: NSWindow) -> Int? {
+        return windowIndices[window]
+    }
 
     func addWindow(_ window: NSWindow) {
         windows.append(window)
+        windowIndices[window] = windows.count - 1 // assign an index to each window
     }
 
     func removeAllWindows(completion: @escaping () -> Void) {

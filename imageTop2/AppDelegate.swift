@@ -2,7 +2,6 @@ import Cocoa
 import SwiftUI
 import ServiceManagement
 import Quartz
-//import Combine
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
@@ -29,6 +28,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             window.orderOut(nil)
             debugPrint("window.orderOut")
             startInactivityTimer()
+            if let index = WindowManager.shared.getIndex(for: window),
+               let player = gPlayers[index] {
+                player.pause()
+                print("video1 pause \(index)")
+            }
         }
 
         self.isMainWindowVisible = false
@@ -39,12 +43,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         inactivityTimer?.invalidate()
         startTimer.toggle()
     }
-
-//    func wasWindowDidEnterFullScreen() {
-//        print("windowDidEnterFullScreen")
-//        inactivityTimer?.invalidate()
-//        startTimer.toggle()
-//    }
 
     var prevSeconds: CFTimeInterval = 0
     var inactivityTimer: Timer!
@@ -97,17 +95,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
-//    // Method called when screen locks
-//    @objc func screenDidLock() {
-//        print("Screen is locked")
-//        ScreenLockStatus.shared.isLocked = true
-//    }
-//
-//    // Method called when screen unlocks
-//    @objc func screenDidUnlock() {
-//        print("Screen is unlocked")
-//        ScreenLockStatus.shared.isLocked = false
-//    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         for window in NSApplication.shared.windows {
@@ -117,8 +104,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
 
         startDetectLockedScreen()
-//        WindowManager.shared.appDelegate = self
-        
+
         createWindows()
 
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -179,40 +165,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
-//    func startWaitingForUserInputAfterLockTimer() {
-//        inactivityAfterLockTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
-//            let currentSeconds = getLastEventTime()
-//            let secondsSinceLastEvent = currentSeconds - prevSeconds
-//            if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
-//                if screenChangeDetected {
-//                    // Wait until user input is detected
-//                    if getLastEventTime() < prevSeconds {
-//                        // User input detected, restart the application
-//                        restartApplication()
-//                        screenChangeDetected = false
-//                        inactivityAfterLockTimer.invalidate()
-//                    }
-//                }
-////                else {
-////                    self.showWindow = true // call your method that brings the window to the front
-////                    WindowManager.shared.enterFullScreen()
-////                }
-//            }
-//        }
-//    }
-
-
     // This is just a placeholder function, replace it with your actual restart logic
     var createWindowsPlease = true
 
     func restartApplication() {
         print("Restarting application...")
-        
-        //        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [self] in // to prevent 1 bip when opening the lid with lock. Probably the lock status is set after opening the screen.
-        //        if WindowManager.shared.isFullScreen() {
-        //
-        //        }
-        
+
         WindowManager.shared.removeAllWindows() { [self] in
             // Recreate windows for the new screen configuration
             print("before createWindows")
@@ -221,12 +179,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                 if createWindowsPlease {
                     print("NSScreen.screens.count before createWindow: \(NSScreen.screens.count) ")
                     createWindows()
-//                    createWindowsPlease.toggle()
                 }
                 print("after createWindows")
             }
         }
-        //        }
     }
 
     func createWindows() {

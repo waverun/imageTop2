@@ -331,8 +331,10 @@ struct ContentView: View {
     func showApp() {
         //        startMonitoringUserInput()
         //        WindowManager.shared.enterFullScreen()
-        if showVideo {
-            gPlayers[index]?.play()
+        if showVideo,
+           let player = gPlayers[index] {
+            print("video1 play \(index)")
+            player.play()
         }
         startScreenChangeTimer()
     }
@@ -519,7 +521,6 @@ struct ContentView: View {
         debugPrint("hideApp \(index)")
         stopChangeTimer()
         stopMonitoringUserInput()
-        gPlayers[index]?.pause()
         if index == 0 {
             WindowManager.shared.exitFullScreen()
         }

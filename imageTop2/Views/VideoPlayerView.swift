@@ -5,6 +5,8 @@ import SwiftUI
 var gPlayers: [Int: AVPlayer] = [:]
 
 struct VideoPlayerView: NSViewRepresentable {
+    @EnvironmentObject var appDelegate: AppDelegate
+
     let url: URL
     let index: Int
     let finishedPlaying: () -> Void
@@ -38,7 +40,7 @@ struct VideoPlayerView: NSViewRepresentable {
 
         // play the video
         player.play()
-        print("Video started playing. \(self.index)")
+        print("Video1 started playing. makeNSView \(self.index)")
         return view
     }
 
@@ -50,11 +52,13 @@ struct VideoPlayerView: NSViewRepresentable {
 
         // Check if the player's URL is different from the new URL
         if let currentURL = player.currentItem?.asset as? AVURLAsset, currentURL.url != url {
+            player.pause()
             // Remove observer from current item
             NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
 
             // Replace the player's current item with a new AVPlayerItem
             let item = AVPlayerItem(url: url)
+            
             player.replaceCurrentItem(with: item)
 
             // Add observer to new item
@@ -64,8 +68,10 @@ struct VideoPlayerView: NSViewRepresentable {
             }
 
             // Play the video
-            player.play()
-            print("Video started playing. \(self.index)")
+            if appDelegate.showWindow {
+                player.play()
+            }
+            print("Video1 started playing. updateNSView \(self.index)")
         }
     }
 }
