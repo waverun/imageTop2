@@ -139,6 +139,14 @@ struct SettingsView: View {
                             .lineLimit(1)
                             .truncationMode(.middle)
                         HStack {
+                            VStack(alignment: .leading) {
+                                Toggle("Photos from Pexels", isOn: $isOn)
+                                Spacer()
+                                    .buttonStyle(PlainButtonStyle())
+                                Toggle("Videos from Pexels", isOn: $isOn)
+                                Spacer()
+                            }
+                            Spacer()
                             Button(action: {
                                 if let url = URL(string: "https://www.pexels.com") {
                                     NSWorkspace.shared.open(url)
@@ -147,12 +155,34 @@ struct SettingsView: View {
                                 Image("pexels")
                                     .resizable()
                                     .frame(width: 32, height: 32)
+                                    .offset(y: -3)  // This line moves the button up by 10 points
+//                                Spacer()
                             }
                             .buttonStyle(PlainButtonStyle())
-                            Toggle("Photos from Pexels", isOn: $isOn)
-                            Spacer()
+                            .padding(.trailing, 50) // Add a gap on the right side of the button
                         }
                         .padding(.leading)
+
+//                        HStack {
+//                            VStack {
+//                                Toggle("Photos from Pexels", isOn: $isOn)
+//                                Spacer()
+//                                    .buttonStyle(PlainButtonStyle())
+//                                Toggle("Videos from Pexels", isOn: $isOn)
+//                                Spacer()
+//                            }
+//                            Button(action: {
+//                                if let url = URL(string: "https://www.pexels.com") {
+//                                    NSWorkspace.shared.open(url)
+//                                }
+//                            }) {
+//                                Image("pexels")
+//                                    .resizable()
+//                                    .frame(width: 32, height: 32)
+//                            }
+//                            .buttonStyle(PlainButtonStyle())
+//                        }
+//                        .padding(.leading)
                     }
                 }
             }
