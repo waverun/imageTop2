@@ -18,6 +18,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var externalDisplayCount: Int = 0
     var screenChangeDetected: Bool = false
     var ignoreMonitor = false // To ignore key after Show menu
+    var firstSetTimer: [Int : Bool] = [:]
+
 
     func windowWillClose(_ notification: Notification) {
         showMainWindow()

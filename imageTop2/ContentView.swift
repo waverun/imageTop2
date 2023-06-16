@@ -36,7 +36,6 @@ struct ContentView: View {
     @State var showVideo = false
     @State var firstVideoPath = ""
     @State var secondVideoPath = ""
-    @State var firstSetTimer = true
 
     @State var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 
@@ -110,10 +109,12 @@ struct ContentView: View {
         GeometryReader { geometry in
             ZStack {
                 backgroundColor
-                    .edgesIgnoringSafeArea(.all)
                     .opacity(showFadeColor ? 0 : 1)
+                    .animation(.linear(duration: 1), value: showFadeColor)
+                    .edgesIgnoringSafeArea(.all)
                 fadeColor
                     .opacity(showFadeColor ? 1 : 0)
+                    .animation(.linear(duration: 1), value: showFadeColor)
                     .edgesIgnoringSafeArea(.all)
 
                 if firstVideoPath != "",
@@ -340,7 +341,7 @@ struct ContentView: View {
             player.play()
             return
         }
-        startScreenChangeTimer()
+//        startScreenChangeTimer()
     }
 
     func hotkeyPressed() {
@@ -403,8 +404,9 @@ struct ContentView: View {
             stopChangeTimer()
         }
 
-        if firstSetTimer {
-            firstSetTimer = false
+        if appDelegate.firstSetTimer[index] == nil {
+            appDelegate.firstSetTimer[index] = false
+            print("firstsettime changeScreenImageOrColor \(index)")
             changeScreenImageOrColor()
         }
 
@@ -455,12 +457,14 @@ struct ContentView: View {
                 } else {
                     secondVideoPath = secondVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" : newRandomImageOrVideoPath
                 }
-                    showSecondVideo.toggle()
                 if !showVideo {
                     stopChangeTimer()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                         showVideo = true
+                        showSecondVideo.toggle()
                     }
+                } else {
+                    showSecondVideo.toggle()
                 }
                 return
             }
