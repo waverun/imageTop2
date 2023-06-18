@@ -81,6 +81,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                     self.showWindow = true // call your method that brings the window to the front
                 }
                 WindowManager.shared.enterFullScreen()
+                inactivityTimer.invalidate()
+                inactivityTimer = nil
             }
         }
     }
