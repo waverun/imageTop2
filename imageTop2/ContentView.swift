@@ -53,8 +53,6 @@ struct ContentView: View {
     //    @State  var imageName: String?
     //    @State  var timer: Timer? = nil
     @State var imageAndVideoNames: [String] = []
-    @State var pexelsImages: [String] = []
-    @State var pexelsVideos: [String] = []
     @State var imageOrBackgroundChangeTimer: Timer? = nil
     @State var backgroundColor: Color = Color.clear
     @State var imageOrVideoMode = false
@@ -220,7 +218,7 @@ struct ContentView: View {
             } else {
                 if let pexelsDirectoryUrl = pexelsDirectoryUrl {
                     clearPexelImages(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
-                    pexelsImages = []
+                    appDelegate.pexelsImages = []
                     imageAndVideoNames = loadImageAndVideoNames()
                     //                    appDelegate.loadImages.toggle()
                 }
@@ -234,7 +232,7 @@ struct ContentView: View {
             } else {
                 if let pexelsDirectoryUrl = pexelsDirectoryUrl {
                     clearPexelVideos(folderURL: pexelsDirectoryUrl, fileName: "videoList.txt")
-                    pexelsVideos = []
+                    appDelegate.pexelsVideos = []
                     imageAndVideoNames = loadImageAndVideoNames()
                     //                    appDelegate.loadImages.toggle()
                 }
@@ -266,7 +264,7 @@ struct ContentView: View {
         .onReceive(appDelegate.$loadImages, perform: { _ in
             print("loadImages: \(index)")
             if index > 0 {
-                pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
+                appDelegate.pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
             }
             imageAndVideoNames = loadImageAndVideoNames()
         })
@@ -528,7 +526,7 @@ struct ContentView: View {
 //                return
 //            }
             getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl) { videosList in
-                pexelsVideos = videosList
+                appDelegate.pexelsVideos = videosList
             }
 //            DispatchQueue.global().async {
 //                pexelDownloadSemaphore.wait()
@@ -553,14 +551,14 @@ struct ContentView: View {
         if usePhotosFromPexels,
            //           pexelDownloadSemaphore.wait(timeout: .now()) == .success,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
-            pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
+            appDelegate.pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
             DispatchQueue.global().async {
                 pexelDownloadSemaphore.wait()
-                if pexelsImages.count == 0 {
+                if appDelegate.pexelsImages.count == 0 {
                     downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
                         //                        let loadedPexelsImages = loadImageNames(from: pexelsDirectoryUrl)
                         //                        DispatchQueue.main.async {
-                        pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
+                        appDelegate.pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
                         pexelDownloadSemaphore.signal()
                         appDelegate.loadImages.toggle()
                         //                        }
@@ -615,10 +613,10 @@ struct ContentView: View {
                 folderString + "/" + image
             }
             if from == nil {
-                imageNames.append(contentsOf: pexelsImages)
-                print("pexelImages: \(pexelsImages.count)")
-                imageNames.append(contentsOf: pexelsVideos)
-                print("pexelVideos: \(pexelsVideos.count)")
+                imageNames.append(contentsOf: appDelegate.pexelsImages)
+                print("pexelImages: \(appDelegate.pexelsImages.count)")
+                imageNames.append(contentsOf: appDelegate.pexelsVideos)
+                print("pexelVideos: \(appDelegate.pexelsVideos.count)")
             }
 //            imageNames = []
 //            imageNames.append("https://player.vimeo.com/external/342571552.hd.mp4?s=6aa6f164de3812abadff3dde86d19f7a074a8a66&profile_id=175&oauth2_token_id=57447761")

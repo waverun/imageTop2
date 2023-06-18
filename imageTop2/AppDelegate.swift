@@ -12,6 +12,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var loadImages: Bool = false
     @Published var startTimer: Bool = false
     @Published var keyAndMouseEventMonitor: Any?
+    @Published var pexelsImages: [String] = []
+    @Published var pexelsVideos: [String] = []
 
     var statusBarItem: NSStatusItem!
     var settingsWindow: NSWindow!
