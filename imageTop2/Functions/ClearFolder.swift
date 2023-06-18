@@ -1,12 +1,12 @@
 import Foundation
 
-func clearFolder(folderPath: String, fileToKeep: String) {
+func clearPexelImages(folderPath: String, filesToKeep: [String]) {
     do {
         let directoryURL = URL(fileURLWithPath: folderPath)
         let fileManager = FileManager.default
         let contents = try fileManager.contentsOfDirectory(at: directoryURL, includingPropertiesForKeys: nil)
         for fileURL in contents {
-            if fileURL.lastPathComponent != fileToKeep {
+            if !filesToKeep.contains(fileURL.lastPathComponent) {
                 try fileManager.removeItem(at: fileURL)
             }
         }

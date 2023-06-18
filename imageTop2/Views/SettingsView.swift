@@ -195,12 +195,13 @@ struct SettingsView: View {
         }
         .onChange(of: useVideosFromPexelsIsOn) { newValue in
             print("isOn: \(useVideosFromPexelsIsOn)")
-            useVideosFromPexels = usePhotosFromPexelsIsOn
+            useVideosFromPexels = useVideosFromPexelsIsOn
         }
         .frame(width: 350, height: 325)
         .onAppear {
             selectedFolderPath = storedFolderPath
             usePhotosFromPexelsIsOn = usePhotosFromPexels
+            useVideosFromPexelsIsOn = useVideosFromPexels
         }
     }
 

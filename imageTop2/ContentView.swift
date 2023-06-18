@@ -41,21 +41,23 @@ struct ContentView: View {
 
     @State var testText: String = ""
 
-    @AppStorage("replaceImageAfter")  var replaceImageAfter: TimeInterval = 10
-    @AppStorage("selectedFolderPath")  var selectedFolderPath: String = ""
-    @AppStorage("imageTopFolderBookmark")  var imageTopFolderBookmarkData: Data?
-    @AppStorage("hotKeyString")  var hotKeyString: String = "escape"
-    @AppStorage("modifierKeyString1")  var keyString1: String = "command"
-    @AppStorage("modifierKeyString2")  var keyString2: String = "control"
-    @AppStorage("usePhotosFromPexels")  var usePhotosFromPexels: Bool = false
+    @AppStorage("replaceImageAfter") var replaceImageAfter: TimeInterval = 10
+    @AppStorage("selectedFolderPath") var selectedFolderPath: String = ""
+    @AppStorage("imageTopFolderBookmark") var imageTopFolderBookmarkData: Data?
+    @AppStorage("hotKeyString") var hotKeyString: String = "escape"
+    @AppStorage("modifierKeyString1") var keyString1: String = "command"
+    @AppStorage("modifierKeyString2") var keyString2: String = "control"
+    @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
+    @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = false
 
     //    @State  var imageName: String?
     //    @State  var timer: Timer? = nil
-    @State var imageNames: [String] = []
+    @State var imageAndVideoNames: [String] = []
     @State var pexelsImages: [String] = []
+    @State var pexelsVideos: [String] = []
     @State var imageOrBackgroundChangeTimer: Timer? = nil
     @State var backgroundColor: Color = Color.clear
-    @State var imageMode = false
+    @State var imageOrVideoMode = false
     @State var fadeColor: Color = Color.clear
     @State var showFadeColor: Bool = false
     //    @State  var secondImageName: String?
@@ -194,6 +196,7 @@ struct ContentView: View {
             updateHotKey()
             if index == 0 {
                 handlePexelsPhotos()
+                handlePexelsVideos()
             }
         }
         .onChange(of: hotKeyString) { _ in
@@ -216,9 +219,23 @@ struct ContentView: View {
                 }
             } else {
                 if let pexelsDirectoryUrl = pexelsDirectoryUrl {
-                    clearFolder(folderPath: pexelsDirectoryUrl.path, fileToKeep: ".imageTop")
+                    clearPexelImages(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
                     pexelsImages = []
-                    imageNames = loadImageNames()
+                    imageAndVideoNames = loadImageAndVideoNames()
+                    //                    appDelegate.loadImages.toggle()
+                }
+            }
+        }
+        .onChange(of: useVideosFromPexels) { newValue in
+            if newValue {
+                if index == 0 {
+                    handlePexelsVideos()
+                }
+            } else {
+                if let pexelsDirectoryUrl = pexelsDirectoryUrl {
+                    clearPexelVideos(folderURL: pexelsDirectoryUrl, fileName: "videoList.txt")
+                    pexelsVideos = []
+                    imageAndVideoNames = loadImageAndVideoNames()
                     //                    appDelegate.loadImages.toggle()
                 }
             }
@@ -249,9 +266,9 @@ struct ContentView: View {
         .onReceive(appDelegate.$loadImages, perform: { _ in
             print("loadImages: \(index)")
             if index > 0 {
-                pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+                pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
             }
-            imageNames = loadImageNames()
+            imageAndVideoNames = loadImageAndVideoNames()
         })
     }
     //     func startMonitoring() {
@@ -303,7 +320,7 @@ struct ContentView: View {
                 } else {
                     if url.startAccessingSecurityScopedResource() {
                         debugPrint("Successfully accessed security-scoped resource")
-                        imageNames = loadImageNames()
+                        imageAndVideoNames = loadImageAndVideoNames()
                     } else {
                         debugPrint("Error accessing security-scoped resource")
                     }
@@ -422,7 +439,7 @@ struct ContentView: View {
         //            return
         //        }
         debugPrint("changeScreenImageOrColor \(index)")
-        _ = imageMode ? loadRandomImage() : changeBackgroundColor()
+        _ = imageOrVideoMode ? loadRandomImage() : changeBackgroundColor()
     }
 
     func loadRandomImage() {
@@ -441,7 +458,7 @@ struct ContentView: View {
         DispatchQueue.global(qos: .userInitiated).async {
             var newRandomImageOrVideoPath = ""
             repeat {
-                if let newRandomImageName = imageNames.randomElement() {
+                if let newRandomImageName = imageAndVideoNames.randomElement() {
                     newRandomImageOrVideoPath = "\(newRandomImageName)"
                 }
             } while (newRandomImageOrVideoPath == firstImagePath && !showSecondImage)
@@ -471,7 +488,7 @@ struct ContentView: View {
 
             guard let nsImage = NSImage(contentsOfFile: newRandomImageOrVideoPath)
             else {
-                imageNames = loadImageNames()
+                imageAndVideoNames = loadImageAndVideoNames()
                 loadingImage = true
                 return
             }
@@ -502,19 +519,48 @@ struct ContentView: View {
         }
     }
 
+    func handlePexelsVideos() {
+        print("handlePexelsVideos: \(index)")
+        if useVideosFromPexels,
+           let pexelsDirectoryUrl = pexelsDirectoryUrl {
+//            if let videosList = loadVideoNames(from: pexelsDirectoryUrl) {
+//                pexelsVideos = videosList
+//                return
+//            }
+            getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl) { videosList in
+                pexelsVideos = videosList
+            }
+//            DispatchQueue.global().async {
+//                pexelDownloadSemaphore.wait()
+//                if pexelsImages.count == 0 {
+//                    downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
+//                        //                        let loadedPexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+//                        //                        DispatchQueue.main.async {
+//                        pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+//                        pexelDownloadSemaphore.signal()
+//                        appDelegate.loadImages.toggle()
+//                        //                        }
+//                    }
+//                } else {
+//                    pexelDownloadSemaphore.signal()
+//                }
+//            }
+        }
+    }
+
     func handlePexelsPhotos() {
         print("handlePexelsPhotos: \(index)")
         if usePhotosFromPexels,
            //           pexelDownloadSemaphore.wait(timeout: .now()) == .success,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
-            pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+            pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
             DispatchQueue.global().async {
                 pexelDownloadSemaphore.wait()
                 if pexelsImages.count == 0 {
                     downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
                         //                        let loadedPexelsImages = loadImageNames(from: pexelsDirectoryUrl)
                         //                        DispatchQueue.main.async {
-                        pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
+                        pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
                         pexelDownloadSemaphore.signal()
                         appDelegate.loadImages.toggle()
                         //                        }
@@ -542,7 +588,7 @@ struct ContentView: View {
     }
 
     func callLoadImageNames() {
-        imageNames = loadImageNames()
+        imageAndVideoNames = loadImageAndVideoNames()
     }
 
     func startWatchingFolder(imageFolder: String) {
@@ -553,13 +599,13 @@ struct ContentView: View {
         }
     }
 
-    func loadImageNames(from: URL? = nil) -> [String] {
+    func loadImageAndVideoNames(from: URL? = nil) -> [String] {
         debugPrint("loadImageNames")
         let imageFolder = selectedFolderPath
 
         let folderURL = from == nil ? URL(fileURLWithPath: imageFolder) : from!
         let fileManager = FileManager.default
-        imageMode = false
+        imageOrVideoMode = false
         var imageNames: [String] = []
         do {
             let contents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
@@ -571,14 +617,16 @@ struct ContentView: View {
             if from == nil {
                 imageNames.append(contentsOf: pexelsImages)
                 print("pexelImages: \(pexelsImages.count)")
+                imageNames.append(contentsOf: pexelsVideos)
+                print("pexelVideos: \(pexelsVideos.count)")
             }
 //            imageNames = []
-            imageNames.append("https://player.vimeo.com/external/342571552.hd.mp4?s=6aa6f164de3812abadff3dde86d19f7a074a8a66&profile_id=175&oauth2_token_id=57447761")
-            imageNames.append("https://player.vimeo.com/external/269971860.m3u8?s=ac08929c597387cc77ae3d88bfe2ad66a9c4d31f&oauth2_token_id=57447761")
-            debugPrint("imageNames: \(imageNames)")
-            imageMode = imageNames.count >= 2
-            debugPrint("imageMode: \(imageMode)")
-            if !imageMode {
+//            imageNames.append("https://player.vimeo.com/external/342571552.hd.mp4?s=6aa6f164de3812abadff3dde86d19f7a074a8a66&profile_id=175&oauth2_token_id=57447761")
+//            imageNames.append("https://player.vimeo.com/external/269971860.m3u8?s=ac08929c597387cc77ae3d88bfe2ad66a9c4d31f&oauth2_token_id=57447761")
+//            debugPrint("imageNames: \(imageNames)")
+            imageOrVideoMode = imageNames.count >= 2
+            debugPrint("imageMode: \(imageOrVideoMode)")
+            if !imageOrVideoMode {
                 firstImage = nil
                 secondImage = nil
             }

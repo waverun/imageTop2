@@ -1,5 +1,8 @@
 import Foundation
 
+let apiKey = "haMLbq5Kxq01WHqDfOZhVrcYqTbBD1nakMA9CVPgd5qqKNKU6bV1Ljl2"
+let pexelsCategories = ["beautiful", "abstract", "dark", "nature", "landscape", "space", "beach", "sky", "food", "technology", "business", "office", "flowers", "jungle", "summer", "car", "forest", "sunset"]
+
 func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
     func getPageNumber(itemsPerPage: Int) -> Int? {
         func getNumberOfItems() -> Int? {
@@ -24,11 +27,8 @@ func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
         return
     }
 
-    let apiKey = "haMLbq5Kxq01WHqDfOZhVrcYqTbBD1nakMA9CVPgd5qqKNKU6bV1Ljl2"
-    let photoCategories = ["beautiful", "abstract", "dark", "nature", "landscape", "space", "beach", "sky", "food", "technology", "business", "office", "flowers", "jungle", "summer", "car", "forest", "sunset"]
-
     var pageNumberParam = ""
-    let category = photoCategories.randomElement()!
+    let category = pexelsCategories.randomElement()!
 
     if let pageNumber = getPageNumber(itemsPerPage: 80) {
         pageNumberParam = "&page=" + String(pageNumber)

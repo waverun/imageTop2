@@ -21,6 +21,10 @@
 		5079FD932A10DBC30066EC08 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD912A10DBC30066EC08 /* SettingsView.swift */; };
 		5079FD952A10DE360066EC08 /* ImageTopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD942A10DE360066EC08 /* ImageTopApp.swift */; };
 		50A06A082A39C02100319BEA /* VideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A06A072A39C02100319BEA /* VideoPlayerView.swift */; };
+		50A06A0C2A3C9E2100319BEA /* getPexelsVideoList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A06A0B2A3C9E2100319BEA /* getPexelsVideoList.swift */; };
+		50A06A0E2A3CA62B00319BEA /* VideoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A06A0D2A3CA62B00319BEA /* VideoData.swift */; };
+		50A06A102A3F2B7E00319BEA /* clearPexelVideos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A06A0F2A3F2B7E00319BEA /* clearPexelVideos.swift */; };
+		50A06A122A3F2BFE00319BEA /* deleteFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A06A112A3F2BFE00319BEA /* deleteFile.swift */; };
 		50B646642A111162002CA82E /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B646632A111162002CA82E /* WindowManager.swift */; };
 		50B9EA932A3648F6002BCB4B /* PexelsResource-photo-src.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EA922A3648F6002BCB4B /* PexelsResource-photo-src.swift */; };
 		50B9EA952A364929002BCB4B /* downloadPexelPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EA942A364929002BCB4B /* downloadPexelPhotos.swift */; };
@@ -51,6 +55,10 @@
 		5079FD912A10DBC30066EC08 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		5079FD942A10DE360066EC08 /* ImageTopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTopApp.swift; sourceTree = "<group>"; };
 		50A06A072A39C02100319BEA /* VideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerView.swift; sourceTree = "<group>"; };
+		50A06A0B2A3C9E2100319BEA /* getPexelsVideoList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getPexelsVideoList.swift; sourceTree = "<group>"; };
+		50A06A0D2A3CA62B00319BEA /* VideoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoData.swift; sourceTree = "<group>"; };
+		50A06A0F2A3F2B7E00319BEA /* clearPexelVideos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = clearPexelVideos.swift; sourceTree = "<group>"; };
+		50A06A112A3F2BFE00319BEA /* deleteFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = deleteFile.swift; sourceTree = "<group>"; };
 		50B646632A111162002CA82E /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
 		50B9EA922A3648F6002BCB4B /* PexelsResource-photo-src.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PexelsResource-photo-src.swift"; sourceTree = "<group>"; };
 		50B9EA942A364929002BCB4B /* downloadPexelPhotos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = downloadPexelPhotos.swift; sourceTree = "<group>"; };
@@ -128,6 +136,7 @@
 				5079FD8B2A10DB4E0066EC08 /* LoadableImageView.swift */,
 				5079FD8D2A10DB680066EC08 /* FocusableTextField.swift */,
 				50B9EA922A3648F6002BCB4B /* PexelsResource-photo-src.swift */,
+				50A06A0D2A3CA62B00319BEA /* VideoData.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -154,6 +163,9 @@
 				50B9EA9E2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift */,
 				50B9EAA02A386A1E002BCB4B /* WriteFile.swift */,
 				50B9EAA22A387E5A002BCB4B /* readFileContents.swift */,
+				50A06A0B2A3C9E2100319BEA /* getPexelsVideoList.swift */,
+				50A06A0F2A3F2B7E00319BEA /* clearPexelVideos.swift */,
+				50A06A112A3F2BFE00319BEA /* deleteFile.swift */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -239,14 +251,17 @@
 				5079FD922A10DBC30066EC08 /* DigitalWatchView.swift in Sources */,
 				50B9EA952A364929002BCB4B /* downloadPexelPhotos.swift in Sources */,
 				50B9EAA12A386A1E002BCB4B /* WriteFile.swift in Sources */,
+				50A06A122A3F2BFE00319BEA /* deleteFile.swift in Sources */,
 				50B9EA9F2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift in Sources */,
 				5079FD8E2A10DB680066EC08 /* FocusableTextField.swift in Sources */,
 				50B9EA9D2A377061002BCB4B /* ClearFolder.swift in Sources */,
+				50A06A0C2A3C9E2100319BEA /* getPexelsVideoList.swift in Sources */,
 				50B9EA9B2A365450002BCB4B /* sanitizeFileName.swift in Sources */,
 				50B9EAA32A387E5A002BCB4B /* readFileContents.swift in Sources */,
 				5079FD952A10DE360066EC08 /* ImageTopApp.swift in Sources */,
 				5079FD932A10DBC30066EC08 /* SettingsView.swift in Sources */,
 				5079FD802A10D5180066EC08 /* AppDelegate.swift in Sources */,
+				50A06A102A3F2B7E00319BEA /* clearPexelVideos.swift in Sources */,
 				50B646642A111162002CA82E /* WindowManager.swift in Sources */,
 				5079FD832A10D5B50066EC08 /* Keyboard.swift in Sources */,
 				50B9EA992A365361002BCB4B /* downloadPhoto.swift in Sources */,
@@ -255,6 +270,7 @@
 				5079FD8C2A10DB4E0066EC08 /* LoadableImageView.swift in Sources */,
 				5079FD7B2A10D2390066EC08 /* ContentView.swift in Sources */,
 				50EC4A9C2A1404BF00C4D327 /* debugPrint.swift in Sources */,
+				50A06A0E2A3CA62B00319BEA /* VideoData.swift in Sources */,
 				50C499182A2D173F00797C12 /* ScreenLockStatus.swift in Sources */,
 				50A06A082A39C02100319BEA /* VideoPlayerView.swift in Sources */,
 			);
