@@ -123,7 +123,7 @@ struct ContentView: View {
                         loadRandomImage()
                     }
                     .opacity(showVideo && !showSecondVideo ? 1 : 0)
-                    .animation(.linear(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
+                    .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
                     .edgesIgnoringSafeArea(.all)
                 }
 
@@ -133,7 +133,7 @@ struct ContentView: View {
                         loadRandomImage()
                     }
                     .opacity(showVideo && showSecondVideo ? 1 : 0)
-                    .animation(.linear(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
+                    .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
                     .edgesIgnoringSafeArea(.all)
                 }
 
