@@ -63,19 +63,22 @@ struct ContentView: View {
     //    @State  var secondImageName: String?
     @State var showSecondImage: Bool = false
     @State var showSecondVideo: Bool = false
-    @State var x: CGFloat = {
-        if let screenSize = NSScreen.main?.frame.size {
-            return calculateWatchPosition(parentSize: screenSize).0
-        }
-        return 0
-    }()
+    @State var x: CGFloat = 0
 
-    @State var y: CGFloat = {
-        if let screenSize = NSScreen.main?.frame.size {
-            return calculateWatchPosition(parentSize: screenSize).1
-        }
-        return 0
-    }()
+//    {
+//        if let screenSize = NSScreen.main?.frame.size {
+//            return calculateWatchPosition(parentSize: screenSize).0
+//        }
+//        return 0
+//    }()
+
+    @State var y: CGFloat = 0
+//    {
+//        if let screenSize = NSScreen.main?.frame.size {
+//            return calculateWatchPosition(parentSize: screenSize).1
+//        }
+//        return 0
+//    }()
 
     //    let appSupportUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
 
