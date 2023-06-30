@@ -120,7 +120,7 @@ struct ContentView: View {
                 if firstVideoPath != "",
                    let url = URL(string: firstVideoPath) {
                     VideoPlayerView(url: url, index: index) {
-                        loadRandomImage()
+                        loadRandomImageOrVideo()
                     }
                     .opacity(showVideo && !showSecondVideo ? 1 : 0)
                     .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
@@ -130,7 +130,7 @@ struct ContentView: View {
                 if secondVideoPath != "",
                    let url = URL(string: secondVideoPath) {
                     VideoPlayerView(url: url, index: index) {
-                        loadRandomImage()
+                        loadRandomImageOrVideo()
                     }
                     .opacity(showVideo && showSecondVideo ? 1 : 0)
                     .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
@@ -440,10 +440,10 @@ struct ContentView: View {
         //            return
         //        }
         debugPrint("changeScreenImageOrColor \(index)")
-        _ = imageOrVideoMode ? loadRandomImage() : changeBackgroundColor()
+        _ = imageOrVideoMode ? loadRandomImageOrVideo() : changeBackgroundColor()
     }
 
-    func loadRandomImage() {
+    func loadRandomImageOrVideo() {
         func extractNameFromFilePath(filePath: String) -> String {
             let components = filePath.components(separatedBy: "/")
             if let pexelsIndex = components.firstIndex(of: "pexels") {
@@ -464,8 +464,8 @@ struct ContentView: View {
                 }
             } while (newRandomImageOrVideoPath == firstImagePath && !showSecondImage)
             || (newRandomImageOrVideoPath == secondImagePath && showSecondImage)
-            || (newRandomImageOrVideoPath == firstVideoPath && !showSecondVideo)
-            || (newRandomImageOrVideoPath == secondVideoPath && showSecondVideo)
+            || (newRandomImageOrVideoPath == firstVideoPath)
+            || (newRandomImageOrVideoPath == secondVideoPath)
 
             print("video newRandoImage \(newRandomImageOrVideoPath) \(index)")
 

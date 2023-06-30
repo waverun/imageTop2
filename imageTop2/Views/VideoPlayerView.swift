@@ -45,6 +45,7 @@ struct VideoPlayerView: NSViewRepresentable {
 
         // play the video
         if appDelegate.showWindow {
+            print("play: \(index) \(Date())")
             player.play()
         }
         print("Video1 started playing. makeNSView \(self.index)")
