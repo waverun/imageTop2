@@ -3,6 +3,7 @@ import AppKit
 import SwiftUI
 
 var gPlayers: [Int: AVPlayer] = [:]
+var gTimers: [Int: PausableTimer] = [:]
 
 struct VideoPlayerView: NSViewRepresentable {
     @EnvironmentObject var appDelegate: AppDelegate
@@ -71,7 +72,9 @@ struct VideoPlayerView: NSViewRepresentable {
                 print("Video duration: \(CMTimeGetSeconds(duration)) seconds")
                 let iDuration = Int(CMTimeGetSeconds(duration))
                 if iDuration > 4 {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(iDuration - 2)) {
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(iDuration - 2)) {
+                    let pausableTimer = PausableTimer()
+                    pausableTimer.start(interval: TimeInterval(iDuration - 2), repeats: false) {_ in
                         finishedPlaying()
                     }
                 } else {
