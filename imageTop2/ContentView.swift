@@ -110,6 +110,14 @@ struct ContentView: View {
         self.index = index
     }
 
+    func resetWatchPosition() {
+        if let screenSize = NSScreen.main?.frame.size {
+            let (xValue, yValue) = calculateWatchPosition(parentSize: screenSize)
+            x = xValue
+            y = yValue
+        }
+    }
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -246,6 +254,7 @@ struct ContentView: View {
         .onDisappear {
             print("before onDisapear")
             //            timer?.invalidate()
+            resetWatchPosition()
             stopChangeTimer()
             if let url = URL(string: selectedFolderPath) {
                 url.stopAccessingSecurityScopedResource()
