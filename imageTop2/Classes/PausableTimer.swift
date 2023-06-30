@@ -1,25 +1,61 @@
 import Foundation
+import AVFoundation
 
 class PausableTimer {
     private var timer: Timer?
     private var startTime: Date?
     private var timeElapsedWhenPaused: TimeInterval = 0
+    private var interval: TimeInterval = 0
+    private var block: ((Timer) -> Void)?
+    var index: Int?
 
-    func start(interval: TimeInterval, repeats: Bool, block: @escaping (Timer) -> Void) {
+    init (index: Int) {
+        self.index = index
+    }
+
+    func start(interval: TimeInterval, block: @escaping (Timer) -> Void) {
+        print("timer: \(index!) start \(interval)")
+        self.interval = interval
+        self.block = block
         startTime = Date()
-        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: block)
+        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false, block: block)
     }
 
     func pause() {
         timeElapsedWhenPaused = -startTime!.timeIntervalSinceNow
+        print("timer: \(index!) pause: \(timeElapsedWhenPaused)")
         timer?.invalidate()
         timer = nil
     }
 
     func resume() {
-        startTime = Date().addingTimeInterval(-timeElapsedWhenPaused)
-        timer = Timer.scheduledTimer(withTimeInterval: -startTime!.timeIntervalSinceNow, repeats: false) { [weak self] timer in
-            self?.start(interval: self!.timeElapsedWhenPaused, repeats: false, block: { _ in })
+        startTime = Date()
+        print("timer: \(index!) resume: \(interval) \(timeElapsedWhenPaused)")
+
+        interval = interval - timeElapsedWhenPaused
+        if interval <= 0,
+           let block = block,
+           let timer = timer {
+            block(timer)
+            return
         }
+
+        if let currentTime = gPlayers[index!]?.currentTime(),
+           let duration = gPlayers[index!]?.currentItem?.duration {
+
+           let playerCurrentTimeSec = CMTimeGetSeconds(currentTime)
+           let playerDurationSec = CMTimeGetSeconds(duration)
+
+           print("timer: \(index!) resume: currentTime: \(playerCurrentTimeSec)")
+
+           let remainingTimeSec = playerDurationSec - playerCurrentTimeSec
+           interval = remainingTimeSec
+        }
+        
+        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false, block: block!)
+        print("timer: \(index!) resume: \(interval)")
+//        { [weak self] timer in
+//            self?.start(interval: self!.timeElapsedWhenPaused, block: self!.block!)
+//        }
     }
 }

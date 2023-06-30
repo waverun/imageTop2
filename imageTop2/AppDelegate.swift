@@ -35,6 +35,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             if let index = WindowManager.shared.getIndex(for: window),
                let player = gPlayers[index] {
                 player.pause()
+                if let timer = gTimers[index] {
+                    timer.pause()
+                }
                 print("video1 pause \(index)")
             }
         }

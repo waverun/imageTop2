@@ -52,6 +52,7 @@ struct VideoPlayerView: NSViewRepresentable {
     }
 
     func setEndPlayNotification(player: AVPlayer) {
+        gTimers.removeValue(forKey: index)
         NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
             print("Video finished playing. \(self.index)")
             finishedPlaying()
@@ -69,12 +70,13 @@ struct VideoPlayerView: NSViewRepresentable {
         Task {
             do {
                 let duration = try await getVideoLength(videoURL: url)
-                print("Video duration: \(CMTimeGetSeconds(duration)) seconds")
+                print("Timer: \(index) Video duration: \(CMTimeGetSeconds(duration)) seconds")
                 let iDuration = Int(CMTimeGetSeconds(duration))
                 if iDuration > 4 {
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(iDuration - 2)) {
-                    let pausableTimer = PausableTimer()
-                    pausableTimer.start(interval: TimeInterval(iDuration - 2), repeats: false) {_ in
+                    let pausableTimer = PausableTimer(index: index)
+                    gTimers[index] = pausableTimer
+                    pausableTimer.start(interval: TimeInterval(iDuration - 2)) {_ in
                         finishedPlaying()
                     }
                 } else {
