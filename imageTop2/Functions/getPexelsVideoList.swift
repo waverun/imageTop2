@@ -49,7 +49,7 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
         pageNumberParam = "&page=" + String(pageNumber)
     }
 
-    let url = URL(string: "https://api.pexels.com/videos/search?query=" + category + "&per_page=80" + pageNumberParam)!
+    let url = URL(string: "https://api.pexels.com/videos/search?query=" + category + "&max_duration=20&per_page=80" + pageNumberParam)!
     print("pexels url: \(url)")
     var request = URLRequest(url: url)
     request.setValue(apiKey, forHTTPHeaderField: "Authorization")

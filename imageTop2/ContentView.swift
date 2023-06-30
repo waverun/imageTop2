@@ -36,6 +36,8 @@ struct ContentView: View {
     @State var showVideo = false
     @State var firstVideoPath = ""
     @State var secondVideoPath = ""
+    @State var startShowVideo = false
+    @State var startShowImage = false
 
     @State var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 
@@ -158,7 +160,7 @@ struct ContentView: View {
                                 }
                             )
                             .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
-                            .animation(.linear(duration: 1), value: showSecondImage || showVideo || loadingImage)
+                            .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
                     } else {
                         Color.clear
                     }
@@ -169,7 +171,7 @@ struct ContentView: View {
                             .clipped()
                             .edgesIgnoringSafeArea(.all)
                             .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
-                            .animation(.linear(duration: 1), value: showSecondImage && !showVideo && !loadingImage)
+                            .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
                     }  else {
                         Color.clear
                     }
@@ -475,9 +477,11 @@ struct ContentView: View {
                 } else {
                     secondVideoPath = secondVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" : newRandomImageOrVideoPath
                 }
+                startShowVideo = false
                 if !showVideo {
                     stopChangeTimer()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        startShowVideo = true
                         showVideo = true
                         showSecondVideo.toggle()
                     }
@@ -501,8 +505,10 @@ struct ContentView: View {
             }
 
             self.showSecondImage.toggle()
+            startShowImage = false
             DispatchQueue.main.async {
                 if showVideo {
+                    startShowImage = true
                     startScreenChangeTimer()
                     showVideo = false
                 }
