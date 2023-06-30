@@ -65,10 +65,6 @@ struct VideoPlayerView: NSViewRepresentable {
     }
 
     func startGetVideoLengthTask(player: AVPlayer, url: URL) {
-        // Get the URL of the video
-//        guard let videoURL = URL(string: url) else { return }
-
-        // Start the task
         Task {
             do {
                 let duration = try await getVideoLength(videoURL: url)

@@ -35,6 +35,7 @@
 		50B9EA9F2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EA9E2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift */; };
 		50B9EAA12A386A1E002BCB4B /* WriteFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EAA02A386A1E002BCB4B /* WriteFile.swift */; };
 		50B9EAA32A387E5A002BCB4B /* readFileContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EAA22A387E5A002BCB4B /* readFileContents.swift */; };
+		50BEA3872A4EC07C00F0FE19 /* PausableTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BEA3862A4EC07C00F0FE19 /* PausableTimer.swift */; };
 		50C499182A2D173F00797C12 /* ScreenLockStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C499172A2D173F00797C12 /* ScreenLockStatus.swift */; };
 		50EC4A9C2A1404BF00C4D327 /* debugPrint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EC4A9B2A1404BF00C4D327 /* debugPrint.swift */; };
 /* End PBXBuildFile section */
@@ -69,6 +70,7 @@
 		50B9EA9E2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isFreeSpaceMoreThan.swift; sourceTree = "<group>"; };
 		50B9EAA02A386A1E002BCB4B /* WriteFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteFile.swift; sourceTree = "<group>"; };
 		50B9EAA22A387E5A002BCB4B /* readFileContents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = readFileContents.swift; sourceTree = "<group>"; };
+		50BEA3862A4EC07C00F0FE19 /* PausableTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PausableTimer.swift; sourceTree = "<group>"; };
 		50C499172A2D173F00797C12 /* ScreenLockStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenLockStatus.swift; sourceTree = "<group>"; };
 		50EC4A9B2A1404BF00C4D327 /* debugPrint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = debugPrint.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -126,6 +128,7 @@
 				50B646632A111162002CA82E /* WindowManager.swift */,
 				50627A852A167148009BA1FC /* DirectoryWatcher.swift */,
 				50C499172A2D173F00797C12 /* ScreenLockStatus.swift */,
+				50BEA3862A4EC07C00F0FE19 /* PausableTimer.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -250,6 +253,7 @@
 				50B9EA972A364CA2002BCB4B /* checkIfUrlExists.swift in Sources */,
 				5079FD922A10DBC30066EC08 /* DigitalWatchView.swift in Sources */,
 				50B9EA952A364929002BCB4B /* downloadPexelPhotos.swift in Sources */,
+				50BEA3872A4EC07C00F0FE19 /* PausableTimer.swift in Sources */,
 				50B9EAA12A386A1E002BCB4B /* WriteFile.swift in Sources */,
 				50A06A122A3F2BFE00319BEA /* deleteFile.swift in Sources */,
 				50B9EA9F2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift in Sources */,
