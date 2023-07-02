@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 
 func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Void) {
     let pexelsVideoList = "videoList.txt"
@@ -49,10 +50,15 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
         pageNumberParam = "&page=" + String(pageNumber)
     }
 
-    let url = URL(string: "https://api.pexels.com/videos/search?query=" + category + "&max_duration=20&per_page=80" + pageNumberParam)!
+    let url = URL(string: "https://api.pexels.com/videos/search?query=" + category + "&min_duration=10&max_duration=60&per_page=80" + pageNumberParam)!
     print("pexels url: \(url)")
     var request = URLRequest(url: url)
     request.setValue(apiKey, forHTTPHeaderField: "Authorization")
+
+    var screenWidth = Int.max
+    if 0 < WindowManager.shared.getMaxScreenWidth() {
+        screenWidth = Int(Double(screenWidth) * 0.9)
+    }
 
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
         if let error = error {
@@ -60,7 +66,6 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
         } else if let data = data {
             _ = JSONDecoder()
             do {
-//                let pexelsResponse = try decoder.decode(PexelsResponse.self, from: data)
                 let videoData = try JSONDecoder().decode(VideoData.self, from: data)
 
                 print("pexelsResponse photos: \(videoData.videos.count)")
@@ -71,34 +76,17 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
                     var link = ""
                     for videoFile in video.videoFiles {
                         if let videoWidth = videoFile.width,
-                           videoWidth > width {
+                           videoWidth > width && width < screenWidth
+                           || videoWidth > screenWidth && videoWidth < width {
                             link = videoFile.link
                             width = videoWidth
                         }
                     }
                     videoLinks.append(link)
                 }
-//                let videoFileURL = pexelsFolder.appendingPathComponent("videoList.txx")
                 let videoList = videoLinks.joined(separator: "\n")
                 writeFile(directoryURL: pexelsFolder, fileName: pexelsVideoList, contents: videoList)
                 onDone(videoLinks)
-                // Create a dispatch group
-//                let group = DispatchGroup()
-//                writeFile(directoryURL: pexelsFolder, fileName: ".imageTop", contents: String(pexelsResponse.totalResults))
-//                for photo in pexelsResponse.photos {
-//                    // Enter group before each download
-//                    group.enter()
-//                    downloadPhoto(from: photo.src.landscape, photographer: photo.photographer, to: pexelsFolder) {
-//                        // Leave group after each download
-//                        group.leave()
-//                    }
-//                }
-//
-//                // Wait for all downloads to complete
-//                group.notify(queue: .main) {
-//                    // All downloads completed
-//                    onDone()
-//                }
             } catch {
                 print("Error decoding JSON: \(error)")
             }

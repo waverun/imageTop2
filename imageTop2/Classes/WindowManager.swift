@@ -9,6 +9,16 @@ class WindowManager: ObservableObject {
     var windows: [NSWindow] = []
     var windowIndices: [NSWindow: Int] = [:] // new dictionary to hold window indices
 
+    func getMaxScreenWidth() -> Int {
+        if let maxWindowWidth = windows.max(by: { $0.frame.size.width < $1.frame.size.width })?.frame.size.width {
+            print("Max window width: \(maxWindowWidth)")
+            return Int(maxWindowWidth)
+        } else {
+            print("Array of windows is empty.")
+            return 0
+        }
+    }
+    
     func getIndex(for window: NSWindow) -> Int? {
         return windowIndices[window]
     }
