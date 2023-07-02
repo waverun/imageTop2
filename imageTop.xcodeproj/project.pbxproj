@@ -36,6 +36,8 @@
 		50B9EAA12A386A1E002BCB4B /* WriteFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EAA02A386A1E002BCB4B /* WriteFile.swift */; };
 		50B9EAA32A387E5A002BCB4B /* readFileContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B9EAA22A387E5A002BCB4B /* readFileContents.swift */; };
 		50BEA3872A4EC07C00F0FE19 /* PausableTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BEA3862A4EC07C00F0FE19 /* PausableTimer.swift */; };
+		50BEA38C2A51CB6100F0FE19 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 50BEA38B2A51CB6100F0FE19 /* Reachability */; };
+		50BEA38E2A51D50000F0FE19 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BEA38D2A51D50000F0FE19 /* NetworkManager.swift */; };
 		50C499182A2D173F00797C12 /* ScreenLockStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C499172A2D173F00797C12 /* ScreenLockStatus.swift */; };
 		50EC4A9C2A1404BF00C4D327 /* debugPrint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EC4A9B2A1404BF00C4D327 /* debugPrint.swift */; };
 /* End PBXBuildFile section */
@@ -71,6 +73,7 @@
 		50B9EAA02A386A1E002BCB4B /* WriteFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteFile.swift; sourceTree = "<group>"; };
 		50B9EAA22A387E5A002BCB4B /* readFileContents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = readFileContents.swift; sourceTree = "<group>"; };
 		50BEA3862A4EC07C00F0FE19 /* PausableTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PausableTimer.swift; sourceTree = "<group>"; };
+		50BEA38D2A51D50000F0FE19 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		50C499172A2D173F00797C12 /* ScreenLockStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenLockStatus.swift; sourceTree = "<group>"; };
 		50EC4A9B2A1404BF00C4D327 /* debugPrint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = debugPrint.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -81,6 +84,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5079FD7E2A10D4D40066EC08 /* HotKey in Frameworks */,
+				50BEA38C2A51CB6100F0FE19 /* Reachability in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,6 +133,7 @@
 				50627A852A167148009BA1FC /* DirectoryWatcher.swift */,
 				50C499172A2D173F00797C12 /* ScreenLockStatus.swift */,
 				50BEA3862A4EC07C00F0FE19 /* PausableTimer.swift */,
+				50BEA38D2A51D50000F0FE19 /* NetworkManager.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -191,6 +196,7 @@
 			name = imageTop;
 			packageProductDependencies = (
 				5079FD7D2A10D4D40066EC08 /* HotKey */,
+				50BEA38B2A51CB6100F0FE19 /* Reachability */,
 			);
 			productName = imageTop2;
 			productReference = 5079FD682A10C8890066EC08 /* imageTop.app */;
@@ -222,6 +228,7 @@
 			mainGroup = 5079FD5F2A10C8890066EC08;
 			packageReferences = (
 				5079FD7C2A10D4D40066EC08 /* XCRemoteSwiftPackageReference "HotKey" */,
+				50BEA38A2A51CB6100F0FE19 /* XCRemoteSwiftPackageReference "Reachability" */,
 			);
 			productRefGroup = 5079FD692A10C8890066EC08 /* Products */;
 			projectDirPath = "";
@@ -263,6 +270,7 @@
 				50B9EA9B2A365450002BCB4B /* sanitizeFileName.swift in Sources */,
 				50B9EAA32A387E5A002BCB4B /* readFileContents.swift in Sources */,
 				5079FD952A10DE360066EC08 /* ImageTopApp.swift in Sources */,
+				50BEA38E2A51D50000F0FE19 /* NetworkManager.swift in Sources */,
 				5079FD932A10DBC30066EC08 /* SettingsView.swift in Sources */,
 				5079FD802A10D5180066EC08 /* AppDelegate.swift in Sources */,
 				50A06A102A3F2B7E00319BEA /* clearPexelVideos.swift in Sources */,
@@ -497,6 +505,14 @@
 				kind = branch;
 			};
 		};
+		50BEA38A2A51CB6100F0FE19 /* XCRemoteSwiftPackageReference "Reachability" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -504,6 +520,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5079FD7C2A10D4D40066EC08 /* XCRemoteSwiftPackageReference "HotKey" */;
 			productName = HotKey;
+		};
+		50BEA38B2A51CB6100F0FE19 /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50BEA38A2A51CB6100F0FE19 /* XCRemoteSwiftPackageReference "Reachability" */;
+			productName = Reachability;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -21,7 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var screenChangeDetected: Bool = false
     var ignoreMonitor = false // To ignore key after Show menu
     var firstSetTimer: [Int : Bool] = [:]
-
+    var networkManager: NetworkManager = NetworkManager()
 
     func windowWillClose(_ notification: Notification) {
         showMainWindow()

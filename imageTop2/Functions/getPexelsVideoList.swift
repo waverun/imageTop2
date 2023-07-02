@@ -55,8 +55,8 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
     var request = URLRequest(url: url)
     request.setValue(apiKey, forHTTPHeaderField: "Authorization")
 
-    var screenWidth = Int.max
-    if 0 < WindowManager.shared.getMaxScreenWidth() {
+    var screenWidth = WindowManager.shared.getMaxScreenWidth()
+    if 0 < screenWidth {
         screenWidth = Int(Double(screenWidth) * 0.9)
     }
 
