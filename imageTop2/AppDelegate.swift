@@ -14,6 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var keyAndMouseEventMonitor: Any?
     @Published var pexelsImages: [String] = []
     @Published var pexelsVideos: [String] = []
+    @Published var networkIsReachable = false
 
     var statusBarItem: NSStatusItem!
     var settingsWindow: NSWindow!
@@ -21,7 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var screenChangeDetected: Bool = false
     var ignoreMonitor = false // To ignore key after Show menu
     var firstSetTimer: [Int : Bool] = [:]
-    var networkManager: NetworkManager = NetworkManager()
+    var networkManager = NetworkManager(appDelegate: nil)
 
     func windowWillClose(_ notification: Notification) {
         showMainWindow()
@@ -156,6 +157,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             object: nil
         )
         showWindow = true
+
+        networkManager = NetworkManager(appDelegate: self)
     }
 
     @objc func handleDisplayConnection(notification: Notification) {

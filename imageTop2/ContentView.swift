@@ -60,27 +60,11 @@ struct ContentView: View {
     @State var imageOrVideoMode = false
     @State var fadeColor: Color = Color.clear
     @State var showFadeColor: Bool = false
-    //    @State  var secondImageName: String?
     @State var showSecondImage: Bool = false
     @State var showSecondVideo: Bool = false
     @State var x: CGFloat = 0
 
-//    {
-//        if let screenSize = NSScreen.main?.frame.size {
-//            return calculateWatchPosition(parentSize: screenSize).0
-//        }
-//        return 0
-//    }()
-
     @State var y: CGFloat = 0
-//    {
-//        if let screenSize = NSScreen.main?.frame.size {
-//            return calculateWatchPosition(parentSize: screenSize).1
-//        }
-//        return 0
-//    }()
-
-    //    let appSupportUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
 
     let pexelDownloadSemaphore = DispatchSemaphore(value: 1)
 
@@ -272,6 +256,7 @@ struct ContentView: View {
         .onReceive(appDelegate.$startTimer, perform: { _ in
             if !showVideo {
                 startScreenChangeTimer()
+                loadRandomImageOrVideo()
             }
             startMonitoringUserInput()
         })
@@ -281,6 +266,28 @@ struct ContentView: View {
                 appDelegate.pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
             }
             imageAndVideoNames = loadImageAndVideoNames()
+        })
+        .onReceive(appDelegate.$networkIsReachable, perform: { _ in
+            print("onReceive \(index) gNetworkIsReachable: \(gNetworkIsReachable) imageOrBackgroundChangeTimer == nil:   \(imageOrBackgroundChangeTimer == nil)")
+            if gNetworkIsReachable {
+                imageOrVideoMode = imageAndVideoNames.count > 2
+                if !showVideo && imageOrBackgroundChangeTimer == nil {
+                    startScreenChangeTimer()
+                }
+            } else {
+                showVideo = false
+                if imageOrVideoMode {
+                    firstImage = nil
+                    secondImage = nil
+                    firstVideoPath = ""
+                    secondVideoPath = ""
+                    imageOrVideoMode = false
+                    imageOrVideoMode = false
+                }
+                if imageOrBackgroundChangeTimer == nil {
+                    startScreenChangeTimer()
+                }
+            }
         })
     }
     //     func startMonitoring() {
@@ -450,9 +457,6 @@ struct ContentView: View {
     }
 
     func changeScreenImageOrColor() {
-        //        if ScreenLockStatus.shared.isLocked {
-        //            return
-        //        }
         debugPrint("changeScreenImageOrColor \(index)")
         _ = imageOrVideoMode ? loadRandomImageOrVideo() : changeBackgroundColor()
     }
