@@ -32,7 +32,8 @@ struct ContentView: View {
     @State var secondImage: NSImage? = nil
     @State var firstImagePath = ""
     @State var secondImagePath = ""
-    @State var photographer = ""
+    @State var firstPhotographer = ""
+    @State var secondPhotographer = ""
     @State var showVideo = false
     @State var firstVideoPath = ""
     @State var secondVideoPath = ""
@@ -127,12 +128,14 @@ struct ContentView: View {
                         VStack {
                             Spacer()
                             HStack {
-                                Text(photographer)
+                                Text(firstPhotographer)
                                     .foregroundColor(.white)
                                     .font(.custom("Noteworthy", size: 20))
                                     .shadow(color: .black, radius: 3, x: 0, y: 0)
                                     .padding(.bottom, 50)
                                     .padding(.leading, 50)
+                                    .opacity(showVideo && !showSecondVideo ? 1 : 0)
+                                    .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
                                 Spacer()
                             }
                         }
@@ -151,12 +154,14 @@ struct ContentView: View {
                         VStack {
                             Spacer()
                             HStack {
-                                Text(photographer)
+                                Text(secondPhotographer)
                                     .foregroundColor(.white)
                                     .font(.custom("Noteworthy", size: 20))
                                     .shadow(color: .black, radius: 3, x: 0, y: 0)
                                     .padding(.bottom, 50)
                                     .padding(.leading, 50)
+                                    .opacity(showVideo && showSecondVideo ? 1 : 0)
+                                    .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
                                 Spacer()
                             }
                         }
@@ -172,12 +177,14 @@ struct ContentView: View {
                             VStack {
                                 Spacer()
                                 HStack {
-                                    Text(photographer)
+                                    Text(firstPhotographer)
                                         .foregroundColor(.white)
                                         .font(.custom("Noteworthy", size: 20))
                                         .shadow(color: .black, radius: 3, x: 0, y: 0)
                                         .padding(.bottom, 50)
                                         .padding(.leading, 50)
+                                        .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
+                                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
                                     Spacer()
                                 }
                             }
@@ -197,12 +204,14 @@ struct ContentView: View {
                             VStack {
                                 Spacer()
                                 HStack {
-                                    Text(photographer)
+                                    Text(secondPhotographer)
                                         .foregroundColor(.white)
                                         .font(.custom("Noteworthy", size: 20))
                                         .shadow(color: .black, radius: 3, x: 0, y: 0)
                                         .padding(.bottom, 50)
                                         .padding(.leading, 50)
+                                        .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
+                                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
                                     Spacer()
                                 }
                             }
@@ -479,7 +488,8 @@ struct ContentView: View {
     }
 
     func changeBackgroundColor() {
-        photographer = ""
+        firstPhotographer = ""
+        secondPhotographer = ""
         var newColor: Color? = nil
 
         repeat {
@@ -550,15 +560,21 @@ struct ContentView: View {
 
             if newRandomImageOrVideoPath.starts(with: "https:") {
                 let videoComponents = newRandomImageOrVideoPath.components(separatedBy: ",")
-                photographer = ""
+                var photographer = ""
                 newRandomImageOrVideoPath = videoComponents[0]
                 if videoComponents.count > 1 {
                     photographer = videoComponents[1]
                 }
                 if showSecondVideo {
-                    firstVideoPath = firstVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" : newRandomImageOrVideoPath
+                    firstVideoPath =
+//                    firstVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" :
+                    newRandomImageOrVideoPath
+                    firstPhotographer = photographer
                 } else {
-                    secondVideoPath = secondVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" : newRandomImageOrVideoPath
+                    secondVideoPath =
+//                    secondVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" :
+                    newRandomImageOrVideoPath
+                    secondPhotographer = photographer
                 }
                 startShowVideo = false
                 if !showVideo {
@@ -581,10 +597,9 @@ struct ContentView: View {
                 return
             }
 
+            var photographer = ""
             if newRandomImageOrVideoPath.contains("/pexels/") {
                 photographer = extractNameFromFilePath(filePath: newRandomImageOrVideoPath)
-            } else {
-                photographer = ""
             }
 
             self.showSecondImage.toggle()
@@ -599,9 +614,11 @@ struct ContentView: View {
                 if showSecondImage {
                     self.firstImagePath = newRandomImageOrVideoPath
                     self.firstImage = nsImage
+                    self.firstPhotographer = photographer
                 } else {
                     self.secondImagePath = newRandomImageOrVideoPath
                     self.secondImage = nsImage
+                    self.secondPhotographer = photographer
                 }
                 self.showSecondImage.toggle()
                 self.loadingImage = false
