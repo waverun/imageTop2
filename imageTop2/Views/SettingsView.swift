@@ -171,7 +171,7 @@ struct SettingsView: View {
             EmptyView()
         }.keyboardShortcut(.cancelAction)
         .buttonStyle(PlainButtonStyle())
-        .overlay(KeyView(dismiss: { appDelegate.hideSettings() }).allowsHitTesting(false))
+//        .overlay(KeyView(dismiss: { appDelegate.hideSettings() }).allowsHitTesting(false))
         .onChange(of: usePhotosFromPexelsIsOn) { newValue in
             print("isOn: \(usePhotosFromPexelsIsOn)")
             usePhotosFromPexels = usePhotosFromPexelsIsOn
