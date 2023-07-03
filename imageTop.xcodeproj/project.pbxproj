@@ -38,7 +38,6 @@
 		50BEA3872A4EC07C00F0FE19 /* PausableTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BEA3862A4EC07C00F0FE19 /* PausableTimer.swift */; };
 		50BEA38C2A51CB6100F0FE19 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 50BEA38B2A51CB6100F0FE19 /* Reachability */; };
 		50BEA38E2A51D50000F0FE19 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BEA38D2A51D50000F0FE19 /* NetworkManager.swift */; };
-		50BEA3902A535EFD00F0FE19 /* KeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BEA38F2A535EFD00F0FE19 /* KeyView.swift */; };
 		50C499182A2D173F00797C12 /* ScreenLockStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C499172A2D173F00797C12 /* ScreenLockStatus.swift */; };
 		50EC4A9C2A1404BF00C4D327 /* debugPrint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EC4A9B2A1404BF00C4D327 /* debugPrint.swift */; };
 /* End PBXBuildFile section */
@@ -75,7 +74,6 @@
 		50B9EAA22A387E5A002BCB4B /* readFileContents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = readFileContents.swift; sourceTree = "<group>"; };
 		50BEA3862A4EC07C00F0FE19 /* PausableTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PausableTimer.swift; sourceTree = "<group>"; };
 		50BEA38D2A51D50000F0FE19 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
-		50BEA38F2A535EFD00F0FE19 /* KeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
 		50C499172A2D173F00797C12 /* ScreenLockStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenLockStatus.swift; sourceTree = "<group>"; };
 		50EC4A9B2A1404BF00C4D327 /* debugPrint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = debugPrint.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -147,7 +145,6 @@
 				5079FD8D2A10DB680066EC08 /* FocusableTextField.swift */,
 				50B9EA922A3648F6002BCB4B /* PexelsResource-photo-src.swift */,
 				50A06A0D2A3CA62B00319BEA /* VideoData.swift */,
-				50BEA38F2A535EFD00F0FE19 /* KeyView.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -261,7 +258,6 @@
 			files = (
 				5079FD6E2A10C8890066EC08 /* ViewController.swift in Sources */,
 				50B9EA972A364CA2002BCB4B /* checkIfUrlExists.swift in Sources */,
-				50BEA3902A535EFD00F0FE19 /* KeyView.swift in Sources */,
 				5079FD922A10DBC30066EC08 /* DigitalWatchView.swift in Sources */,
 				50B9EA952A364929002BCB4B /* downloadPexelPhotos.swift in Sources */,
 				50BEA3872A4EC07C00F0FE19 /* PausableTimer.swift in Sources */,

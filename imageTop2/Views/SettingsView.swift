@@ -3,7 +3,6 @@ import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @EnvironmentObject var appDelegate: AppDelegate
-    @Environment(\.presentationMode) var presentationMode
 
     @AppStorage("replaceImageAfter") private var replaceImageAfter: TimeInterval = 10
     @AppStorage("startAfter") private var startAfter: TimeInterval = 600
@@ -168,7 +167,11 @@ struct SettingsView: View {
                 }
             }
         }
-        .overlay(KeyView(dismiss: { appDelegate.hideSettings() }))
+        Button(action: { appDelegate.hideSettings() }) {
+            EmptyView()
+        }.keyboardShortcut(.cancelAction)
+        .buttonStyle(PlainButtonStyle())
+        .overlay(KeyView(dismiss: { appDelegate.hideSettings() }).allowsHitTesting(false))
         .onChange(of: usePhotosFromPexelsIsOn) { newValue in
             print("isOn: \(usePhotosFromPexelsIsOn)")
             usePhotosFromPexels = usePhotosFromPexelsIsOn
