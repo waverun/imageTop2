@@ -123,6 +123,20 @@ struct ContentView: View {
                     .opacity(showVideo && !showSecondVideo ? 1 : 0)
                     .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
                     .edgesIgnoringSafeArea(.all)
+                    .overlay(
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Text(photographer)
+                                    .foregroundColor(.white)
+                                    .font(.custom("Noteworthy", size: 20))
+                                    .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                    .padding(.bottom, 50)
+                                    .padding(.leading, 50)
+                                Spacer()
+                            }
+                        }
+                    )
                 }
 
                 if secondVideoPath != "",
@@ -133,6 +147,20 @@ struct ContentView: View {
                     .opacity(showVideo && showSecondVideo ? 1 : 0)
                     .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
                     .edgesIgnoringSafeArea(.all)
+                    .overlay(
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Text(photographer)
+                                    .foregroundColor(.white)
+                                    .font(.custom("Noteworthy", size: 20))
+                                    .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                    .padding(.bottom, 50)
+                                    .padding(.leading, 50)
+                                Spacer()
+                            }
+                        }
+                    )
                 }
 
 //                if !loadingImage {
@@ -497,7 +525,6 @@ struct ContentView: View {
             return ""
         }
         debugPrint("video loadRandomImage \(index)")
-//        secondVideoPath = "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0="
 
         DispatchQueue.global(qos: .userInitiated).async {
             var newRandomImageOrVideoPath = ""
@@ -513,6 +540,12 @@ struct ContentView: View {
             print("video newRandoImage \(newRandomImageOrVideoPath) \(index)")
 
             if newRandomImageOrVideoPath.starts(with: "https:") {
+                let videoComponents = newRandomImageOrVideoPath.components(separatedBy: ",")
+                photographer = ""
+                newRandomImageOrVideoPath = videoComponents[0]
+                if videoComponents.count > 1 {
+                    photographer = videoComponents[1]
+                }
                 if showSecondVideo {
                     firstVideoPath = firstVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" : newRandomImageOrVideoPath
                 } else {

@@ -78,7 +78,7 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
                         if let videoWidth = videoFile.width,
                            videoWidth > width && width < screenWidth
                            || videoWidth > screenWidth && videoWidth < width {
-                            link = videoFile.link
+                            link = videoFile.link + "," + video.user.name
                             width = videoWidth
                         }
                     }
