@@ -166,6 +166,20 @@ struct ContentView: View {
                             .resizable()
                             .clipped()
                             .edgesIgnoringSafeArea(.all)
+                            .overlay(
+                                VStack {
+                                    Spacer()
+                                    HStack {
+                                        Text(photographer)
+                                            .foregroundColor(.white)
+                                            .font(.custom("Noteworthy", size: 20))
+                                            .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                            .padding(.bottom, 50)
+                                            .padding(.leading, 50)
+                                        Spacer()
+                                    }
+                                }
+                            )
                             .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
                             .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
                     }  else {
