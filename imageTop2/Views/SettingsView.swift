@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @EnvironmentObject var appDelegate: AppDelegate
+    @Environment(\.presentationMode) var presentationMode
 
     @AppStorage("replaceImageAfter") private var replaceImageAfter: TimeInterval = 10
     @AppStorage("startAfter") private var startAfter: TimeInterval = 600
@@ -158,37 +159,16 @@ struct SettingsView: View {
                                     .resizable()
                                     .frame(width: 32, height: 32)
                                     .offset(y: -3)  // This line moves the button up by 10 points
-//                                Spacer()
                             }
                             .buttonStyle(PlainButtonStyle())
                             .padding(.trailing, 50) // Add a gap on the right side of the button
                         }
                         .padding(.leading)
-
-//                        HStack {
-//                            VStack {
-//                                Toggle("Photos from Pexels", isOn: $isOn)
-//                                Spacer()
-//                                    .buttonStyle(PlainButtonStyle())
-//                                Toggle("Videos from Pexels", isOn: $isOn)
-//                                Spacer()
-//                            }
-//                            Button(action: {
-//                                if let url = URL(string: "https://www.pexels.com") {
-//                                    NSWorkspace.shared.open(url)
-//                                }
-//                            }) {
-//                                Image("pexels")
-//                                    .resizable()
-//                                    .frame(width: 32, height: 32)
-//                            }
-//                            .buttonStyle(PlainButtonStyle())
-//                        }
-//                        .padding(.leading)
                     }
                 }
             }
         }
+        .overlay(KeyView(dismiss: { appDelegate.hideSettings() }))
         .onChange(of: usePhotosFromPexelsIsOn) { newValue in
             print("isOn: \(usePhotosFromPexelsIsOn)")
             usePhotosFromPexels = usePhotosFromPexelsIsOn
