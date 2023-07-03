@@ -38,6 +38,7 @@ struct ContentView: View {
     @State var secondVideoPath = ""
     @State var startShowVideo = false
     @State var startShowImage = false
+    @State var networkIsReachableOrNotShowingVideos = false
 
     @State var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 
@@ -282,12 +283,20 @@ struct ContentView: View {
     //    }
 
     func showAccordingToNetworkReachability () {
+        if !imageAndVideoNames.contains(where: { imageOrVideo in
+            imageOrVideo.starts(with: "https:")
+        }) {
+            networkIsReachableOrNotShowingVideos = true
+            return
+        }
         if gNetworkIsReachable {
+            networkIsReachableOrNotShowingVideos = true
             imageOrVideoMode = imageAndVideoNames.count > 2
-            if !showVideo && imageOrBackgroundChangeTimer == nil {
+            if imageOrBackgroundChangeTimer == nil {
                 startScreenChangeTimer()
             }
         } else {
+            networkIsReachableOrNotShowingVideos = false
             showVideo = false
             if imageOrVideoMode {
                 firstImage = nil
@@ -375,7 +384,7 @@ struct ContentView: View {
     func showApp() {
         showAccordingToNetworkReachability()
 
-        if showVideo, gNetworkIsReachable,
+        if showVideo, networkIsReachableOrNotShowingVideos,
            let player = gPlayers[index] {
             print("video1 play \(index)")
             player.play()
@@ -460,7 +469,7 @@ struct ContentView: View {
 
     func changeScreenImageVideoOrColor() {
         debugPrint("changeScreenImageOrColor gNetworkIsReachable: \(gNetworkIsReachable) \(index)")
-        _ = imageOrVideoMode && gNetworkIsReachable ? loadRandomImageOrVideo() : changeBackgroundColor()
+        _ = imageOrVideoMode && networkIsReachableOrNotShowingVideos ? loadRandomImageOrVideo() : changeBackgroundColor()
     }
 
     func loadRandomImageOrVideo() {
@@ -553,7 +562,9 @@ struct ContentView: View {
 //                return
 //            }
             getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl) { videosList in
-                appDelegate.pexelsVideos = videosList
+                DispatchQueue.main.async {
+                    appDelegate.pexelsVideos = videosList
+                }
             }
 //            DispatchQueue.global().async {
 //                pexelDownloadSemaphore.wait()
@@ -576,7 +587,6 @@ struct ContentView: View {
     func handlePexelsPhotos() {
         print("handlePexelsPhotos: \(index)")
         if usePhotosFromPexels,
-           //           pexelDownloadSemaphore.wait(timeout: .now()) == .success,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
             appDelegate.pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
             DispatchQueue.global().async {
@@ -631,25 +641,26 @@ struct ContentView: View {
         let folderURL = from == nil ? URL(fileURLWithPath: imageFolder) : from!
         let fileManager = FileManager.default
         imageOrVideoMode = false
-        var imageNames: [String] = []
+        startShowVideo = false
+        var imageOrVideoNames: [String] = []
         do {
             let contents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            imageNames = contents.compactMap { $0.pathExtension.lowercased() == "webp" || $0.pathExtension.lowercased() == "avif" || $0.pathExtension.lowercased() == "jpeg" || $0.pathExtension.lowercased() == "jpg" || $0.pathExtension.lowercased() == "png" ? $0.lastPathComponent : nil }
+            imageOrVideoNames = contents.compactMap { $0.pathExtension.lowercased() == "webp" || $0.pathExtension.lowercased() == "avif" || $0.pathExtension.lowercased() == "jpeg" || $0.pathExtension.lowercased() == "jpg" || $0.pathExtension.lowercased() == "png" ? $0.lastPathComponent : nil }
             let folderString = folderURL.path
-            imageNames = imageNames.map { image in
+            imageOrVideoNames = imageOrVideoNames.map { image in
                 folderString + "/" + image
             }
             if from == nil {
-                imageNames.append(contentsOf: appDelegate.pexelsImages)
+                imageOrVideoNames.append(contentsOf: appDelegate.pexelsImages)
                 print("pexelImages: \(appDelegate.pexelsImages.count)")
-                imageNames.append(contentsOf: appDelegate.pexelsVideos)
+                imageOrVideoNames.append(contentsOf: appDelegate.pexelsVideos)
                 print("pexelVideos: \(appDelegate.pexelsVideos.count)")
             }
 //            imageNames = []
 //            imageNames.append("https://player.vimeo.com/external/342571552.hd.mp4?s=6aa6f164de3812abadff3dde86d19f7a074a8a66&profile_id=175&oauth2_token_id=57447761")
 //            imageNames.append("https://player.vimeo.com/external/269971860.m3u8?s=ac08929c597387cc77ae3d88bfe2ad66a9c4d31f&oauth2_token_id=57447761")
 //            debugPrint("imageNames: \(imageNames)")
-            imageOrVideoMode = imageNames.count >= 2
+            imageOrVideoMode = imageOrVideoNames.count >= 2
             debugPrint("imageMode: \(imageOrVideoMode)")
             if !imageOrVideoMode {
                 firstImage = nil
@@ -658,6 +669,6 @@ struct ContentView: View {
         } catch {
             debugPrint("Error loading image names: \(error)")
         }
-        return imageNames
+        return imageOrVideoNames
     }
 }
