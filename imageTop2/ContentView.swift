@@ -163,58 +163,55 @@ struct ContentView: View {
                     )
                 }
 
-//                if !loadingImage {
-                    if let image = firstImage {
-                        Image(nsImage: image)
-                            .resizable()
-                            .clipped()
-                            .edgesIgnoringSafeArea(.all)
-                            .overlay(
-                                VStack {
+                if let image = firstImage {
+                    Image(nsImage: image)
+                        .resizable()
+                        .clipped()
+                        .edgesIgnoringSafeArea(.all)
+                        .overlay(
+                            VStack {
+                                Spacer()
+                                HStack {
+                                    Text(photographer)
+                                        .foregroundColor(.white)
+                                        .font(.custom("Noteworthy", size: 20))
+                                        .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                        .padding(.bottom, 50)
+                                        .padding(.leading, 50)
                                     Spacer()
-                                    HStack {
-                                        Text(photographer)
-                                            .foregroundColor(.white)
-                                            .font(.custom("Noteworthy", size: 20))
-                                            .shadow(color: .black, radius: 3, x: 0, y: 0)
-                                            .padding(.bottom, 50)
-                                            .padding(.leading, 50)
-                                        Spacer()
-                                    }
                                 }
-                            )
-                            .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
-                            .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
-                    } else {
-                        Color.clear
-                    }
+                            }
+                        )
+                        .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
+                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
+                } else {
+                    Color.clear
+                }
 
-                    if let image = secondImage {
-                        Image(nsImage: image)
-                            .resizable()
-                            .clipped()
-                            .edgesIgnoringSafeArea(.all)
-                            .overlay(
-                                VStack {
+                if let image = secondImage {
+                    Image(nsImage: image)
+                        .resizable()
+                        .clipped()
+                        .edgesIgnoringSafeArea(.all)
+                        .overlay(
+                            VStack {
+                                Spacer()
+                                HStack {
+                                    Text(photographer)
+                                        .foregroundColor(.white)
+                                        .font(.custom("Noteworthy", size: 20))
+                                        .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                        .padding(.bottom, 50)
+                                        .padding(.leading, 50)
                                     Spacer()
-                                    HStack {
-                                        Text(photographer)
-                                            .foregroundColor(.white)
-                                            .font(.custom("Noteworthy", size: 20))
-                                            .shadow(color: .black, radius: 3, x: 0, y: 0)
-                                            .padding(.bottom, 50)
-                                            .padding(.leading, 50)
-                                        Spacer()
-                                    }
                                 }
-                            )
-                            .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
-                            .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
-                    }  else {
-                        Color.clear
-                    }
-//                }
-                //                }
+                            }
+                        )
+                        .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
+                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
+                }  else {
+                    Color.clear
+                }
                 if index == 0 {
                     DigitalWatchView(x: x, y: y)
                 }
@@ -225,17 +222,29 @@ struct ContentView: View {
             resetImageOrBackgroundChangeTimer()
         }
         .onAppear {
-            print("selectedFolderPath: \(selectedFolderPath)")
+            print("selectedFolderPath: \(index) selectedFolderPath: \(selectedFolderPath) appDelegate.showWindow:  \(appDelegate.showWindow)")
             backgroundColor = randomGentleColor()
 //            if imageOrBackgroundChangeTimer == nil
 //            startScreenChangeTimer()
 //            }
+            print("after randomGentleColor \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
+
             startAccessingFolder()
+
+            print("after startAccessingFolder \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
+
             updateHotKey()
+            print("after updateHotKey \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
+
             if index == 0 {
                 handlePexelsPhotos()
+                print("after handlePexelsPhotos \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
+
                 handlePexelsVideos()
+                print("after handlePexelsVideos \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
+
             }
+            print("onAppear \(index) appDelegate.showWindow:  \(appDelegate.showWindow)")
         }
         .onChange(of: hotKeyString) { _ in
             updateHotKey()
@@ -257,8 +266,8 @@ struct ContentView: View {
                 }
             } else {
                 if let pexelsDirectoryUrl = pexelsDirectoryUrl {
-                    clearPexelImages(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
-                    appDelegate.pexelsImages = []
+                    clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+                    appDelegate.pexelsPhotos = []
                     imageAndVideoNames = loadImageAndVideoNames()
                     //                    appDelegate.loadImages.toggle()
                 }
@@ -303,10 +312,10 @@ struct ContentView: View {
             }
             startMonitoringUserInput()
         })
-        .onReceive(appDelegate.$loadImages, perform: { _ in
+        .onReceive(appDelegate.$loadImagesAndVideos, perform: { _ in
             print("loadImages: \(index)")
             if index > 0 {
-                appDelegate.pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
+                appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
             }
             imageAndVideoNames = loadImageAndVideoNames()
         })
@@ -366,7 +375,7 @@ struct ContentView: View {
         }
 
         appDelegate.keyAndMouseEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
-            debugPrint("in startMonitoringUserInput showWindow: \(appDelegate.$showWindow)")
+            debugPrint("in startMonitoringUserInput showWindow: \(appDelegate.showWindow)")
             //            self.hideApp()
             if !appDelegate.ignoreMonitor {
                 appDelegate.showWindow = false
@@ -425,7 +434,6 @@ struct ContentView: View {
 
     func showApp() {
         showAccordingToNetworkReachability()
-
         if showVideo, networkIsReachableOrNotShowingVideos,
            let player = gPlayers[index] {
             print("video1 play \(index)")
@@ -510,7 +518,7 @@ struct ContentView: View {
     }
 
     func changeScreenImageVideoOrColor() {
-        debugPrint("changeScreenImageOrColor gNetworkIsReachable: \(gNetworkIsReachable) \(index)")
+        debugPrint("changeScreenImageOrColor \(index) imageOrVideoMode: \(imageOrVideoMode) gNetworkIsReachable: \(gNetworkIsReachable)")
         _ = imageOrVideoMode && networkIsReachableOrNotShowingVideos ? loadRandomImageOrVideo() : changeBackgroundColor()
     }
 
@@ -524,7 +532,8 @@ struct ContentView: View {
             }
             return ""
         }
-        debugPrint("video loadRandomImage \(index)")
+
+        debugPrint("video loadRandomImageOrVideo \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
 
         DispatchQueue.global(qos: .userInitiated).async {
             var newRandomImageOrVideoPath = ""
@@ -537,7 +546,7 @@ struct ContentView: View {
             || (newRandomImageOrVideoPath == firstVideoPath)
             || (newRandomImageOrVideoPath == secondVideoPath)
 
-            print("video newRandoImage \(newRandomImageOrVideoPath) \(index)")
+            print("video newRandoImage \(index) \(newRandomImageOrVideoPath)")
 
             if newRandomImageOrVideoPath.starts(with: "https:") {
                 let videoComponents = newRandomImageOrVideoPath.components(separatedBy: ",")
@@ -604,48 +613,28 @@ struct ContentView: View {
         print("handlePexelsVideos: \(index)")
         if useVideosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
-//            if let videosList = loadVideoNames(from: pexelsDirectoryUrl) {
-//                pexelsVideos = videosList
-//                return
-//            }
             getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl) { videosList in
                 DispatchQueue.main.async {
                     appDelegate.pexelsVideos = videosList
+                    appDelegate.loadImagesAndVideos.toggle()
+//                    _ = loadImageAndVideoNames()
                 }
             }
-//            DispatchQueue.global().async {
-//                pexelDownloadSemaphore.wait()
-//                if pexelsImages.count == 0 {
-//                    downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
-//                        //                        let loadedPexelsImages = loadImageNames(from: pexelsDirectoryUrl)
-//                        //                        DispatchQueue.main.async {
-//                        pexelsImages = loadImageNames(from: pexelsDirectoryUrl)
-//                        pexelDownloadSemaphore.signal()
-//                        appDelegate.loadImages.toggle()
-//                        //                        }
-//                    }
-//                } else {
-//                    pexelDownloadSemaphore.signal()
-//                }
-//            }
         }
     }
 
     func handlePexelsPhotos() {
-        print("handlePexelsPhotos: \(index)")
+        print("handlePexelsPhotos: \(index) usePhotosFromPexels: \(usePhotosFromPexels)")
         if usePhotosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
-            appDelegate.pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
+            appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
             DispatchQueue.global().async {
                 pexelDownloadSemaphore.wait()
-                if appDelegate.pexelsImages.count == 0 {
+                if appDelegate.pexelsPhotos.count == 0 {
                     downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
-                        //                        let loadedPexelsImages = loadImageNames(from: pexelsDirectoryUrl)
-                        //                        DispatchQueue.main.async {
-                        appDelegate.pexelsImages = loadImageAndVideoNames(from: pexelsDirectoryUrl)
+                        appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
                         pexelDownloadSemaphore.signal()
-                        appDelegate.loadImages.toggle()
-                        //                        }
+                        appDelegate.loadImagesAndVideos.toggle()
                     }
                 } else {
                     pexelDownloadSemaphore.signal()
@@ -681,11 +670,11 @@ struct ContentView: View {
         }
     }
 
-    func loadImageAndVideoNames(from: URL? = nil) -> [String] {
+    func loadImageAndVideoNames(fromPexel: URL? = nil) -> [String] {
         debugPrint("loadImageNames")
         let imageFolder = selectedFolderPath
 
-        let folderURL = from == nil ? URL(fileURLWithPath: imageFolder) : from!
+        let folderURL = fromPexel == nil ? URL(fileURLWithPath: imageFolder) : fromPexel!
         let fileManager = FileManager.default
         imageOrVideoMode = false
         startShowVideo = false
@@ -697,21 +686,19 @@ struct ContentView: View {
             imageOrVideoNames = imageOrVideoNames.map { image in
                 folderString + "/" + image
             }
-            if from == nil {
-                imageOrVideoNames.append(contentsOf: appDelegate.pexelsImages)
-                print("pexelImages: \(appDelegate.pexelsImages.count)")
+            if fromPexel == nil {
+                imageOrVideoNames.append(contentsOf: appDelegate.pexelsPhotos)
+                print("pexelImages: \(index) \(appDelegate.pexelsPhotos.count)")
                 imageOrVideoNames.append(contentsOf: appDelegate.pexelsVideos)
-                print("pexelVideos: \(appDelegate.pexelsVideos.count)")
+                print("pexelVideos: \(index) \(appDelegate.pexelsVideos.count)")
             }
-//            imageNames = []
-//            imageNames.append("https://player.vimeo.com/external/342571552.hd.mp4?s=6aa6f164de3812abadff3dde86d19f7a074a8a66&profile_id=175&oauth2_token_id=57447761")
-//            imageNames.append("https://player.vimeo.com/external/269971860.m3u8?s=ac08929c597387cc77ae3d88bfe2ad66a9c4d31f&oauth2_token_id=57447761")
-//            debugPrint("imageNames: \(imageNames)")
             imageOrVideoMode = imageOrVideoNames.count >= 2
-            debugPrint("imageMode: \(imageOrVideoMode)")
+            debugPrint("imageMode: \(index) \(imageOrVideoMode)")
             if !imageOrVideoMode {
                 firstImage = nil
                 secondImage = nil
+                firstVideoPath = ""
+                secondVideoPath = ""
             }
         } catch {
             debugPrint("Error loading image names: \(error)")

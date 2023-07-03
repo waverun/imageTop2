@@ -9,10 +9,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     @Published var isMainWindowVisible: Bool = true
     @Published var showWindow: Bool = true
-    @Published var loadImages: Bool = false
+    @Published var loadImagesAndVideos: Bool = false
     @Published var startTimer: Bool = false
     @Published var keyAndMouseEventMonitor: Any?
-    @Published var pexelsImages: [String] = []
+    @Published var pexelsPhotos: [String] = []
     @Published var pexelsVideos: [String] = []
     @Published var networkIsReachable = false
 
@@ -156,6 +156,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             name: NSApplication.didChangeScreenParametersNotification,
             object: nil
         )
+
         showWindow = true
 
         networkManager = NetworkManager(appDelegate: self)

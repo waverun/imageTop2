@@ -1,6 +1,6 @@
 import Foundation
 
-func clearPexelImages(folderPath: String, filesToKeep: [String]) {
+func                     clearPexelPhotos(folderPath: String, filesToKeep: [String]) {
     do {
         let directoryURL = URL(fileURLWithPath: folderPath)
         let fileManager = FileManager.default
