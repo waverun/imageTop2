@@ -117,7 +117,7 @@ struct ContentView: View {
                 if firstVideoPath != "",
                    let url = URL(string: firstVideoPath) {
                     VideoPlayerView(url: url, index: index) {
-                        loadRandomImageOrVideo()
+                        changeScreenImageVideoOrColor()
                     }
                     .opacity(showVideo && !showSecondVideo ? 1 : 0)
                     .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
@@ -127,7 +127,7 @@ struct ContentView: View {
                 if secondVideoPath != "",
                    let url = URL(string: secondVideoPath) {
                     VideoPlayerView(url: url, index: index) {
-                        loadRandomImageOrVideo()
+                        changeScreenImageVideoOrColor()
                     }
                     .opacity(showVideo && showSecondVideo ? 1 : 0)
                     .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
@@ -256,7 +256,7 @@ struct ContentView: View {
         .onReceive(appDelegate.$startTimer, perform: { _ in
             if !showVideo {
                 startScreenChangeTimer()
-                loadRandomImageOrVideo()
+                changeScreenImageVideoOrColor()
             }
             startMonitoringUserInput()
         })
@@ -269,25 +269,7 @@ struct ContentView: View {
         })
         .onReceive(appDelegate.$networkIsReachable, perform: { _ in
             print("onReceive \(index) gNetworkIsReachable: \(gNetworkIsReachable) imageOrBackgroundChangeTimer == nil:   \(imageOrBackgroundChangeTimer == nil)")
-            if gNetworkIsReachable {
-                imageOrVideoMode = imageAndVideoNames.count > 2
-                if !showVideo && imageOrBackgroundChangeTimer == nil {
-                    startScreenChangeTimer()
-                }
-            } else {
-                showVideo = false
-                if imageOrVideoMode {
-                    firstImage = nil
-                    secondImage = nil
-                    firstVideoPath = ""
-                    secondVideoPath = ""
-                    imageOrVideoMode = false
-                    imageOrVideoMode = false
-                }
-                if imageOrBackgroundChangeTimer == nil {
-                    startScreenChangeTimer()
-                }
-            }
+            showAccordingToNetworkReachability()
         })
     }
     //     func startMonitoring() {
@@ -298,6 +280,28 @@ struct ContentView: View {
     //            return event
     //        }
     //    }
+
+    func showAccordingToNetworkReachability () {
+        if gNetworkIsReachable {
+            imageOrVideoMode = imageAndVideoNames.count > 2
+            if !showVideo && imageOrBackgroundChangeTimer == nil {
+                startScreenChangeTimer()
+            }
+        } else {
+            showVideo = false
+            if imageOrVideoMode {
+                firstImage = nil
+                secondImage = nil
+                firstVideoPath = ""
+                secondVideoPath = ""
+                imageOrVideoMode = false
+                imageOrVideoMode = false
+            }
+            if imageOrBackgroundChangeTimer == nil {
+                startScreenChangeTimer()
+            }
+        }
+    }
 
     func startMonitoringUserInput() {
         if index > 0 {
@@ -369,18 +373,16 @@ struct ContentView: View {
     }
 
     func showApp() {
-        //        startMonitoringUserInput()
-        //        WindowManager.shared.enterFullScreen()
-        if showVideo,
+        showAccordingToNetworkReachability()
+
+        if showVideo, gNetworkIsReachable,
            let player = gPlayers[index] {
             print("video1 play \(index)")
             player.play()
             if let timer = gTimers[index] {
                 timer.resume()
             }
-            return
         }
-//        startScreenChangeTimer()
     }
 
     func hotkeyPressed() {
@@ -446,19 +448,19 @@ struct ContentView: View {
         if appDelegate.firstSetTimer[index] == nil {
             appDelegate.firstSetTimer[index] = false
             print("firstsettime changeScreenImageOrColor \(index)")
-            changeScreenImageOrColor()
+            changeScreenImageVideoOrColor()
         }
 
         print("startScreenChangeTimer \(index)")
 
         imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter, repeats: true) { [self] _ in
-            changeScreenImageOrColor()
+            changeScreenImageVideoOrColor()
         }
     }
 
-    func changeScreenImageOrColor() {
-        debugPrint("changeScreenImageOrColor \(index)")
-        _ = imageOrVideoMode ? loadRandomImageOrVideo() : changeBackgroundColor()
+    func changeScreenImageVideoOrColor() {
+        debugPrint("changeScreenImageOrColor gNetworkIsReachable: \(gNetworkIsReachable) \(index)")
+        _ = imageOrVideoMode && gNetworkIsReachable ? loadRandomImageOrVideo() : changeBackgroundColor()
     }
 
     func loadRandomImageOrVideo() {
