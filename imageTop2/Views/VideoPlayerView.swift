@@ -13,11 +13,21 @@ struct VideoPlayerView: NSViewRepresentable {
     let finishedPlaying: () -> Void
 
     func makeNSView(context: Context) -> NSView {
-        print("videoPlayerView \(url.path) on \(index)")
+        print("videoPlayerView \(index) \(url.path)")
         let view = NSView()
 
+//        let url = URL(fileURLWithPath: "/Users/shyem/Downloads/pexels-camila-flores.mp4")
+//        let url = URL(fileURLWithPath: "/Users/shyem/Movies/pexels-camila-flores.mp4")
+//        let url = URL(fileURLWithPath: "/Users/shyem/Downloads/Library-1of4.mov")
         // create an AVPlayer
+
+//        let playerItem = AVPlayerItem(url: url)
+
+//        playerItem.preferredForwardBufferDuration = 0
+
         let player = AVPlayer(url: url)
+//        let player = AVPlayer(playerItem: playerItem)
+//        player.rate = 0.2
         player .isMuted = true
 
         startGetVideoLengthTask(player: player, url: url)
@@ -45,9 +55,8 @@ struct VideoPlayerView: NSViewRepresentable {
 
         // play the video
         if appDelegate.showWindow {
-            print("play: \(index) \(Date())")
             player.play()
-            print("Video1 started playing. makeNSView \(self.index)")
+            print("Video1 started playing. makeNSView \(self.index) url: \(url)")
         }
         return view
     }
@@ -97,7 +106,7 @@ struct VideoPlayerView: NSViewRepresentable {
         }
 
         // Check if the player's URL is different from the new URL
-        if let currentURL = player.currentItem?.asset as? AVURLAsset, currentURL.url != url {
+        if let currentURL = player.currentItem?.asset as? AVURLAsset, currentURL.url.path != url.path {
 //            player.pause()
             // Remove observer from current item
 
@@ -106,10 +115,15 @@ struct VideoPlayerView: NSViewRepresentable {
             NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
 
             // Replace the player's current item with a new AVPlayerItem
-            let item = AVPlayerItem(url: url)
-            
-            player.replaceCurrentItem(with: item)
+//            let url = URL(fileURLWithPath: "/Users/shyem/Movies/Library-(1).mov")
+//            let url = URL(fileURLWithPath: "/Users/shyem/Downloads/Library-4of4.mov")
 
+            let item = AVPlayerItem(url: url)
+
+//            item.preferredForwardBufferDuration = 0
+
+            player.replaceCurrentItem(with: item)
+//            player.rate = 0.2
             // Add observer to new item
 //            NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
 //                print("Video finished playing. \(self.index)")
@@ -119,7 +133,7 @@ struct VideoPlayerView: NSViewRepresentable {
             // Play the video
             if appDelegate.showWindow {
                 player.play()
-                print("Video1 started playing. updateNSView \(self.index)")
+                print("Video1 started playing. updateNSView \(self.index) url: \(url)")
             }
         }
     }

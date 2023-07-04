@@ -117,7 +117,7 @@ struct ContentView: View {
                     .edgesIgnoringSafeArea(.all)
 
                 if firstVideoPath != "",
-                   let url = URL(string: firstVideoPath) {
+                   let url = firstVideoPath.starts(with: "https:") ? URL(string: firstVideoPath) : URL(fileURLWithPath: firstVideoPath) {
                     VideoPlayerView(url: url, index: index) {
                         changeScreenImageVideoOrColor()
                     }
@@ -143,7 +143,7 @@ struct ContentView: View {
                 }
 
                 if secondVideoPath != "",
-                   let url = URL(string: secondVideoPath) {
+                   let url = secondVideoPath.starts(with: "https:") ? URL(string: secondVideoPath) : URL(fileURLWithPath: secondVideoPath) {
                     VideoPlayerView(url: url, index: index) {
                         changeScreenImageVideoOrColor()
                     }
@@ -231,29 +231,17 @@ struct ContentView: View {
             resetImageOrBackgroundChangeTimer()
         }
         .onAppear {
-            print("selectedFolderPath: \(index) selectedFolderPath: \(selectedFolderPath) appDelegate.showWindow:  \(appDelegate.showWindow)")
             backgroundColor = randomGentleColor()
-//            if imageOrBackgroundChangeTimer == nil
-//            startScreenChangeTimer()
-//            }
-            print("after randomGentleColor \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
 
             startAccessingFolder()
 
-            print("after startAccessingFolder \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
-
             updateHotKey()
-            print("after updateHotKey \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
 
             if index == 0 {
                 handlePexelsPhotos()
-                print("after handlePexelsPhotos \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
 
                 handlePexelsVideos()
-                print("after handlePexelsVideos \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
-
             }
-            print("onAppear \(index) appDelegate.showWindow:  \(appDelegate.showWindow)")
         }
         .onChange(of: hotKeyString) { _ in
             updateHotKey()
@@ -558,7 +546,9 @@ struct ContentView: View {
 
             print("video newRandoImage \(index) \(newRandomImageOrVideoPath)")
 
-            if newRandomImageOrVideoPath.starts(with: "https:") {
+            if newRandomImageOrVideoPath.starts(with: "https:")
+            || isVideoFile(atPath: newRandomImageOrVideoPath) {
+                print("isVideFile: \(index) newRandomImageOrVideoPath: \(newRandomImageOrVideoPath)")
                 let videoComponents = newRandomImageOrVideoPath.components(separatedBy: ",")
                 var photographer = ""
                 newRandomImageOrVideoPath = videoComponents[0]
