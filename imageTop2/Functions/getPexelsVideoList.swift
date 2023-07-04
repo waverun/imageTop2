@@ -50,7 +50,8 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
         pageNumberParam = "&page=" + String(pageNumber)
     }
 
-    let url = URL(string: "https://api.pexels.com/videos/search?query=" + category + "&min_duration=10&max_duration=60&per_page=80" + pageNumberParam)!
+    let kind = ["popular", "search"].randomElement()!
+    let url = URL(string: "https://api.pexels.com/videos/" + kind + "?orientation=landscape&query=" + category + "&min_duration=10&max_duration=60&per_page=80" + pageNumberParam)!
     print("pexels url: \(url)")
     var request = URLRequest(url: url)
     request.setValue(apiKey, forHTTPHeaderField: "Authorization")
@@ -76,10 +77,12 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
                     var link = ""
                     for videoFile in video.videoFiles {
                         if let videoWidth = videoFile.width,
+                           video.duration >= 10, video.duration <= 60,
                            videoWidth > width && width < screenWidth
                            || videoWidth > screenWidth && videoWidth < width {
                             link = videoFile.link + "," + video.user.name
                             width = videoWidth
+                            print("viderFile: lenght: \(video.duration)")
                         }
                     }
                     videoLinks.append(link)
