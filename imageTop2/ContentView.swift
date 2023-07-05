@@ -89,7 +89,7 @@ struct ContentView: View {
             do {
                 try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
             } catch {
-                print("Error creating pexels directory: \(error)")
+                debugPrint("Error creating pexels directory: \(error)")
                 return nil
             }
         }
@@ -355,10 +355,10 @@ struct ContentView: View {
 //    }
 
     func onAppearAction() {
-        print("onAppear: \(index)")
+        debugPrint("onAppear: \(index)")
         guard !stateObject.viewAppeared else { return }
         stateObject.viewAppeared = true
-        print("inside onAppear: \(index)")
+        debugPrint("inside onAppear: \(index)")
         backgroundColor = randomGentleColor()
 
         startAccessingFolder()
@@ -419,18 +419,18 @@ struct ContentView: View {
     }
 
     func onDisappearAction() {
-        print("before onDisapear")
+        debugPrint("before onDisapear")
         //            timer?.invalidate()
         resetWatchPosition()
         stopChangeTimer()
         if let url = URL(string: selectedFolderPath) {
             url.stopAccessingSecurityScopedResource()
         }
-        print("after onDisapear")
+        debugPrint("after onDisapear")
     }
 
     func handleShowWindowChange(showWindow: Bool) {
-        print("received showWindow \(showWindow) \(index)")
+        debugPrint("received showWindow \(showWindow) \(index)")
         if showWindow {
             showApp()
         } else {
@@ -447,7 +447,7 @@ struct ContentView: View {
     }
 
     func handleLoadImagesAndVideosChange(_ value: Bool) {
-        print("loadImagesAndVideos: \(index)")
+        debugPrint("loadImagesAndVideos: \(index)")
         if stateObject.ignoreFirstLoadImagesAndVideos {
             stateObject.ignoreFirstLoadImagesAndVideos = false
             return
@@ -459,7 +459,7 @@ struct ContentView: View {
     }
 
     func handleNetworkReachabilityChange(_ value: Bool) {
-        print("onReceive \(index) gNetworkIsReachable: \(gNetworkIsReachable) imageOrBackgroundChangeTimer == nil:   \(imageOrBackgroundChangeTimer == nil)")
+        debugPrint("onReceive \(index) gNetworkIsReachable: \(gNetworkIsReachable) imageOrBackgroundChangeTimer == nil:   \(imageOrBackgroundChangeTimer == nil)")
         showAccordingToNetworkReachability()
     }
 
@@ -590,10 +590,10 @@ struct ContentView: View {
 //            resetImageOrBackgroundChangeTimer()
 //        }
 //        .onAppear {
-//            print("onAppear: \(index)")
+//            debugPrint("onAppear: \(index)")
 //            guard !stateObject.viewAppeared else { return }
 //            stateObject.viewAppeared = true
-//            print("inside onAppear: \(index)")
+//            debugPrint("inside onAppear: \(index)")
 //            backgroundColor = randomGentleColor()
 //
 //            startAccessingFolder()
@@ -651,17 +651,17 @@ struct ContentView: View {
 //            }
 //        }
 //        .onDisappear {
-//            print("before onDisapear")
+//            debugPrint("before onDisapear")
 //            //            timer?.invalidate()
 //            resetWatchPosition()
 //            stopChangeTimer()
 //            if let url = URL(string: selectedFolderPath) {
 //                url.stopAccessingSecurityScopedResource()
 //            }
-//            print("after onDisapear")
+//            debugPrint("after onDisapear")
 //        }
 //        .onReceive(appDelegate.$showWindow, perform: { showWindow in
-//            print("received showWindow \(showWindow) \(index)")
+//            debugPrint("received showWindow \(showWindow) \(index)")
 //            if showWindow {
 //                showApp()
 //            } else {
@@ -676,7 +676,7 @@ struct ContentView: View {
 //            startMonitoringUserInput()
 //        })
 //        .onReceive(appDelegate.$loadImagesAndVideos, perform: { _ in
-//            print("loadImagesAndVideos: \(index)")
+//            debugPrint("loadImagesAndVideos: \(index)")
 //            if stateObject.ignoreFirstLoadImagesAndVideos {
 //                stateObject.ignoreFirstLoadImagesAndVideos = false
 //                return
@@ -687,7 +687,7 @@ struct ContentView: View {
 //            imageAndVideoNames = loadImageAndVideoNames()
 //        })
 //        .onReceive(appDelegate.$networkIsReachable, perform: { _ in
-//            print("onReceive \(index) gNetworkIsReachable: \(gNetworkIsReachable) imageOrBackgroundChangeTimer == nil:   \(imageOrBackgroundChangeTimer == nil)")
+//            debugPrint("onReceive \(index) gNetworkIsReachable: \(gNetworkIsReachable) imageOrBackgroundChangeTimer == nil:   \(imageOrBackgroundChangeTimer == nil)")
 //            showAccordingToNetworkReachability()
 //        })
 //    }
@@ -803,7 +803,7 @@ struct ContentView: View {
         showAccordingToNetworkReachability()
         if showVideo, networkIsReachableOrNotShowingVideos,
            let player = gPlayers[index] {
-            print("video1 play: \(index) \(index) stateObject.firstVideoPath: \(stateObject.firstVideoPath) stateObject.secondVideoPath: \(stateObject.secondVideoPath)")
+            debugPrint("video1 play: \(index) \(index) stateObject.firstVideoPath: \(stateObject.firstVideoPath) stateObject.secondVideoPath: \(stateObject.secondVideoPath)")
             player.play()
             if let timer = gTimers[index] {
                 timer.resume()
@@ -874,14 +874,14 @@ struct ContentView: View {
 
         if appDelegate.firstSetTimer[index] == nil {
             appDelegate.firstSetTimer[index] = false
-            print("firstsettime changeScreenImageOrColor \(index)")
+            debugPrint("firstsettime changeScreenImageOrColor \(index)")
             changeScreenImageVideoOrColor()
         }
 
-        print("startScreenChangeTimer: \(index) \(Date())")
+        debugPrint("startScreenChangeTimer: \(index) \(Date())")
 
         imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter, repeats: true) { [self] _ in
-            print("imageOrBackgroundChangeTimer: \(index) \(Date())")
+            debugPrint("imageOrBackgroundChangeTimer: \(index) \(Date())")
             changeScreenImageVideoOrColor()
         }
     }
@@ -927,7 +927,7 @@ struct ContentView: View {
     }
 
     private func handleVideo(_ path: String) {
-        print("isVideFile: \(index) newRandomImageOrVideoPath: \(path)")
+        debugPrint("isVideFile: \(index) newRandomImageOrVideoPath: \(path)")
         let videoComponents = path.components(separatedBy: ",")
         let newVideoPath = videoComponents[0]
         let photographer = videoComponents.count > 1 ? videoComponents[1] : ""
@@ -1044,11 +1044,11 @@ struct ContentView: View {
 //            || (newRandomImageOrVideoPath == stateObject.firstVideoPath)
 //            || (newRandomImageOrVideoPath == stateObject.secondVideoPath)
 //
-//            print("video newRandoImage \(index) \(newRandomImageOrVideoPath)")
+//            debugPrint("video newRandoImage \(index) \(newRandomImageOrVideoPath)")
 //
 //            if newRandomImageOrVideoPath.starts(with: "https:")
 //            || isVideoFile(atPath: newRandomImageOrVideoPath) {
-//                print("isVideFile: \(index) newRandomImageOrVideoPath: \(newRandomImageOrVideoPath)")
+//                debugPrint("isVideFile: \(index) newRandomImageOrVideoPath: \(newRandomImageOrVideoPath)")
 //                let videoComponents = newRandomImageOrVideoPath.components(separatedBy: ",")
 //                var photographer = ""
 //                newRandomImageOrVideoPath = videoComponents[0]
@@ -1117,7 +1117,7 @@ struct ContentView: View {
 //    }
 
     func handlePexelsVideos() {
-        print("handlePexelsVideos: \(index)")
+        debugPrint("handlePexelsVideos: \(index)")
         if useVideosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
             getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl) { videosList in
@@ -1130,7 +1130,7 @@ struct ContentView: View {
     }
 
     func handlePexelsPhotos() {
-        print("handlePexelsPhotos: \(index) usePhotosFromPexels: \(usePhotosFromPexels)")
+        debugPrint("handlePexelsPhotos: \(index) usePhotosFromPexels: \(usePhotosFromPexels)")
         if usePhotosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
             appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
@@ -1152,7 +1152,7 @@ struct ContentView: View {
     }
 
     func stopChangeTimer () {
-        print("stopChangeTimer \(index)")
+        debugPrint("stopChangeTimer \(index)")
         imageOrBackgroundChangeTimer?.invalidate()
         imageOrBackgroundChangeTimer = nil
     }
@@ -1174,7 +1174,7 @@ struct ContentView: View {
         do {
             try directoryWatcher = DirectoryWatcher(directoryPath: imageFolder, onChange: callLoadImageNames)
         } catch let error {
-            print("failed to watch directory: \(imageFolder) - \(error.localizedDescription)")
+            debugPrint("failed to watch directory: \(imageFolder) - \(error.localizedDescription)")
         }
     }
 
@@ -1208,9 +1208,9 @@ struct ContentView: View {
             }
             if fromPexel == nil {
                 imageOrVideoNames.append(contentsOf: appDelegate.pexelsPhotos)
-                print("pexelImages: \(index) \(appDelegate.pexelsPhotos.count)")
+                debugPrint("pexelImages: \(index) \(appDelegate.pexelsPhotos.count)")
                 imageOrVideoNames.append(contentsOf: appDelegate.pexelsVideos)
-                print("pexelVideos: \(index) \(appDelegate.pexelsVideos.count)")
+                debugPrint("pexelVideos: \(index) \(appDelegate.pexelsVideos.count)")
             }
             imageOrVideoMode = imageOrVideoNames.count >= 2
             debugPrint("imageMode: \(index) \(imageOrVideoMode)")

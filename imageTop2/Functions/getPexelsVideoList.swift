@@ -34,7 +34,7 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
 
 
 //    if !isFreeSpaceMoreThan(gigabytes: 1) {
-//        print("Not enough space to download Pexels photos")
+//        debugPrint("Not enough space to download Pexels photos")
 //        return
 //    }
 
@@ -52,7 +52,7 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
 
     let kind = ["popular", "search"].randomElement()!
     let url = URL(string: "https://api.pexels.com/videos/" + kind + "?orientation=landscape&query=" + category + "&min_duration=10&max_duration=60&per_page=80" + pageNumberParam)!
-    print("pexels url: \(url)")
+    debugPrint("pexels url: \(url)")
     var request = URLRequest(url: url)
     request.setValue(apiKey, forHTTPHeaderField: "Authorization")
 
@@ -63,13 +63,13 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
 
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
         if let error = error {
-            print("Error: \(error)")
+            debugPrint("Error: \(error)")
         } else if let data = data {
             _ = JSONDecoder()
             do {
                 let videoData = try JSONDecoder().decode(VideoData.self, from: data)
 
-                print("pexelsResponse photos: \(videoData.videos.count)")
+                debugPrint("pexelsResponse photos: \(videoData.videos.count)")
 
                 var videoLinks: [String] = []
                 for video in videoData.videos {
@@ -82,7 +82,7 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
                            || videoWidth > screenWidth && videoWidth < width {
                             link = videoFile.link + "," + video.user.name
                             width = videoWidth
-                            print("viderFile: lenght: \(video.duration)")
+                            debugPrint("viderFile: lenght: \(video.duration)")
                         }
                     }
                     videoLinks.append(link)
@@ -91,7 +91,7 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
                 writeFile(directoryURL: pexelsFolder, fileName: pexelsVideoList, contents: videoList)
                 onDone(videoLinks)
             } catch {
-                print("Error decoding JSON: \(error)")
+                debugPrint("Error decoding JSON: \(error)")
             }
         }
     }

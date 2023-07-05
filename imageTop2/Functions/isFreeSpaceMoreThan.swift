@@ -8,7 +8,7 @@ func isFreeSpaceMoreThan(gigabytes: Double) -> Bool {
             return freeSpaceInGigabytes > gigabytes
         }
     } catch {
-        print("Error retrieving system free size: \(error)")
+        debugPrint("Error retrieving system free size: \(error)")
     }
     return false
 }

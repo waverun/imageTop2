@@ -6,8 +6,8 @@ func writeFile(directoryURL: URL, fileName: String, contents: String) {
 
     do {
         try contents.write(to: fileURL, atomically: true, encoding: .utf8)
-        print("File is written successfully")
+        debugPrint("File is written successfully")
     } catch {
-        print("Error writing file: \(error)")
+        debugPrint("Error writing file: \(error)")
     }
 }

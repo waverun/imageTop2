@@ -15,17 +15,17 @@ class NetworkManager {
     init(appDelegate: AppDelegate?) {
         reachability.whenReachable = { reachability in
             if reachability.connection == .wifi {
-                print("Reachable via WiFi")
+                debugPrint("Reachable via WiFi")
                 gNetworkIsReachable = true
                 appDelegate?.networkIsReachable = true
             } else {
-                print("Reachable via Cellular")
+                debugPrint("Reachable via Cellular")
                 gNetworkIsReachable = false
                 appDelegate?.networkIsReachable = false
             }
         }
         reachability.whenUnreachable = { _ in
-            print("Not reachable")
+            debugPrint("Not reachable")
             gNetworkIsReachable = false
             appDelegate?.networkIsReachable = false
         }
@@ -33,7 +33,7 @@ class NetworkManager {
         do {
             try reachability.startNotifier()
         } catch {
-            print("Unable to start notifier")
+            debugPrint("Unable to start notifier")
         }
     }
 

@@ -17,7 +17,7 @@ class DirectoryWatcher {
         source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: .write, queue: queue)
 
         source?.setEventHandler {
-            print("Directory contents changed.")
+            debugPrint("Directory contents changed.")
             onChange()
         }
 

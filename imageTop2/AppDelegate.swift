@@ -39,7 +39,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                 if let timer = gTimers[index] {
                     timer.pause()
                 }
-                print("video1 pause \(index)")
+                debugPrint("video1 pause \(index)")
             }
         }
 
@@ -47,7 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     func windowDidEnterFullScreen(_ notification: Notification) {
-        print("windowDidEnterFullScreen")
+        debugPrint("windowDidEnterFullScreen")
         inactivityTimer?.invalidate()
         startTimer.toggle()
         showWindow = true
@@ -77,7 +77,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
             let currentSeconds = getLastEventTime()
             if prevEventTime != currentSeconds {
-                print("startInactivityTimer \(prevSeconds) \(currentSeconds)")
+                debugPrint("startInactivityTimer \(prevSeconds) \(currentSeconds)")
                 prevEventTime = currentSeconds
             }
             let secondsSinceLastEvent = currentSeconds - prevSeconds
@@ -96,12 +96,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         let dnc = DistributedNotificationCenter.default()
 
         _ = dnc.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { _ in
-            print("Screen Locked")
+            debugPrint("Screen Locked")
             ScreenLockStatus.shared.isLocked = true
         }
 
         _ = dnc.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { _ in
-            print("Screen Unlocked")
+            debugPrint("Screen Unlocked")
             ScreenLockStatus.shared.isLocked = false
         }
     }
@@ -167,14 +167,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         if externalDisplayCount != NSScreen.screens.count {
             externalDisplayCount = NSScreen.screens.count
 
-            print("A screen was added or removed.")
+            debugPrint("A screen was added or removed.")
             // Remove all current windows
             
             restartApplication()
 
             screenChangeDetected = true // used to create windows again on user input to prevent problem when the screen was locked
         } else {
-            print("A display configuration change occurred.")
+            debugPrint("A display configuration change occurred.")
             // Handle any other display configuration changes if needed
         }
     }
@@ -183,18 +183,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var createWindowsPlease = true
 
     func restartApplication() {
-        print("Restarting application...")
+        debugPrint("Restarting application...")
 
         WindowManager.shared.removeAllWindows() { [self] in
             // Recreate windows for the new screen configuration
-            print("before createWindows")
+            debugPrint("before createWindows")
             //??:
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
                 if createWindowsPlease {
-                    print("NSScreen.screens.count before createWindow: \(NSScreen.screens.count) ")
+                    debugPrint("NSScreen.screens.count before createWindow: \(NSScreen.screens.count) ")
                     createWindows()
                 }
-                print("after createWindows")
+                debugPrint("after createWindows")
             }
         }
     }
@@ -245,7 +245,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
             hideSettings()
 //            showWindow = true // To cause to call showApp.
-            print("showMainWindow")
+            debugPrint("showMainWindow")
             ignoreMonitor = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [self] in
                 ignoreMonitor = false

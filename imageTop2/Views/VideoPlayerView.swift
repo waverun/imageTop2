@@ -13,7 +13,7 @@ struct VideoPlayerView: NSViewRepresentable {
     let finishedPlaying: () -> Void
 
     func makeNSView(context: Context) -> NSView {
-        print("videoPlayerView \(index) \(url.path)")
+        debugPrint("videoPlayerView \(index) \(url.path)")
         let view = NSView()
 
 //        let url = URL(fileURLWithPath: "/Users/shyem/Downloads/pexels-camila-flores.mp4")
@@ -34,13 +34,13 @@ struct VideoPlayerView: NSViewRepresentable {
 //        getVideoLength(videoURL: url)
 
         gPlayers[index] = player
-        print("gPlayers[index]: \(index)")
+        debugPrint("gPlayers[index]: \(index)")
         // create a player layer
         let playerLayer = AVPlayerLayer(player: player)
 
         // Add observer to get notified when the video finishes playing
 //        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
-//            print("Video finished playing. \(self.index)")
+//            debugPrint("Video finished playing. \(self.index)")
 //                finishedPlaying()
 //            // You could do additional things here like play the next video, show a replay button, etc.
 //        }
@@ -57,7 +57,7 @@ struct VideoPlayerView: NSViewRepresentable {
         // play the video
         if appDelegate.showWindow {
             player.play()
-            print("Video1 started playing. \(self.index) url: \(url) makeNSView \(Date())")
+            debugPrint("Video1 started playing. \(self.index) url: \(url) makeNSView \(Date())")
         }
         return view
     }
@@ -65,7 +65,7 @@ struct VideoPlayerView: NSViewRepresentable {
     func setEndPlayNotification(player: AVPlayer) {
         gTimers.removeValue(forKey: index)
         NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
-            print("Video finished playing. \(self.index)")
+            debugPrint("Video finished playing. \(self.index)")
             finishedPlaying()
             // You could do additional things here like play the next video, show a replay button, etc.
         }
@@ -81,9 +81,9 @@ struct VideoPlayerView: NSViewRepresentable {
         Task {
             do {
                 let duration = try await getVideoLength(videoURL: url)
-                print("Timer: \(index) Video duration: \(CMTimeGetSeconds(duration)) seconds")
+                debugPrint("Timer: \(index) Video duration: \(CMTimeGetSeconds(duration)) seconds")
                 let iDuration = Int(CMTimeGetSeconds(duration))
-                print("iDuration \(index) \(iDuration)")
+                debugPrint("iDuration \(index) \(iDuration)")
                 if iDuration > 4 {
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(iDuration - 2)) {
                     let pausableTimer = PausableTimer(index: index)
@@ -95,7 +95,7 @@ struct VideoPlayerView: NSViewRepresentable {
                     setEndPlayNotification(player: player)
                 }
             } catch {
-                print("Failed to get video duration: \(error)")
+                debugPrint("Failed to get video duration: \(error)")
                 setEndPlayNotification(player: player)
             }
         }
@@ -128,14 +128,14 @@ struct VideoPlayerView: NSViewRepresentable {
 //            player.rate = 0.2
             // Add observer to new item
 //            NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
-//                print("Video finished playing. \(self.index)")
+//                debugPrint("Video finished playing. \(self.index)")
 //                    finishedPlaying()
 //            }
 
             // Play the video
             if appDelegate.showWindow {
                 player.play()
-                print("Video1 started playing. \(self.index) url: \(url) updateNSView \(Date())")
+                debugPrint("Video1 started playing. \(self.index) url: \(url) updateNSView \(Date())")
             }
         }
     }

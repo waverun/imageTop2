@@ -173,11 +173,11 @@ struct SettingsView: View {
         .buttonStyle(PlainButtonStyle())
 //        .overlay(KeyView(dismiss: { appDelegate.hideSettings() }).allowsHitTesting(false))
         .onChange(of: usePhotosFromPexelsIsOn) { newValue in
-            print("isOn: \(usePhotosFromPexelsIsOn)")
+           debugPrint("isOn: \(usePhotosFromPexelsIsOn)")
             usePhotosFromPexels = usePhotosFromPexelsIsOn
         }
         .onChange(of: useVideosFromPexelsIsOn) { newValue in
-            print("isOn: \(useVideosFromPexelsIsOn)")
+           debugPrint("isOn: \(useVideosFromPexelsIsOn)")
             useVideosFromPexels = useVideosFromPexelsIsOn
         }
         .frame(width: 350, height: 325)

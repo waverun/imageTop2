@@ -2,14 +2,14 @@ import Foundation
 
 func downloadPhoto(from urlString: String, photographer: String, to folder: URL, onComplete: @escaping () -> Void) {
     guard let url = URL(string: urlString) else {
-        print("Invalid URL: \(urlString)")
+        debugPrint("Invalid URL: \(urlString)")
         onComplete()
         return
     }
 
     let task = URLSession.shared.dataTask(with: url) { data, response, error in
         if let error = error {
-            print("Error downloading photo: \(error)")
+            debugPrint("Error downloading photo: \(error)")
         } else if let data = data {
             // Generate a unique filename based on the photographer's name
             let sanitizedPhotographerName = sanitizeFileName(photographer)
@@ -18,9 +18,9 @@ func downloadPhoto(from urlString: String, photographer: String, to folder: URL,
 
             do {
                 try data.write(to: fileURL)
-                print("Saved photo to: \(fileURL)")
+                debugPrint("Saved photo to: \(fileURL)")
             } catch {
-                print("Error saving photo: \(error)")
+                debugPrint("Error saving photo: \(error)")
             }
         }
         onComplete()
@@ -31,13 +31,13 @@ func downloadPhoto(from urlString: String, photographer: String, to folder: URL,
 
 //func downloadPhoto(from urlString: String, photographer: String, to folder: URL) {
 //    guard let url = URL(string: urlString) else {
-//        print("Invalid URL: \(urlString)")
+//        debugPrint("Invalid URL: \(urlString)")
 //        return
 //    }
 //
 //    let task = URLSession.shared.dataTask(with: url) { data, response, error in
 //        if let error = error {
-//            print("Error downloading photo: \(error)")
+//            debugPrint("Error downloading photo: \(error)")
 //        } else if let data = data {
 //            // Generate a unique filename based on the photographer's name
 //            let sanitizedPhotographerName = sanitizeFileName(photographer)
@@ -46,9 +46,9 @@ func downloadPhoto(from urlString: String, photographer: String, to folder: URL,
 //
 //            do {
 //                try data.write(to: fileURL)
-//                print("Saved photo to: \(fileURL)")
+//                debugPrint("Saved photo to: \(fileURL)")
 //            } catch {
-//                print("Error saving photo: \(error)")
+//                debugPrint("Error saving photo: \(error)")
 //            }
 //        }
 //    }
