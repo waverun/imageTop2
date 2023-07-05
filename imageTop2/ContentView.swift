@@ -339,42 +339,39 @@ struct ContentView: View {
             showAccordingToNetworkReachability()
         })
     }
-    //     func startMonitoring() {
-    //        debugPrint("startMonitoring")
-    //        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
-    //            debugPrint("in startMonitoring")
-    //            self.hideApp()
-    //            return event
-    //        }
-    //    }
 
     func showAccordingToNetworkReachability () {
-        if !imageAndVideoNames.contains(where: { imageOrVideo in
+        let showingVideos = imageAndVideoNames.contains(where: { imageOrVideo in
             imageOrVideo.starts(with: "https:")
-        }) {
-            networkIsReachableOrNotShowingVideos = true
-            return
-        }
-        if gNetworkIsReachable {
-            networkIsReachableOrNotShowingVideos = true
-            imageOrVideoMode = imageAndVideoNames.count > 2
-//            if imageOrBackgroundChangeTimer == nil {
-//                startScreenChangeTimer()
-//            }
-        } else {
-            networkIsReachableOrNotShowingVideos = false
-            showVideo = false
-            if imageOrVideoMode {
-                firstImage = nil
-                secondImage = nil
-                stateObject.firstVideoPath = ""
-                stateObject.secondVideoPath = ""
-                imageOrVideoMode = false
-                imageOrVideoMode = false
-            }
-            if imageOrBackgroundChangeTimer == nil {
-                startScreenChangeTimer()
-            }
+        })
+
+        switch true {
+
+            case !showingVideos:
+
+                networkIsReachableOrNotShowingVideos = true
+                return
+
+            case gNetworkIsReachable:
+
+                networkIsReachableOrNotShowingVideos = true
+                imageOrVideoMode = imageAndVideoNames.count > 2
+
+            default:
+
+                networkIsReachableOrNotShowingVideos = false
+                showVideo = false
+                if imageOrVideoMode {
+                    firstImage = nil
+                    secondImage = nil
+                    stateObject.firstVideoPath = ""
+                    stateObject.secondVideoPath = ""
+                    imageOrVideoMode = false
+                    imageOrVideoMode = false
+                }
+                if imageOrBackgroundChangeTimer == nil {
+                    startScreenChangeTimer()
+                }
         }
     }
 
@@ -576,17 +573,12 @@ struct ContentView: View {
                 }
                 if showSecondVideo {
                     DispatchQueue.main.async {
-
-                        stateObject.firstVideoPath =
-                        //                    stateObject.firstVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" :
-                        newRandomImageOrVideoPath
+                        stateObject.firstVideoPath = newRandomImageOrVideoPath
                         firstPhotographer = photographer
                     }
                 } else {
                     DispatchQueue.main.async {
-                        stateObject.secondVideoPath =
-                        //                    stateObject.secondVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" :
-                        newRandomImageOrVideoPath
+                        stateObject.secondVideoPath = newRandomImageOrVideoPath
                         secondPhotographer = photographer
                     }
                 }
