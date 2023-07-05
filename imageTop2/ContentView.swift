@@ -118,22 +118,106 @@ struct ContentView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                backgroundColor
-                    .opacity(showFadeColor ? 0 : 1)
-                    .animation(.linear(duration: 1), value: showFadeColor)
-                    .edgesIgnoringSafeArea(.all)
-                fadeColor
-                    .opacity(showFadeColor ? 1 : 0)
-                    .animation(.linear(duration: 1), value: showFadeColor)
-                    .edgesIgnoringSafeArea(.all)
+                backgroundView
+                videoPlayerView
+                imageView
+                if index == 0 {
+                    DigitalWatchView(x: x, y: y)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear(perform: onAppearAction)
+        .onChange(of: replaceImageAfter, perform: handleReplaceImageAfterChange)
+        .onChange(of: hotKeyString, perform: handleHotKeyChange)
+        .onChange(of: keyString1, perform: handleHotKeyChange)
+        .onChange(of: keyString2, perform: handleHotKeyChange)
+        .onChange(of: selectedFolderPath, perform: handleSelectedFolderPathChange)
+        .onChange(of: usePhotosFromPexels, perform: handleUsePhotosFromPexelsChange)
+        .onChange(of: useVideosFromPexels, perform: handleUseVideosFromPexelsChange)
+        .onDisappear(perform: onDisappearAction)
+        .onReceive(appDelegate.$showWindow, perform: handleShowWindowChange)
+        .onReceive(appDelegate.$startTimer, perform: handleStartTimerChange)
+        .onReceive(appDelegate.$loadImagesAndVideos, perform: handleLoadImagesAndVideosChange)
+        .onReceive(appDelegate.$networkIsReachable, perform: handleNetworkReachabilityChange)
+    }
 
-                if stateObject.firstVideoPath != "",
-                   let url = stateObject.firstVideoPath.starts(with: "https:") ? URL(string: stateObject.firstVideoPath) : URL(fileURLWithPath: stateObject.firstVideoPath) {
-                    VideoPlayerView(url: url, index: index) {
-                        changeScreenImageVideoOrColor()
+    var backgroundView: some View {
+        ZStack {
+            backgroundColor
+                .opacity(showFadeColor ? 0 : 1)
+                .animation(.linear(duration: 1), value: showFadeColor)
+                .edgesIgnoringSafeArea(.all)
+
+            fadeColor
+                .opacity(showFadeColor ? 1 : 0)
+                .animation(.linear(duration: 1), value: showFadeColor)
+                .edgesIgnoringSafeArea(.all)
+        }
+    }
+
+    var videoPlayerView: some View {
+        ZStack {
+            if stateObject.firstVideoPath != "",
+               let url = stateObject.firstVideoPath.starts(with: "https:") ? URL(string: stateObject.firstVideoPath) : URL(fileURLWithPath: stateObject.firstVideoPath) {
+                VideoPlayerView(url: url, index: index) {
+                    changeScreenImageVideoOrColor()
+                }
+                .opacity(showVideo && !showSecondVideo ? 1 : 0)
+                .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
+                .edgesIgnoringSafeArea(.all)
+                .overlay(
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Text(firstPhotographer)
+                                .foregroundColor(.white)
+                                .font(.custom("Noteworthy", size: 20))
+                                .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                .padding(.bottom, 50)
+                                .padding(.leading, 50)
+                                .opacity(showVideo && !showSecondVideo ? 1 : 0)
+                                .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
+                            Spacer()
+                        }
                     }
-                    .opacity(showVideo && !showSecondVideo ? 1 : 0)
-                    .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
+                )
+            }
+
+            if stateObject.secondVideoPath != "",
+               let url = stateObject.secondVideoPath.starts(with: "https:") ? URL(string: stateObject.secondVideoPath) : URL(fileURLWithPath: stateObject.secondVideoPath) {
+                VideoPlayerView(url: url, index: index) {
+                    changeScreenImageVideoOrColor()
+                }
+                .opacity(showVideo && showSecondVideo ? 1 : 0)
+                .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
+                .edgesIgnoringSafeArea(.all)
+                .overlay(
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Text(secondPhotographer)
+                                .foregroundColor(.white)
+                                .font(.custom("Noteworthy", size: 20))
+                                .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                .padding(.bottom, 50)
+                                .padding(.leading, 50)
+                                .opacity(showVideo && showSecondVideo ? 1 : 0)
+                                .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
+                            Spacer()
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    var imageView: some View {
+        ZStack {
+            if let image = firstImage {
+                Image(nsImage: image)
+                    .resizable()
+                    .clipped()
                     .edgesIgnoringSafeArea(.all)
                     .overlay(
                         VStack {
@@ -145,21 +229,22 @@ struct ContentView: View {
                                     .shadow(color: .black, radius: 3, x: 0, y: 0)
                                     .padding(.bottom, 50)
                                     .padding(.leading, 50)
-                                    .opacity(showVideo && !showSecondVideo ? 1 : 0)
-                                    .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
+                                    .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
+                                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
                                 Spacer()
                             }
                         }
                     )
-                }
+                    .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
+                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
+            } else {
+                Color.clear
+            }
 
-                if stateObject.secondVideoPath != "",
-                   let url = stateObject.secondVideoPath.starts(with: "https:") ? URL(string: stateObject.secondVideoPath) : URL(fileURLWithPath: stateObject.secondVideoPath) {
-                    VideoPlayerView(url: url, index: index) {
-                        changeScreenImageVideoOrColor()
-                    }
-                    .opacity(showVideo && showSecondVideo ? 1 : 0)
-                    .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
+            if let image = secondImage {
+                Image(nsImage: image)
+                    .resizable()
+                    .clipped()
                     .edgesIgnoringSafeArea(.all)
                     .overlay(
                         VStack {
@@ -171,178 +256,360 @@ struct ContentView: View {
                                     .shadow(color: .black, radius: 3, x: 0, y: 0)
                                     .padding(.bottom, 50)
                                     .padding(.leading, 50)
-                                    .opacity(showVideo && showSecondVideo ? 1 : 0)
-                                    .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
+                                    .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
+                                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
                                 Spacer()
                             }
                         }
                     )
-                }
-
-                if let image = firstImage {
-                    Image(nsImage: image)
-                        .resizable()
-                        .clipped()
-                        .edgesIgnoringSafeArea(.all)
-                        .overlay(
-                            VStack {
-                                Spacer()
-                                HStack {
-                                    Text(firstPhotographer)
-                                        .foregroundColor(.white)
-                                        .font(.custom("Noteworthy", size: 20))
-                                        .shadow(color: .black, radius: 3, x: 0, y: 0)
-                                        .padding(.bottom, 50)
-                                        .padding(.leading, 50)
-                                        .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
-                                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
-                                    Spacer()
-                                }
-                            }
-                        )
-                        .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
-                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
-                } else {
-                    Color.clear
-                }
-
-                if let image = secondImage {
-                    Image(nsImage: image)
-                        .resizable()
-                        .clipped()
-                        .edgesIgnoringSafeArea(.all)
-                        .overlay(
-                            VStack {
-                                Spacer()
-                                HStack {
-                                    Text(secondPhotographer)
-                                        .foregroundColor(.white)
-                                        .font(.custom("Noteworthy", size: 20))
-                                        .shadow(color: .black, radius: 3, x: 0, y: 0)
-                                        .padding(.bottom, 50)
-                                        .padding(.leading, 50)
-                                        .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
-                                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
-                                    Spacer()
-                                }
-                            }
-                        )
-                        .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
-                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
-                }  else {
-                    Color.clear
-                }
-                if index == 0 {
-                    DigitalWatchView(x: x, y: y)
-                }
+                    .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
+                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
+            }  else {
+                Color.clear
+            }
+            if index == 0 {
+                DigitalWatchView(x: x, y: y)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onChange(of: replaceImageAfter) { newValue in
-            resetImageOrBackgroundChangeTimer()
+    }
+
+    func onAppearAction() {
+        print("onAppear: \(index)")
+        guard !stateObject.viewAppeared else { return }
+        stateObject.viewAppeared = true
+        print("inside onAppear: \(index)")
+        backgroundColor = randomGentleColor()
+
+        startAccessingFolder()
+
+        updateHotKey()
+
+        if !usePhotosFromPexels, !useVideosFromPexels {
+            imageAndVideoNames = loadImageAndVideoNames()
         }
-        .onAppear {
-            print("onAppear: \(index)")
-            guard !stateObject.viewAppeared else { return }
-            stateObject.viewAppeared = true
-            print("inside onAppear: \(index)")
-            backgroundColor = randomGentleColor()
 
-            startAccessingFolder()
+        if index == 0 {
+            handlePexelsPhotos()
+            handlePexelsVideos()
+        }
+    }
 
-            updateHotKey()
+    func handleReplaceImageAfterChange(_ newValue: Double) {
+        resetImageOrBackgroundChangeTimer()
+    }
 
-            if !usePhotosFromPexels, !useVideosFromPexels {
-                imageAndVideoNames = loadImageAndVideoNames()
-            }
+    func handleHotKeyChange(_ newValue: String) {
+        updateHotKey()
+    }
 
+    func handleSelectedFolderPathChange(_ newValue: String) {
+        startAccessingFolder(loadImages: true)
+        startWatchingFolder(imageFolder: selectedFolderPath)
+    }
+
+    func handleUsePhotosFromPexelsChange(_ newValue: Bool) {
+        if newValue {
             if index == 0 {
                 handlePexelsPhotos()
+            }
+        } else {
+            if let pexelsDirectoryUrl = pexelsDirectoryUrl {
+                clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+                appDelegate.pexelsPhotos = []
+                imageAndVideoNames = loadImageAndVideoNames()
+                //                    appDelegate.loadImages.toggle()
+            }
+        }
+    }
+
+    func handleUseVideosFromPexelsChange(_ newValue: Bool) {
+        if newValue {
+            if index == 0 {
                 handlePexelsVideos()
             }
-        }
-        .onChange(of: hotKeyString) { _ in
-            updateHotKey()
-        }
-        .onChange(of: keyString1) { _ in
-            updateHotKey()
-        }
-        .onChange(of: keyString2) { _ in
-            updateHotKey()
-        }
-        .onChange(of: selectedFolderPath) { _ in
-            startAccessingFolder()
-            startWatchingFolder(imageFolder: selectedFolderPath)
-        }
-        .onChange(of: usePhotosFromPexels) { newValue in
-            if newValue {
-                if index == 0 {
-                    handlePexelsPhotos()
-                }
-            } else {
-                if let pexelsDirectoryUrl = pexelsDirectoryUrl {
-                    clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
-                    appDelegate.pexelsPhotos = []
-                    imageAndVideoNames = loadImageAndVideoNames()
-                    //                    appDelegate.loadImages.toggle()
-                }
+        } else {
+            if let pexelsDirectoryUrl = pexelsDirectoryUrl {
+                clearPexelVideos(folderURL: pexelsDirectoryUrl, fileName: "videoList.txt")
+                appDelegate.pexelsVideos = []
+                imageAndVideoNames = loadImageAndVideoNames()
+                //                    appDelegate.loadImages.toggle()
             }
         }
-        .onChange(of: useVideosFromPexels) { newValue in
-            if newValue {
-                if index == 0 {
-                    handlePexelsVideos()
-                }
-            } else {
-                if let pexelsDirectoryUrl = pexelsDirectoryUrl {
-                    clearPexelVideos(folderURL: pexelsDirectoryUrl, fileName: "videoList.txt")
-                    appDelegate.pexelsVideos = []
-                    imageAndVideoNames = loadImageAndVideoNames()
-                    //                    appDelegate.loadImages.toggle()
-                }
-            }
-        }
-        .onDisappear {
-            print("before onDisapear")
-            //            timer?.invalidate()
-            resetWatchPosition()
-            stopChangeTimer()
-            if let url = URL(string: selectedFolderPath) {
-                url.stopAccessingSecurityScopedResource()
-            }
-            print("after onDisapear")
-        }
-        .onReceive(appDelegate.$showWindow, perform: { showWindow in
-            print("received showWindow \(showWindow) \(index)")
-            if showWindow {
-                showApp()
-            } else {
-                hideApp()
-            }
-        })
-        .onReceive(appDelegate.$startTimer, perform: { _ in
-            if !showVideo {
-                startScreenChangeTimer()
-//                changeScreenImageVideoOrColor()
-            }
-            startMonitoringUserInput()
-        })
-        .onReceive(appDelegate.$loadImagesAndVideos, perform: { _ in
-            print("loadImagesAndVideos: \(index)")
-            if stateObject.ignoreFirstLoadImagesAndVideos {
-                stateObject.ignoreFirstLoadImagesAndVideos = false
-                return
-            }
-            if index > 0 && usePhotosFromPexels {
-                appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
-            }
-            imageAndVideoNames = loadImageAndVideoNames()
-        })
-        .onReceive(appDelegate.$networkIsReachable, perform: { _ in
-            print("onReceive \(index) gNetworkIsReachable: \(gNetworkIsReachable) imageOrBackgroundChangeTimer == nil:   \(imageOrBackgroundChangeTimer == nil)")
-            showAccordingToNetworkReachability()
-        })
     }
+
+    func onDisappearAction() {
+        print("before onDisapear")
+        //            timer?.invalidate()
+        resetWatchPosition()
+        stopChangeTimer()
+        if let url = URL(string: selectedFolderPath) {
+            url.stopAccessingSecurityScopedResource()
+        }
+        print("after onDisapear")
+    }
+
+    func handleShowWindowChange(showWindow: Bool) {
+        print("received showWindow \(showWindow) \(index)")
+        if showWindow {
+            showApp()
+        } else {
+            hideApp()
+        }
+    }
+
+    func handleStartTimerChange(_ value: Bool) {
+        if !showVideo {
+            startScreenChangeTimer()
+            //                changeScreenImageVideoOrColor()
+        }
+        startMonitoringUserInput()
+    }
+
+    func handleLoadImagesAndVideosChange(_ value: Bool) {
+        print("loadImagesAndVideos: \(index)")
+        if stateObject.ignoreFirstLoadImagesAndVideos {
+            stateObject.ignoreFirstLoadImagesAndVideos = false
+            return
+        }
+        if index > 0 && usePhotosFromPexels {
+            appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
+        }
+        imageAndVideoNames = loadImageAndVideoNames()
+    }
+
+    func handleNetworkReachabilityChange(_ value: Bool) {
+        print("onReceive \(index) gNetworkIsReachable: \(gNetworkIsReachable) imageOrBackgroundChangeTimer == nil:   \(imageOrBackgroundChangeTimer == nil)")
+        showAccordingToNetworkReachability()
+    }
+
+//    var body: some View {
+//        GeometryReader { geometry in
+//            ZStack {
+//                backgroundColor
+//                    .opacity(showFadeColor ? 0 : 1)
+//                    .animation(.linear(duration: 1), value: showFadeColor)
+//                    .edgesIgnoringSafeArea(.all)
+//                fadeColor
+//                    .opacity(showFadeColor ? 1 : 0)
+//                    .animation(.linear(duration: 1), value: showFadeColor)
+//                    .edgesIgnoringSafeArea(.all)
+//
+//                if stateObject.firstVideoPath != "",
+//                   let url = stateObject.firstVideoPath.starts(with: "https:") ? URL(string: stateObject.firstVideoPath) : URL(fileURLWithPath: stateObject.firstVideoPath) {
+//                    VideoPlayerView(url: url, index: index) {
+//                        changeScreenImageVideoOrColor()
+//                    }
+//                    .opacity(showVideo && !showSecondVideo ? 1 : 0)
+//                    .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
+//                    .edgesIgnoringSafeArea(.all)
+//                    .overlay(
+//                        VStack {
+//                            Spacer()
+//                            HStack {
+//                                Text(firstPhotographer)
+//                                    .foregroundColor(.white)
+//                                    .font(.custom("Noteworthy", size: 20))
+//                                    .shadow(color: .black, radius: 3, x: 0, y: 0)
+//                                    .padding(.bottom, 50)
+//                                    .padding(.leading, 50)
+//                                    .opacity(showVideo && !showSecondVideo ? 1 : 0)
+//                                    .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
+//                                Spacer()
+//                            }
+//                        }
+//                    )
+//                }
+//
+//                if stateObject.secondVideoPath != "",
+//                   let url = stateObject.secondVideoPath.starts(with: "https:") ? URL(string: stateObject.secondVideoPath) : URL(fileURLWithPath: stateObject.secondVideoPath) {
+//                    VideoPlayerView(url: url, index: index) {
+//                        changeScreenImageVideoOrColor()
+//                    }
+//                    .opacity(showVideo && showSecondVideo ? 1 : 0)
+//                    .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
+//                    .edgesIgnoringSafeArea(.all)
+//                    .overlay(
+//                        VStack {
+//                            Spacer()
+//                            HStack {
+//                                Text(secondPhotographer)
+//                                    .foregroundColor(.white)
+//                                    .font(.custom("Noteworthy", size: 20))
+//                                    .shadow(color: .black, radius: 3, x: 0, y: 0)
+//                                    .padding(.bottom, 50)
+//                                    .padding(.leading, 50)
+//                                    .opacity(showVideo && showSecondVideo ? 1 : 0)
+//                                    .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
+//                                Spacer()
+//                            }
+//                        }
+//                    )
+//                }
+//
+//                if let image = firstImage {
+//                    Image(nsImage: image)
+//                        .resizable()
+//                        .clipped()
+//                        .edgesIgnoringSafeArea(.all)
+//                        .overlay(
+//                            VStack {
+//                                Spacer()
+//                                HStack {
+//                                    Text(firstPhotographer)
+//                                        .foregroundColor(.white)
+//                                        .font(.custom("Noteworthy", size: 20))
+//                                        .shadow(color: .black, radius: 3, x: 0, y: 0)
+//                                        .padding(.bottom, 50)
+//                                        .padding(.leading, 50)
+//                                        .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
+//                                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
+//                                    Spacer()
+//                                }
+//                            }
+//                        )
+//                        .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
+//                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
+//                } else {
+//                    Color.clear
+//                }
+//
+//                if let image = secondImage {
+//                    Image(nsImage: image)
+//                        .resizable()
+//                        .clipped()
+//                        .edgesIgnoringSafeArea(.all)
+//                        .overlay(
+//                            VStack {
+//                                Spacer()
+//                                HStack {
+//                                    Text(secondPhotographer)
+//                                        .foregroundColor(.white)
+//                                        .font(.custom("Noteworthy", size: 20))
+//                                        .shadow(color: .black, radius: 3, x: 0, y: 0)
+//                                        .padding(.bottom, 50)
+//                                        .padding(.leading, 50)
+//                                        .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
+//                                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
+//                                    Spacer()
+//                                }
+//                            }
+//                        )
+//                        .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
+//                        .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
+//                }  else {
+//                    Color.clear
+//                }
+//                if index == 0 {
+//                    DigitalWatchView(x: x, y: y)
+//                }
+//            }
+//        }
+//        .frame(maxWidth: .infinity, maxHeight: .infinity)
+//        .onChange(of: replaceImageAfter) { newValue in
+//            resetImageOrBackgroundChangeTimer()
+//        }
+//        .onAppear {
+//            print("onAppear: \(index)")
+//            guard !stateObject.viewAppeared else { return }
+//            stateObject.viewAppeared = true
+//            print("inside onAppear: \(index)")
+//            backgroundColor = randomGentleColor()
+//
+//            startAccessingFolder()
+//
+//            updateHotKey()
+//
+//            if !usePhotosFromPexels, !useVideosFromPexels {
+//                imageAndVideoNames = loadImageAndVideoNames()
+//            }
+//
+//            if index == 0 {
+//                handlePexelsPhotos()
+//                handlePexelsVideos()
+//            }
+//        }
+//        .onChange(of: hotKeyString) { _ in
+//            updateHotKey()
+//        }
+//        .onChange(of: keyString1) { _ in
+//            updateHotKey()
+//        }
+//        .onChange(of: keyString2) { _ in
+//            updateHotKey()
+//        }
+//        .onChange(of: selectedFolderPath) { _ in
+//            startAccessingFolder()
+//            startWatchingFolder(imageFolder: selectedFolderPath)
+//        }
+//        .onChange(of: usePhotosFromPexels) { newValue in
+//            if newValue {
+//                if index == 0 {
+//                    handlePexelsPhotos()
+//                }
+//            } else {
+//                if let pexelsDirectoryUrl = pexelsDirectoryUrl {
+//                    clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+//                    appDelegate.pexelsPhotos = []
+//                    imageAndVideoNames = loadImageAndVideoNames()
+//                    //                    appDelegate.loadImages.toggle()
+//                }
+//            }
+//        }
+//        .onChange(of: useVideosFromPexels) { newValue in
+//            if newValue {
+//                if index == 0 {
+//                    handlePexelsVideos()
+//                }
+//            } else {
+//                if let pexelsDirectoryUrl = pexelsDirectoryUrl {
+//                    clearPexelVideos(folderURL: pexelsDirectoryUrl, fileName: "videoList.txt")
+//                    appDelegate.pexelsVideos = []
+//                    imageAndVideoNames = loadImageAndVideoNames()
+//                    //                    appDelegate.loadImages.toggle()
+//                }
+//            }
+//        }
+//        .onDisappear {
+//            print("before onDisapear")
+//            //            timer?.invalidate()
+//            resetWatchPosition()
+//            stopChangeTimer()
+//            if let url = URL(string: selectedFolderPath) {
+//                url.stopAccessingSecurityScopedResource()
+//            }
+//            print("after onDisapear")
+//        }
+//        .onReceive(appDelegate.$showWindow, perform: { showWindow in
+//            print("received showWindow \(showWindow) \(index)")
+//            if showWindow {
+//                showApp()
+//            } else {
+//                hideApp()
+//            }
+//        })
+//        .onReceive(appDelegate.$startTimer, perform: { _ in
+//            if !showVideo {
+//                startScreenChangeTimer()
+////                changeScreenImageVideoOrColor()
+//            }
+//            startMonitoringUserInput()
+//        })
+//        .onReceive(appDelegate.$loadImagesAndVideos, perform: { _ in
+//            print("loadImagesAndVideos: \(index)")
+//            if stateObject.ignoreFirstLoadImagesAndVideos {
+//                stateObject.ignoreFirstLoadImagesAndVideos = false
+//                return
+//            }
+//            if index > 0 && usePhotosFromPexels {
+//                appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
+//            }
+//            imageAndVideoNames = loadImageAndVideoNames()
+//        })
+//        .onReceive(appDelegate.$networkIsReachable, perform: { _ in
+//            print("onReceive \(index) gNetworkIsReachable: \(gNetworkIsReachable) imageOrBackgroundChangeTimer == nil:   \(imageOrBackgroundChangeTimer == nil)")
+//            showAccordingToNetworkReachability()
+//        })
+//    }
 
     func showAccordingToNetworkReachability () {
         let showingVideos = imageAndVideoNames.contains(where: { imageOrVideo in
@@ -409,7 +676,7 @@ struct ContentView: View {
         }
     }
 
-    func startAccessingFolder() {
+    func startAccessingFolder(loadImages: Bool? = nil) {
         if let bookmarkData = imageTopFolderBookmarkData {
             do {
                 var isStale = false
@@ -419,7 +686,10 @@ struct ContentView: View {
                 } else {
                     if url.startAccessingSecurityScopedResource() {
                         debugPrint("Successfully accessed security-scoped resource")
-//                        imageAndVideoNames = loadImageAndVideoNames()
+                        if let loadImages = loadImages,
+                           loadImages {
+                            imageAndVideoNames = loadImageAndVideoNames()
+                        }
                     } else {
                         debugPrint("Error accessing security-scoped resource")
                     }
