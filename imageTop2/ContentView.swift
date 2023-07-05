@@ -6,6 +6,14 @@ import HotKey
 
 //var gShowWatch = true
 
+class StateObjectVariables: ObservableObject {
+    @Published var firstVideoPath = ""
+    @Published var secondVideoPath = ""
+    @Published var viewAppeared = false
+//    @Published var loadImagesAndVideos = false
+    @Published var ignoreFirstLoadImagesAndVideos = true
+}
+
 func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
     var seed = UInt64(Date().timeIntervalSince1970)
     let seedData = Data(bytes: &seed, count: MemoryLayout<UInt64>.size)
@@ -19,6 +27,8 @@ func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
 
 struct ContentView: View {
     var index: Int
+
+    @StateObject var stateObject = StateObjectVariables()
 
     @State  var directoryWatcher: DirectoryWatcher?
 
@@ -35,8 +45,9 @@ struct ContentView: View {
     @State var firstPhotographer = ""
     @State var secondPhotographer = ""
     @State var showVideo = false
-    @State var firstVideoPath = ""
-    @State var secondVideoPath = ""
+
+//    @State var stateObject.firstVideoPath = ""
+//    @State var stateObject.secondVideoPath = ""
     @State var startShowVideo = false
     @State var startShowImage = false
     @State var networkIsReachableOrNotShowingVideos = false
@@ -116,8 +127,8 @@ struct ContentView: View {
                     .animation(.linear(duration: 1), value: showFadeColor)
                     .edgesIgnoringSafeArea(.all)
 
-                if firstVideoPath != "",
-                   let url = firstVideoPath.starts(with: "https:") ? URL(string: firstVideoPath) : URL(fileURLWithPath: firstVideoPath) {
+                if stateObject.firstVideoPath != "",
+                   let url = stateObject.firstVideoPath.starts(with: "https:") ? URL(string: stateObject.firstVideoPath) : URL(fileURLWithPath: stateObject.firstVideoPath) {
                     VideoPlayerView(url: url, index: index) {
                         changeScreenImageVideoOrColor()
                     }
@@ -142,8 +153,8 @@ struct ContentView: View {
                     )
                 }
 
-                if secondVideoPath != "",
-                   let url = secondVideoPath.starts(with: "https:") ? URL(string: secondVideoPath) : URL(fileURLWithPath: secondVideoPath) {
+                if stateObject.secondVideoPath != "",
+                   let url = stateObject.secondVideoPath.starts(with: "https:") ? URL(string: stateObject.secondVideoPath) : URL(fileURLWithPath: stateObject.secondVideoPath) {
                     VideoPlayerView(url: url, index: index) {
                         changeScreenImageVideoOrColor()
                     }
@@ -231,6 +242,10 @@ struct ContentView: View {
             resetImageOrBackgroundChangeTimer()
         }
         .onAppear {
+            print("onAppear: \(index)")
+            guard !stateObject.viewAppeared else { return }
+            stateObject.viewAppeared = true
+            print("inside onAppear: \(index)")
             backgroundColor = randomGentleColor()
 
             startAccessingFolder()
@@ -239,7 +254,6 @@ struct ContentView: View {
 
             if index == 0 {
                 handlePexelsPhotos()
-
                 handlePexelsVideos()
             }
         }
@@ -310,8 +324,12 @@ struct ContentView: View {
             startMonitoringUserInput()
         })
         .onReceive(appDelegate.$loadImagesAndVideos, perform: { _ in
-            print("loadImages: \(index)")
-            if index > 0 {
+            print("loadImagesAndVideos: \(index)")
+            if stateObject.ignoreFirstLoadImagesAndVideos {
+                stateObject.ignoreFirstLoadImagesAndVideos = false
+                return
+            }
+            if index > 0 && usePhotosFromPexels {
                 appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
             }
             imageAndVideoNames = loadImageAndVideoNames()
@@ -349,8 +367,8 @@ struct ContentView: View {
             if imageOrVideoMode {
                 firstImage = nil
                 secondImage = nil
-                firstVideoPath = ""
-                secondVideoPath = ""
+                stateObject.firstVideoPath = ""
+                stateObject.secondVideoPath = ""
                 imageOrVideoMode = false
                 imageOrVideoMode = false
             }
@@ -400,7 +418,7 @@ struct ContentView: View {
                 } else {
                     if url.startAccessingSecurityScopedResource() {
                         debugPrint("Successfully accessed security-scoped resource")
-                        imageAndVideoNames = loadImageAndVideoNames()
+//                        imageAndVideoNames = loadImageAndVideoNames()
                     } else {
                         debugPrint("Error accessing security-scoped resource")
                     }
@@ -433,7 +451,7 @@ struct ContentView: View {
         showAccordingToNetworkReachability()
         if showVideo, networkIsReachableOrNotShowingVideos,
            let player = gPlayers[index] {
-            print("video1 play \(index)")
+            print("video1 play: \(index) \(index) stateObject.firstVideoPath: \(stateObject.firstVideoPath) stateObject.secondVideoPath: \(stateObject.secondVideoPath)")
             player.play()
             if let timer = gTimers[index] {
                 timer.resume()
@@ -444,7 +462,7 @@ struct ContentView: View {
     func hotkeyPressed() {
         debugPrint("hotkey pressed")
         //        showApp()
-        appDelegate.showWindow = true
+//        appDelegate.showWindow = true
         appDelegate.hideSettings()
         if index == 0 {
             WindowManager.shared.enterFullScreen()
@@ -542,8 +560,8 @@ struct ContentView: View {
                 }
             } while (newRandomImageOrVideoPath == firstImagePath && !showSecondImage)
             || (newRandomImageOrVideoPath == secondImagePath && showSecondImage)
-            || (newRandomImageOrVideoPath == firstVideoPath)
-            || (newRandomImageOrVideoPath == secondVideoPath)
+            || (newRandomImageOrVideoPath == stateObject.firstVideoPath)
+            || (newRandomImageOrVideoPath == stateObject.secondVideoPath)
 
             print("video newRandoImage \(index) \(newRandomImageOrVideoPath)")
 
@@ -557,15 +575,20 @@ struct ContentView: View {
                     photographer = videoComponents[1]
                 }
                 if showSecondVideo {
-                    firstVideoPath =
-//                    firstVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" :
-                    newRandomImageOrVideoPath
-                    firstPhotographer = photographer
+                    DispatchQueue.main.async {
+
+                        stateObject.firstVideoPath =
+                        //                    stateObject.firstVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" :
+                        newRandomImageOrVideoPath
+                        firstPhotographer = photographer
+                    }
                 } else {
-                    secondVideoPath =
-//                    secondVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" :
-                    newRandomImageOrVideoPath
-                    secondPhotographer = photographer
+                    DispatchQueue.main.async {
+                        stateObject.secondVideoPath =
+                        //                    stateObject.secondVideoPath == newRandomImageOrVideoPath ? "https://media.istockphoto.com/id/1389532697/video/choosing-the-right-shade-from-color-palette-collection-closeup.mp4?s=mp4-640x640-is&k=20&c=2ZJHKhw1tu7x_uu75Ab0gI9InHHfS-wqYCOPhdNb9i0=" :
+                        newRandomImageOrVideoPath
+                        secondPhotographer = photographer
+                    }
                 }
                 startShowVideo = false
                 if !showVideo {
@@ -679,7 +702,7 @@ struct ContentView: View {
     }
 
     func loadImageAndVideoNames(fromPexel: URL? = nil) -> [String] {
-        debugPrint("loadImageNames")
+        debugPrint("loadImageNames: \(index) fromPexel: \(fromPexel?.absoluteString ?? "")")
         let imageFolder = selectedFolderPath
 
         let folderURL = fromPexel == nil ? URL(fileURLWithPath: imageFolder) : fromPexel!
@@ -717,8 +740,8 @@ struct ContentView: View {
             if !imageOrVideoMode {
                 firstImage = nil
                 secondImage = nil
-                firstVideoPath = ""
-                secondVideoPath = ""
+                stateObject.firstVideoPath = ""
+                stateObject.secondVideoPath = ""
             }
         } catch {
             debugPrint("Error loading image names: \(error)")

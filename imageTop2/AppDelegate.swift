@@ -50,6 +50,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         print("windowDidEnterFullScreen")
         inactivityTimer?.invalidate()
         startTimer.toggle()
+        showWindow = true
     }
 
     var prevSeconds: CFTimeInterval = 0
@@ -243,7 +244,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         WindowManager.shared.enterFullScreen()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
             hideSettings()
-            showWindow = true // To cause to call showApp.
+//            showWindow = true // To cause to call showApp.
             print("showMainWindow")
             ignoreMonitor = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [self] in

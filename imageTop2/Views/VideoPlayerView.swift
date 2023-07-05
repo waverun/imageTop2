@@ -34,6 +34,7 @@ struct VideoPlayerView: NSViewRepresentable {
 //        getVideoLength(videoURL: url)
 
         gPlayers[index] = player
+        print("gPlayers[index]: \(index)")
         // create a player layer
         let playerLayer = AVPlayerLayer(player: player)
 
