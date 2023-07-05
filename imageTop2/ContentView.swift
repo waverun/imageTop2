@@ -214,64 +214,106 @@ struct ContentView: View {
 
     var imageView: some View {
         ZStack {
-            if let image = firstImage {
-                Image(nsImage: image)
-                    .resizable()
-                    .clipped()
-                    .edgesIgnoringSafeArea(.all)
-                    .overlay(
-                        VStack {
-                            Spacer()
-                            HStack {
-                                Text(firstPhotographer)
-                                    .foregroundColor(.white)
-                                    .font(.custom("Noteworthy", size: 20))
-                                    .shadow(color: .black, radius: 3, x: 0, y: 0)
-                                    .padding(.bottom, 50)
-                                    .padding(.leading, 50)
-                                    .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
-                                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
-                                Spacer()
-                            }
-                        }
-                    )
-                    .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
-                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
-            } else {
-                Color.clear
-            }
+            imageViewBuilder(image: firstImage, photographer: firstPhotographer, condition: !(showSecondImage || showVideo || loadingImage))
+            imageViewBuilder(image: secondImage, photographer: secondPhotographer, condition: showSecondImage && !showVideo && !loadingImage)
 
-            if let image = secondImage {
-                Image(nsImage: image)
-                    .resizable()
-                    .clipped()
-                    .edgesIgnoringSafeArea(.all)
-                    .overlay(
-                        VStack {
-                            Spacer()
-                            HStack {
-                                Text(secondPhotographer)
-                                    .foregroundColor(.white)
-                                    .font(.custom("Noteworthy", size: 20))
-                                    .shadow(color: .black, radius: 3, x: 0, y: 0)
-                                    .padding(.bottom, 50)
-                                    .padding(.leading, 50)
-                                    .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
-                                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
-                                Spacer()
-                            }
-                        }
-                    )
-                    .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
-                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
-            }  else {
-                Color.clear
-            }
             if index == 0 {
                 DigitalWatchView(x: x, y: y)
             }
         }
     }
+
+    func imageViewBuilder(image: NSImage?, photographer: String, condition: Bool) -> some View {
+        if let image = image {
+            return AnyView(
+                Image(nsImage: image)
+                    .resizable()
+                    .clipped()
+                    .edgesIgnoringSafeArea(.all)
+                    .overlay(
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Text(photographer)
+                                    .foregroundColor(.white)
+                                    .font(.custom("Noteworthy", size: 20))
+                                    .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                    .padding(.bottom, 50)
+                                    .padding(.leading, 50)
+                                    .opacity(condition ? 1 : 0)
+                                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: condition)
+                                Spacer()
+                            }
+                        }
+                    )
+                    .opacity(condition ? 1 : 0)
+                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: condition)
+            )
+        } else {
+            return AnyView(Color.clear)
+        }
+    }
+
+//    var imageView: some View {
+//        ZStack {
+//            if let image = firstImage {
+//                Image(nsImage: image)
+//                    .resizable()
+//                    .clipped()
+//                    .edgesIgnoringSafeArea(.all)
+//                    .overlay(
+//                        VStack {
+//                            Spacer()
+//                            HStack {
+//                                Text(firstPhotographer)
+//                                    .foregroundColor(.white)
+//                                    .font(.custom("Noteworthy", size: 20))
+//                                    .shadow(color: .black, radius: 3, x: 0, y: 0)
+//                                    .padding(.bottom, 50)
+//                                    .padding(.leading, 50)
+//                                    .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
+//                                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
+//                                Spacer()
+//                            }
+//                        }
+//                    )
+//                    .opacity(showSecondImage || showVideo || loadingImage ? 0 : 1)
+//                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage || showVideo || loadingImage)
+//            } else {
+//                Color.clear
+//            }
+//
+//            if let image = secondImage {
+//                Image(nsImage: image)
+//                    .resizable()
+//                    .clipped()
+//                    .edgesIgnoringSafeArea(.all)
+//                    .overlay(
+//                        VStack {
+//                            Spacer()
+//                            HStack {
+//                                Text(secondPhotographer)
+//                                    .foregroundColor(.white)
+//                                    .font(.custom("Noteworthy", size: 20))
+//                                    .shadow(color: .black, radius: 3, x: 0, y: 0)
+//                                    .padding(.bottom, 50)
+//                                    .padding(.leading, 50)
+//                                    .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
+//                                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
+//                                Spacer()
+//                            }
+//                        }
+//                    )
+//                    .opacity(showSecondImage && !showVideo && !loadingImage ? 1 : 0)
+//                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: showSecondImage && !showVideo && !loadingImage)
+//            }  else {
+//                Color.clear
+//            }
+//            if index == 0 {
+//                DigitalWatchView(x: x, y: y)
+//            }
+//        }
+//    }
 
     func onAppearAction() {
         print("onAppear: \(index)")
