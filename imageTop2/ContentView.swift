@@ -158,59 +158,98 @@ struct ContentView: View {
 
     var videoPlayerView: some View {
         ZStack {
-            if stateObject.firstVideoPath != "",
-               let url = stateObject.firstVideoPath.starts(with: "https:") ? URL(string: stateObject.firstVideoPath) : URL(fileURLWithPath: stateObject.firstVideoPath) {
-                VideoPlayerView(url: url, index: index) {
-                    changeScreenImageVideoOrColor()
-                }
-                .opacity(showVideo && !showSecondVideo ? 1 : 0)
-                .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
-                .edgesIgnoringSafeArea(.all)
-                .overlay(
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Text(firstPhotographer)
-                                .foregroundColor(.white)
-                                .font(.custom("Noteworthy", size: 20))
-                                .shadow(color: .black, radius: 3, x: 0, y: 0)
-                                .padding(.bottom, 50)
-                                .padding(.leading, 50)
-                                .opacity(showVideo && !showSecondVideo ? 1 : 0)
-                                .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
-                            Spacer()
-                        }
-                    }
-                )
-            }
-
-            if stateObject.secondVideoPath != "",
-               let url = stateObject.secondVideoPath.starts(with: "https:") ? URL(string: stateObject.secondVideoPath) : URL(fileURLWithPath: stateObject.secondVideoPath) {
-                VideoPlayerView(url: url, index: index) {
-                    changeScreenImageVideoOrColor()
-                }
-                .opacity(showVideo && showSecondVideo ? 1 : 0)
-                .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
-                .edgesIgnoringSafeArea(.all)
-                .overlay(
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Text(secondPhotographer)
-                                .foregroundColor(.white)
-                                .font(.custom("Noteworthy", size: 20))
-                                .shadow(color: .black, radius: 3, x: 0, y: 0)
-                                .padding(.bottom, 50)
-                                .padding(.leading, 50)
-                                .opacity(showVideo && showSecondVideo ? 1 : 0)
-                                .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
-                            Spacer()
-                        }
-                    }
-                )
-            }
+            videoPlayerBuilder(videoPath: stateObject.firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
+            videoPlayerBuilder(videoPath: stateObject.secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
         }
     }
+
+    func videoPlayerBuilder(videoPath: String, photographer: String, condition: Bool) -> some View {
+        if videoPath != "",
+           let url = videoPath.starts(with: "https:") ? URL(string: videoPath) : URL(fileURLWithPath: videoPath) {
+            return AnyView(
+                VideoPlayerView(url: url, index: index) {
+                    changeScreenImageVideoOrColor()
+                }
+                    .opacity(condition ? 1 : 0)
+                    .animation(.easeIn(duration: condition ? 4 : 4), value: condition)
+                    .edgesIgnoringSafeArea(.all)
+                    .overlay(
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Text(photographer)
+                                    .foregroundColor(.white)
+                                    .font(.custom("Noteworthy", size: 20))
+                                    .shadow(color: .black, radius: 3, x: 0, y: 0)
+                                    .padding(.bottom, 50)
+                                    .padding(.leading, 50)
+                                    .opacity(condition ? 1 : 0)
+                                    .animation(.easeIn(duration: condition ? 4 : 4), value: condition)
+                                Spacer()
+                            }
+                        }
+                    )
+            )
+        } else {
+            return AnyView(EmptyView())
+        }
+    }
+
+//    var videoPlayerView: some View {
+//        ZStack {
+//            if stateObject.firstVideoPath != "",
+//               let url = stateObject.firstVideoPath.starts(with: "https:") ? URL(string: stateObject.firstVideoPath) : URL(fileURLWithPath: stateObject.firstVideoPath) {
+//                VideoPlayerView(url: url, index: index) {
+//                    changeScreenImageVideoOrColor()
+//                }
+//                .opacity(showVideo && !showSecondVideo ? 1 : 0)
+//                .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
+//                .edgesIgnoringSafeArea(.all)
+//                .overlay(
+//                    VStack {
+//                        Spacer()
+//                        HStack {
+//                            Text(firstPhotographer)
+//                                .foregroundColor(.white)
+//                                .font(.custom("Noteworthy", size: 20))
+//                                .shadow(color: .black, radius: 3, x: 0, y: 0)
+//                                .padding(.bottom, 50)
+//                                .padding(.leading, 50)
+//                                .opacity(showVideo && !showSecondVideo ? 1 : 0)
+//                                .animation(.easeIn(duration: showVideo && !showSecondVideo ? 4 : 4), value: showVideo && !showSecondVideo)
+//                            Spacer()
+//                        }
+//                    }
+//                )
+//            }
+//
+//            if stateObject.secondVideoPath != "",
+//               let url = stateObject.secondVideoPath.starts(with: "https:") ? URL(string: stateObject.secondVideoPath) : URL(fileURLWithPath: stateObject.secondVideoPath) {
+//                VideoPlayerView(url: url, index: index) {
+//                    changeScreenImageVideoOrColor()
+//                }
+//                .opacity(showVideo && showSecondVideo ? 1 : 0)
+//                .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
+//                .edgesIgnoringSafeArea(.all)
+//                .overlay(
+//                    VStack {
+//                        Spacer()
+//                        HStack {
+//                            Text(secondPhotographer)
+//                                .foregroundColor(.white)
+//                                .font(.custom("Noteworthy", size: 20))
+//                                .shadow(color: .black, radius: 3, x: 0, y: 0)
+//                                .padding(.bottom, 50)
+//                                .padding(.leading, 50)
+//                                .opacity(showVideo && showSecondVideo ? 1 : 0)
+//                                .animation(.easeIn(duration: showVideo && showSecondVideo ? 4 : 4), value: showVideo && showSecondVideo)
+//                            Spacer()
+//                        }
+//                    }
+//                )
+//            }
+//        }
+//    }
 
     var imageView: some View {
         ZStack {
