@@ -56,7 +56,7 @@ struct VideoPlayerView: NSViewRepresentable {
         // play the video
         if appDelegate.showWindow {
             player.play()
-            print("Video1 started playing. makeNSView \(self.index) url: \(url)")
+            print("Video1 started playing. \(self.index) url: \(url) makeNSView \(Date())")
         }
         return view
     }
@@ -82,6 +82,7 @@ struct VideoPlayerView: NSViewRepresentable {
                 let duration = try await getVideoLength(videoURL: url)
                 print("Timer: \(index) Video duration: \(CMTimeGetSeconds(duration)) seconds")
                 let iDuration = Int(CMTimeGetSeconds(duration))
+                print("iDuration \(index) \(iDuration)")
                 if iDuration > 4 {
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(iDuration - 2)) {
                     let pausableTimer = PausableTimer(index: index)
@@ -133,7 +134,7 @@ struct VideoPlayerView: NSViewRepresentable {
             // Play the video
             if appDelegate.showWindow {
                 player.play()
-                print("Video1 started playing. updateNSView \(self.index) url: \(url)")
+                print("Video1 started playing. \(self.index) url: \(url) updateNSView \(Date())")
             }
         }
     }

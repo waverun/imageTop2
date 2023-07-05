@@ -305,7 +305,7 @@ struct ContentView: View {
         .onReceive(appDelegate.$startTimer, perform: { _ in
             if !showVideo {
                 startScreenChangeTimer()
-                changeScreenImageVideoOrColor()
+//                changeScreenImageVideoOrColor()
             }
             startMonitoringUserInput()
         })
