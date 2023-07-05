@@ -252,6 +252,10 @@ struct ContentView: View {
 
             updateHotKey()
 
+            if !usePhotosFromPexels, !useVideosFromPexels {
+                imageAndVideoNames = loadImageAndVideoNames()
+            }
+
             if index == 0 {
                 handlePexelsPhotos()
                 handlePexelsVideos()
@@ -537,100 +541,229 @@ struct ContentView: View {
     }
 
     func loadRandomImageOrVideo() {
-        func extractNameFromFilePath(filePath: String) -> String {
-            let components = filePath.components(separatedBy: "/")
-            if let pexelsIndex = components.firstIndex(of: "pexels") {
-                let fileName = components[pexelsIndex + 1]
-                let nameComponents = fileName.components(separatedBy: "_")
-                return nameComponents[0]
-            }
-            return ""
-        }
-
         debugPrint("video loadRandomImageOrVideo \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
 
         DispatchQueue.global(qos: .userInitiated).async {
-            var newRandomImageOrVideoPath = ""
-            repeat {
-                if let newRandomImageName = imageAndVideoNames.randomElement() {
-                    newRandomImageOrVideoPath = "\(newRandomImageName)"
-                }
-            } while (newRandomImageOrVideoPath == firstImagePath && !showSecondImage)
-            || (newRandomImageOrVideoPath == secondImagePath && showSecondImage)
-            || (newRandomImageOrVideoPath == stateObject.firstVideoPath)
-            || (newRandomImageOrVideoPath == stateObject.secondVideoPath)
-
-            print("video newRandoImage \(index) \(newRandomImageOrVideoPath)")
-
-            if newRandomImageOrVideoPath.starts(with: "https:")
-            || isVideoFile(atPath: newRandomImageOrVideoPath) {
-                print("isVideFile: \(index) newRandomImageOrVideoPath: \(newRandomImageOrVideoPath)")
-                let videoComponents = newRandomImageOrVideoPath.components(separatedBy: ",")
-                var photographer = ""
-                newRandomImageOrVideoPath = videoComponents[0]
-                if videoComponents.count > 1 {
-                    photographer = videoComponents[1]
-                }
-                if showSecondVideo {
-                    DispatchQueue.main.async {
-                        stateObject.firstVideoPath = newRandomImageOrVideoPath
-                        firstPhotographer = photographer
-                    }
+            if let newRandomImageOrVideoPath = self.generateRandomPath() {
+                if self.isVideo(newRandomImageOrVideoPath) {
+                    self.handleVideo(newRandomImageOrVideoPath)
                 } else {
-                    DispatchQueue.main.async {
-                        stateObject.secondVideoPath = newRandomImageOrVideoPath
-                        secondPhotographer = photographer
-                    }
+                    self.handleImage(newRandomImageOrVideoPath)
                 }
-                startShowVideo = false
-                if !showVideo {
-                    stopChangeTimer()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                        startShowVideo = true
-                        showVideo = true
-                        showSecondVideo.toggle()
-                    }
-                } else {
-                    showSecondVideo.toggle()
-                }
-                return
-            }
-
-            guard let nsImage = NSImage(contentsOfFile: newRandomImageOrVideoPath)
-            else {
-                imageAndVideoNames = loadImageAndVideoNames()
-                loadingImage = true
-                return
-            }
-
-            var photographer = ""
-            if newRandomImageOrVideoPath.contains("/pexels/") {
-                photographer = extractNameFromFilePath(filePath: newRandomImageOrVideoPath)
-            }
-
-            self.showSecondImage.toggle()
-            startShowImage = false
-            DispatchQueue.main.async {
-                if showVideo {
-                    startShowImage = true
-                    startScreenChangeTimer()
-                    showVideo = false
-                }
-                self.loadingImage = true
-                if showSecondImage {
-                    self.firstImagePath = newRandomImageOrVideoPath
-                    self.firstImage = nsImage
-                    self.firstPhotographer = photographer
-                } else {
-                    self.secondImagePath = newRandomImageOrVideoPath
-                    self.secondImage = nsImage
-                    self.secondPhotographer = photographer
-                }
-                self.showSecondImage.toggle()
-                self.loadingImage = false
             }
         }
     }
+
+    private func generateRandomPath() -> String? {
+        var newRandomImageOrVideoPath = ""
+        repeat {
+            if let newRandomImageName = imageAndVideoNames.randomElement() {
+                newRandomImageOrVideoPath = "\(newRandomImageName)"
+            }
+        } while self.shouldRegeneratePath(newRandomImageOrVideoPath)
+        return newRandomImageOrVideoPath
+    }
+
+    private func shouldRegeneratePath(_ path: String) -> Bool {
+        return (path == firstImagePath && !showSecondImage)
+        || (path == secondImagePath && showSecondImage)
+        || (path == stateObject.firstVideoPath)
+        || (path == stateObject.secondVideoPath)
+    }
+
+    private func isVideo(_ path: String) -> Bool {
+        return path.starts(with: "https:") || isVideoFile(atPath: path)
+    }
+
+    private func handleVideo(_ path: String) {
+        print("isVideFile: \(index) newRandomImageOrVideoPath: \(path)")
+        let videoComponents = path.components(separatedBy: ",")
+        let newVideoPath = videoComponents[0]
+        let photographer = videoComponents.count > 1 ? videoComponents[1] : ""
+        setNewVideo(path: newVideoPath, photographer: photographer)
+    }
+
+    private func setNewVideo(path: String, photographer: String) {
+        if showSecondVideo {
+            DispatchQueue.main.async {
+                stateObject.firstVideoPath = path
+                firstPhotographer = photographer
+            }
+        } else {
+            DispatchQueue.main.async {
+                stateObject.secondVideoPath = path
+                secondPhotographer = photographer
+            }
+        }
+        startShowVideo = false
+        manageVideoDisplay()
+    }
+
+    private func manageVideoDisplay() {
+        if !showVideo {
+            stopChangeTimer()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                startShowVideo = true
+                showVideo = true
+                showSecondVideo.toggle()
+            }
+        } else {
+            showSecondVideo.toggle()
+        }
+    }
+
+    private func handleImage(_ path: String) {
+        guard let nsImage = NSImage(contentsOfFile: path) else {
+            imageAndVideoNames = loadImageAndVideoNames()
+            loadingImage = true
+            return
+        }
+
+        let photographer = path.contains("/pexels/") ? extractNameFromFilePath(filePath: path) : ""
+        manageImageDisplay(path: path, nsImage: nsImage, photographer: photographer)
+    }
+
+    private func manageImageDisplay(path: String, nsImage: NSImage, photographer: String) {
+        self.showSecondImage.toggle()
+        startShowImage = false
+        DispatchQueue.main.async {
+            self.manageVideoToImageTransition()
+            self.loadingImage = true
+            if showSecondImage {
+                self.setFirstImage(path: path, nsImage: nsImage, photographer: photographer)
+            } else {
+                self.setSecondImage(path: path, nsImage: nsImage, photographer: photographer)
+            }
+            self.showSecondImage.toggle()
+            self.loadingImage = false
+        }
+    }
+
+    private func manageVideoToImageTransition() {
+        if showVideo {
+            startShowImage = true
+            startScreenChangeTimer()
+            showVideo = false
+        }
+    }
+
+    private func setFirstImage(path: String, nsImage: NSImage, photographer: String) {
+        self.firstImagePath = path
+        self.firstImage = nsImage
+        self.firstPhotographer = photographer
+    }
+
+    private func setSecondImage(path: String, nsImage: NSImage, photographer: String) {
+        self.secondImagePath = path
+        self.secondImage = nsImage
+        self.secondPhotographer = photographer
+    }
+
+    private func extractNameFromFilePath(filePath: String) -> String {
+        let components = filePath.components(separatedBy: "/")
+        if let pexelsIndex = components.firstIndex(of: "pexels") {
+            let fileName = components[pexelsIndex + 1]
+            let nameComponents = fileName.components(separatedBy: "_")
+            return nameComponents[0]
+        }
+        return ""
+    }
+
+//    func loadRandomImageOrVideo() {
+//        func extractNameFromFilePath(filePath: String) -> String {
+//            let components = filePath.components(separatedBy: "/")
+//            if let pexelsIndex = components.firstIndex(of: "pexels") {
+//                let fileName = components[pexelsIndex + 1]
+//                let nameComponents = fileName.components(separatedBy: "_")
+//                return nameComponents[0]
+//            }
+//            return ""
+//        }
+//
+//        debugPrint("video loadRandomImageOrVideo \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
+//
+//        DispatchQueue.global(qos: .userInitiated).async {
+//            var newRandomImageOrVideoPath = ""
+//            repeat {
+//                if let newRandomImageName = imageAndVideoNames.randomElement() {
+//                    newRandomImageOrVideoPath = "\(newRandomImageName)"
+//                }
+//            } while (newRandomImageOrVideoPath == firstImagePath && !showSecondImage)
+//            || (newRandomImageOrVideoPath == secondImagePath && showSecondImage)
+//            || (newRandomImageOrVideoPath == stateObject.firstVideoPath)
+//            || (newRandomImageOrVideoPath == stateObject.secondVideoPath)
+//
+//            print("video newRandoImage \(index) \(newRandomImageOrVideoPath)")
+//
+//            if newRandomImageOrVideoPath.starts(with: "https:")
+//            || isVideoFile(atPath: newRandomImageOrVideoPath) {
+//                print("isVideFile: \(index) newRandomImageOrVideoPath: \(newRandomImageOrVideoPath)")
+//                let videoComponents = newRandomImageOrVideoPath.components(separatedBy: ",")
+//                var photographer = ""
+//                newRandomImageOrVideoPath = videoComponents[0]
+//                if videoComponents.count > 1 {
+//                    photographer = videoComponents[1]
+//                }
+//                if showSecondVideo {
+//                    DispatchQueue.main.async {
+//                        stateObject.firstVideoPath = newRandomImageOrVideoPath
+//                        firstPhotographer = photographer
+//                    }
+//                } else {
+//                    DispatchQueue.main.async {
+//                        stateObject.secondVideoPath = newRandomImageOrVideoPath
+//                        secondPhotographer = photographer
+//                    }
+//                }
+//                startShowVideo = false
+//                if !showVideo {
+//                    stopChangeTimer()
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                        startShowVideo = true
+//                        showVideo = true
+//                        showSecondVideo.toggle()
+//                    }
+//                } else {
+//                    showSecondVideo.toggle()
+//                }
+//                return
+//            }
+//
+//            guard let nsImage = NSImage(contentsOfFile: newRandomImageOrVideoPath)
+//            else {
+//                imageAndVideoNames = loadImageAndVideoNames()
+//                loadingImage = true
+//                return
+//            }
+//
+//            var photographer = ""
+//            if newRandomImageOrVideoPath.contains("/pexels/") {
+//                photographer = extractNameFromFilePath(filePath: newRandomImageOrVideoPath)
+//            }
+//
+//            self.showSecondImage.toggle()
+//            startShowImage = false
+//            DispatchQueue.main.async {
+//                if showVideo {
+//                    startShowImage = true
+//                    startScreenChangeTimer()
+//                    showVideo = false
+//                }
+//                self.loadingImage = true
+//                if showSecondImage {
+//                    self.firstImagePath = newRandomImageOrVideoPath
+//                    self.firstImage = nsImage
+//                    self.firstPhotographer = photographer
+//                } else {
+//                    self.secondImagePath = newRandomImageOrVideoPath
+//                    self.secondImage = nsImage
+//                    self.secondPhotographer = photographer
+//                }
+//                self.showSecondImage.toggle()
+//                self.loadingImage = false
+//            }
+//        }
+//    }
 
     func handlePexelsVideos() {
         print("handlePexelsVideos: \(index)")
@@ -640,7 +773,6 @@ struct ContentView: View {
                 DispatchQueue.main.async {
                     appDelegate.pexelsVideos = videosList
                     appDelegate.loadImagesAndVideos.toggle()
-//                    _ = loadImageAndVideoNames()
                 }
             }
         }
@@ -657,7 +789,9 @@ struct ContentView: View {
                     downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
                         appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
                         pexelDownloadSemaphore.signal()
-                        appDelegate.loadImagesAndVideos.toggle()
+                        if !useVideosFromPexels {
+                            appDelegate.loadImagesAndVideos.toggle()
+                        }
                     }
                 } else {
                     pexelDownloadSemaphore.signal()
