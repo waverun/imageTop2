@@ -340,9 +340,9 @@ struct ContentView: View {
         if gNetworkIsReachable {
             networkIsReachableOrNotShowingVideos = true
             imageOrVideoMode = imageAndVideoNames.count > 2
-            if imageOrBackgroundChangeTimer == nil {
-                startScreenChangeTimer()
-            }
+//            if imageOrBackgroundChangeTimer == nil {
+//                startScreenChangeTimer()
+//            }
         } else {
             networkIsReachableOrNotShowingVideos = false
             showVideo = false
@@ -508,9 +508,10 @@ struct ContentView: View {
             changeScreenImageVideoOrColor()
         }
 
-        print("startScreenChangeTimer \(index)")
+        print("startScreenChangeTimer: \(index) \(Date())")
 
         imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter, repeats: true) { [self] _ in
+            print("imageOrBackgroundChangeTimer: \(index) \(Date())")
             changeScreenImageVideoOrColor()
         }
     }
