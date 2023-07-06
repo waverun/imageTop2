@@ -6,12 +6,13 @@ import HotKey
 
 //var gShowWatch = true
 
-class StateObjectVariables: ObservableObject {
+class ContentViewStateObjectVariables: ObservableObject {
     @Published var firstVideoPath = ""
     @Published var secondVideoPath = ""
     @Published var viewAppeared = false
 //    @Published var loadImagesAndVideos = false
     @Published var ignoreFirstLoadImagesAndVideos = true
+    @Published var unusedPaths = Set<String>()
 }
 
 func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
@@ -28,7 +29,7 @@ func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
 struct ContentView: View {
     var index: Int
 
-    @StateObject var stateObject = StateObjectVariables()
+    @StateObject var stateObjects = ContentViewStateObjectVariables()
 
     @State  var directoryWatcher: DirectoryWatcher?
 
@@ -158,8 +159,8 @@ struct ContentView: View {
 
     var videoPlayerView: some View {
         ZStack {
-            videoPlayerBuilder(videoPath: stateObject.firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
-            videoPlayerBuilder(videoPath: stateObject.secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
+            videoPlayerBuilder(videoPath: stateObjects.firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
+            videoPlayerBuilder(videoPath: stateObjects.secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
         }
     }
 
@@ -356,8 +357,8 @@ struct ContentView: View {
 
     func onAppearAction() {
         debugPrint("onAppear: \(index)")
-        guard !stateObject.viewAppeared else { return }
-        stateObject.viewAppeared = true
+        guard !stateObjects.viewAppeared else { return }
+        stateObjects.viewAppeared = true
         debugPrint("inside onAppear: \(index)")
         backgroundColor = randomGentleColor()
 
@@ -448,8 +449,8 @@ struct ContentView: View {
 
     func handleLoadImagesAndVideosChange(_ value: Bool) {
         debugPrint("loadImagesAndVideos: \(index)")
-        if stateObject.ignoreFirstLoadImagesAndVideos {
-            stateObject.ignoreFirstLoadImagesAndVideos = false
+        if stateObjects.ignoreFirstLoadImagesAndVideos {
+            stateObjects.ignoreFirstLoadImagesAndVideos = false
             return
         }
         if index > 0 && usePhotosFromPexels {
@@ -716,8 +717,8 @@ struct ContentView: View {
                 if imageOrVideoMode {
                     firstImage = nil
                     secondImage = nil
-                    stateObject.firstVideoPath = ""
-                    stateObject.secondVideoPath = ""
+                    stateObjects.firstVideoPath = ""
+                    stateObjects.secondVideoPath = ""
                     imageOrVideoMode = false
                     imageOrVideoMode = false
                 }
@@ -809,7 +810,7 @@ struct ContentView: View {
         showAccordingToNetworkReachability()
         if showVideo, networkIsReachableOrNotShowingVideos,
            let player = gPlayers[index] {
-            debugPrint("video1 play: \(index) \(index) stateObject.firstVideoPath: \(stateObject.firstVideoPath) stateObject.secondVideoPath: \(stateObject.secondVideoPath)")
+            debugPrint("video1 play: \(index) \(index) stateObject.firstVideoPath: \(stateObjects.firstVideoPath) stateObject.secondVideoPath: \(stateObjects.secondVideoPath)")
             player.play()
             if let timer = gTimers[index] {
                 timer.resume()
@@ -912,20 +913,39 @@ struct ContentView: View {
     }
 
     private func generateRandomPath() -> String? {
-        var newRandomImageOrVideoPath = ""
-        repeat {
-            if let newRandomImageName = imageAndVideoNames.randomElement() {
-                newRandomImageOrVideoPath = "\(newRandomImageName)"
-            }
-        } while self.shouldRegeneratePath(newRandomImageOrVideoPath)
-        return newRandomImageOrVideoPath
+        // Check if all paths have been used, if so, reset the unusedPaths array
+        if stateObjects.unusedPaths.isEmpty {
+            stateObjects.unusedPaths = Set(imageAndVideoNames)
+        }
+
+        // Get a random unused path
+        guard let randomPath = stateObjects.unusedPaths.randomElement() else {
+            return nil
+        }
+
+        // Remove the used path from the unusedPaths array
+        if let index = stateObjects.unusedPaths.firstIndex(of: randomPath) {
+            stateObjects.unusedPaths.remove(at: index)
+        }
+
+        return randomPath
     }
+
+//    private func generateRandomPath() -> String? {
+//        var newRandomImageOrVideoPath = ""
+//        repeat {
+//            if let newRandomImageName = imageAndVideoNames.randomElement() {
+//                newRandomImageOrVideoPath = "\(newRandomImageName)"
+//            }
+//        } while self.shouldRegeneratePath(newRandomImageOrVideoPath)
+//        return newRandomImageOrVideoPath
+//    }
 
     private func shouldRegeneratePath(_ path: String) -> Bool {
         return (path == firstImagePath && !showSecondImage)
         || (path == secondImagePath && showSecondImage)
-        || (path == stateObject.firstVideoPath)
-        || (path == stateObject.secondVideoPath)
+        || (path == stateObjects.firstVideoPath)
+        || (path == stateObjects.secondVideoPath)
     }
 
     private func isVideo(_ path: String) -> Bool {
@@ -943,12 +963,12 @@ struct ContentView: View {
     private func setNewVideo(path: String, photographer: String) {
         if showSecondVideo {
             DispatchQueue.main.async {
-                stateObject.firstVideoPath = path
+                stateObjects.firstVideoPath = path
                 firstPhotographer = photographer
             }
         } else {
             DispatchQueue.main.async {
-                stateObject.secondVideoPath = path
+                stateObjects.secondVideoPath = path
                 secondPhotographer = photographer
             }
         }
@@ -1225,8 +1245,8 @@ struct ContentView: View {
             if !imageOrVideoMode {
                 firstImage = nil
                 secondImage = nil
-                stateObject.firstVideoPath = ""
-                stateObject.secondVideoPath = ""
+                stateObjects.firstVideoPath = ""
+                stateObjects.secondVideoPath = ""
             }
         } catch {
             debugPrint("Error loading image names: \(error)")
