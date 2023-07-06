@@ -901,8 +901,8 @@ struct ContentView: View {
     func loadRandomImageOrVideo() {
         debugPrint("video loadRandomImageOrVideo \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
 
-        DispatchQueue.global(qos: .userInitiated).async {
-            if let newRandomImageOrVideoPath = self.generateRandomPath() {
+        if let newRandomImageOrVideoPath = self.generateRandomPath() {
+            DispatchQueue.global(qos: .userInitiated).async {
                 if self.isVideo(newRandomImageOrVideoPath) {
                     self.handleVideo(newRandomImageOrVideoPath)
                 } else {
