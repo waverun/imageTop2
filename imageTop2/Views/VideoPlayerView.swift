@@ -5,8 +5,13 @@ import SwiftUI
 var gPlayers: [Int: AVPlayer] = [:]
 var gTimers: [Int: PausableTimer] = [:]
 
+class VideoPlayerViewStateObjects: ObservableObject {
+    @Published var pausableTimer : PausableTimer?
+}
+
 struct VideoPlayerView: NSViewRepresentable {
     @EnvironmentObject var appDelegate: AppDelegate
+    @StateObject var stateObjects = VideoPlayerViewStateObjects()
 
     let url: URL
     let index: Int
@@ -86,9 +91,9 @@ struct VideoPlayerView: NSViewRepresentable {
                 debugPrint("iDuration \(index) \(iDuration)")
                 if iDuration > 4 {
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(iDuration - 2)) {
-                    let pausableTimer = PausableTimer(index: index)
-                    gTimers[index] = pausableTimer
-                    pausableTimer.start(interval: TimeInterval(iDuration - 2)) {_ in
+                    stateObjects.pausableTimer = PausableTimer(index: index)
+                    gTimers[index] = stateObjects.pausableTimer
+                    stateObjects.pausableTimer!.start(interval: TimeInterval(iDuration - 2)) {_ in
                         finishedPlaying()
                     }
                 } else {

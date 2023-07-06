@@ -63,7 +63,7 @@ struct ContentView: View {
     @AppStorage("modifierKeyString1") var keyString1: String = "command"
     @AppStorage("modifierKeyString2") var keyString2: String = "control"
     @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
-    @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = false
+    @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = true
 
     //    @State  var imageName: String?
     //    @State  var timer: Timer? = nil
@@ -741,7 +741,13 @@ struct ContentView: View {
         appDelegate.keyAndMouseEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
             debugPrint("in startMonitoringUserInput showWindow: \(appDelegate.showWindow)")
             //            self.hideApp()
+//            stateObject.firstVideoPath = ""
+//            stateObject.secondVideoPath = ""
             if !appDelegate.ignoreMonitor {
+//                for player in gPlayers.enumerated() {
+//                    player.element.value.pause()
+//                    WindowManager.shared.windows[player.offset].orderOut(nil)
+//                }
                 appDelegate.showWindow = false
                 debugPrint("show - startMonitoringUserInput")
             }
@@ -1159,6 +1165,8 @@ struct ContentView: View {
 
     func hideApp() {
         debugPrint("hideApp \(index)")
+//        gPlayers[index]?.pause()
+//        WindowManager.shared.windows[index].orderOut(nil)
         stopChangeTimer()
         stopMonitoringUserInput()
         if index == 0 {

@@ -12,10 +12,10 @@ struct SettingsView: View {
     @AppStorage("modifierKeyString1") private var keyString1: String = "command"
     @AppStorage("modifierKeyString2") private var keyString2: String = "control"
     @AppStorage("usePhotosFromPexels") private var usePhotosFromPexels: Bool = false
-    @AppStorage("useVideosFromPexels") private var useVideosFromPexels: Bool = false
+    @AppStorage("useVideosFromPexels") private var useVideosFromPexels: Bool = true
 
     @State private var usePhotosFromPexelsIsOn: Bool = false
-    @State private var useVideosFromPexelsIsOn: Bool = false
+    @State private var useVideosFromPexelsIsOn: Bool = true
     @State private var selectedFolderPath = ""
 
     private let allKeyNames = Keyboard.keyNames
