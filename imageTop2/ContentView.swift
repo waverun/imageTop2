@@ -160,9 +160,21 @@ struct ContentView: View {
     var videoPlayerView: some View {
         ZStack {
             videoPlayerBuilder(videoPath: stateObjects.firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
+//                .onAppear { videoAppeared(firstVideo: true) }
+//                .onDisappear { videoDisAppeared(firstVideo: true) }
             videoPlayerBuilder(videoPath: stateObjects.secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
+//                .onAppear { videoAppeared(firstVideo: false) }
+//                .onDisappear { videoDisAppeared(firstVideo: false) }
         }
     }
+
+//    func videoAppeared(firstVideo: Bool) {
+//        debugPrint("videoAppearens: Appeared: \(index) firstVideo: \(firstVideo)")
+//    }
+//
+//    func videoDisAppeared(firstVideo: Bool) {
+//        debugPrint("videoAppearens: DisAppeared: \(index) firstVideo: \(firstVideo)")
+//    }
 
     func videoPlayerBuilder(videoPath: String, photographer: String, condition: Bool) -> some View {
         if videoPath != "",
@@ -741,6 +753,7 @@ struct ContentView: View {
 
         appDelegate.keyAndMouseEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
             debugPrint("in startMonitoringUserInput showWindow: \(appDelegate.showWindow)")
+
             //            self.hideApp()
 //            stateObject.firstVideoPath = ""
 //            stateObject.secondVideoPath = ""
@@ -899,8 +912,11 @@ struct ContentView: View {
     }
 
     func loadRandomImageOrVideo() {
+        if !appDelegate.isFullScreen {
+            gTimers[index]?.pause()
+            return
+        }
         debugPrint("video loadRandomImageOrVideo \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
-
         let newRandomImageOrVideoPath = self.generateRandomPath()
         DispatchQueue.global(qos: .userInitiated).async {
             if self.isVideo(newRandomImageOrVideoPath) {

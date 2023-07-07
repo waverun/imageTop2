@@ -15,6 +15,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var pexelsPhotos: [String] = []
     @Published var pexelsVideos: [String] = []
     @Published var networkIsReachable = false
+    @Published var isFullScreen = false
+    @Published var monitor: Any?
 
     var statusBarItem: NSStatusItem!
     var settingsWindow: NSWindow!
@@ -29,6 +31,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     func windowDidExitFullScreen(_ notification: Notification) {
+        NSCursor.unhide()
+        isFullScreen = false
         if let window = notification.object as? NSWindow {
             window.orderOut(nil)
             debugPrint("window.orderOut")
@@ -47,10 +51,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     func windowDidEnterFullScreen(_ notification: Notification) {
+        isFullScreen = true
         debugPrint("windowDidEnterFullScreen")
         inactivityTimer?.invalidate()
         startTimer.toggle()
         showWindow = true
+        NSCursor.hide()
+//        if let window = notification.object as? NSWindow,
+//           let index = WindowManager.shared.getIndex(for: window),
+//           index == 0 {
+//            monitor = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved]) { event in
+//                debugPrint("monitor: \(event)")
+//                NSCursor.unhide()
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                    if let monitor = self.monitor {
+//                        debugPrint("Removing monitor")
+//                        NSEvent.removeMonitor(monitor)
+//                        self.monitor = nil
+//                    }
+//                }
+//            }
+//        }
     }
 
     var prevSeconds: CFTimeInterval = 0
