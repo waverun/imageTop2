@@ -901,34 +901,34 @@ struct ContentView: View {
     func loadRandomImageOrVideo() {
         debugPrint("video loadRandomImageOrVideo \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
 
-        if let newRandomImageOrVideoPath = self.generateRandomPath() {
-            DispatchQueue.global(qos: .userInitiated).async {
-                if self.isVideo(newRandomImageOrVideoPath) {
-                    self.handleVideo(newRandomImageOrVideoPath)
-                } else {
-                    self.handleImage(newRandomImageOrVideoPath)
-                }
+        let newRandomImageOrVideoPath = self.generateRandomPath()
+        DispatchQueue.global(qos: .userInitiated).async {
+            if self.isVideo(newRandomImageOrVideoPath) {
+                self.handleVideo(newRandomImageOrVideoPath)
+            } else {
+                self.handleImage(newRandomImageOrVideoPath)
             }
         }
     }
 
-    private func generateRandomPath() -> String? {
+    private func generateRandomPath() -> String {
         // Check if all paths have been used, if so, reset the unusedPaths array
-        if stateObjects.unusedPaths.isEmpty {
-            stateObjects.unusedPaths = Set(imageAndVideoNames)
-        }
+        var randomPath: String?
+        repeat {
+            if stateObjects.unusedPaths.isEmpty {
+                stateObjects.unusedPaths = Set(imageAndVideoNames)
+            }
 
-        // Get a random unused path
-        guard let randomPath = stateObjects.unusedPaths.randomElement() else {
-            return nil
-        }
+            // Get a random unused path
+            randomPath = stateObjects.unusedPaths.randomElement()
+            guard randomPath != nil else { continue }
 
-        // Remove the used path from the unusedPaths array
-        if let index = stateObjects.unusedPaths.firstIndex(of: randomPath) {
-            stateObjects.unusedPaths.remove(at: index)
-        }
-
-        return randomPath
+            // Remove the used path from the unusedPaths array
+            if let index = stateObjects.unusedPaths.firstIndex(of: randomPath!) {
+                stateObjects.unusedPaths.remove(at: index)
+            }
+        } while shouldRegeneratePath(randomPath!)
+        return randomPath!
     }
 
 //    private func generateRandomPath() -> String? {
@@ -944,8 +944,8 @@ struct ContentView: View {
     private func shouldRegeneratePath(_ path: String) -> Bool {
         return (path == firstImagePath && !showSecondImage)
         || (path == secondImagePath && showSecondImage)
-        || (path == stateObjects.firstVideoPath)
-        || (path == stateObjects.secondVideoPath)
+        || (path == stateObjects.firstVideoPath && !showSecondVideo)
+        || (path == stateObjects.secondVideoPath && showSecondVideo)
     }
 
     private func isVideo(_ path: String) -> Bool {

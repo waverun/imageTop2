@@ -13,6 +13,10 @@ class PausableTimer {
         self.index = index
     }
 
+    deinit {
+        invalidate()
+    }
+
     func start(interval: TimeInterval, block: @escaping (Timer) -> Void) {
         debugPrint("timer: \(index!) start \(interval)")
         self.interval = interval
@@ -28,6 +32,11 @@ class PausableTimer {
         timer = nil
     }
 
+    func invalidate() {
+        timer?.invalidate()
+        timer = nil
+    }
+    
     func resume() {
         startTime = Date()
         debugPrint("timer: \(index!) resume: \(interval) \(timeElapsedWhenPaused)")

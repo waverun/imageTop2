@@ -71,7 +71,7 @@ struct VideoPlayerView: NSViewRepresentable {
         gTimers.removeValue(forKey: index)
         NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
             debugPrint("Video finished playing. \(self.index)")
-            finishedPlaying()
+            startNewVideo(player)
             // You could do additional things here like play the next video, show a replay button, etc.
         }
     }
@@ -91,10 +91,15 @@ struct VideoPlayerView: NSViewRepresentable {
                 debugPrint("iDuration \(index) \(iDuration)")
                 if iDuration > 4 {
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(iDuration - 2)) {
+                    if let timer = stateObjects.pausableTimer {
+                        timer.invalidate()
+                        stateObjects.pausableTimer = nil
+                    }
                     stateObjects.pausableTimer = PausableTimer(index: index)
                     gTimers[index] = stateObjects.pausableTimer
                     stateObjects.pausableTimer!.start(interval: TimeInterval(iDuration - 2)) {_ in
-                        finishedPlaying()
+                        startNewVideo(player)
+
                     }
                 } else {
                     setEndPlayNotification(player: player)
@@ -104,6 +109,12 @@ struct VideoPlayerView: NSViewRepresentable {
                 setEndPlayNotification(player: player)
             }
         }
+    }
+
+    func startNewVideo(_ player: AVPlayer) {
+        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
+        stateObjects.pausableTimer?.invalidate()
+        finishedPlaying()
     }
 
     func updateNSView(_ nsView: NSView, context: Context) {
