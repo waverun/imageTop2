@@ -119,6 +119,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         _ = dnc.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { _ in
             debugPrint("Screen Locked")
             ScreenLockStatus.shared.isLocked = true
+            self.showWindow = false
         }
 
         _ = dnc.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { _ in
