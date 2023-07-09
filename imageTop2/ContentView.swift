@@ -732,7 +732,6 @@ struct ContentView: View {
                     stateObjects.firstVideoPath = ""
                     stateObjects.secondVideoPath = ""
                     imageOrVideoMode = false
-                    imageOrVideoMode = false
                 }
                 if imageOrBackgroundChangeTimer == nil {
                     startScreenChangeTimer()
@@ -908,6 +907,7 @@ struct ContentView: View {
 
     func changeScreenImageVideoOrColor() {
         debugPrint("changeScreenImageOrColor \(index) imageOrVideoMode: \(imageOrVideoMode) gNetworkIsReachable: \(gNetworkIsReachable)")
+        imageOrVideoMode = imageAndVideoNames.count > 2 // Done since there was an error where after sleep and network unreachable, the colors where changed but videos were not played.
         _ = imageOrVideoMode && networkIsReachableOrNotShowingVideos ? loadRandomImageOrVideo() : changeBackgroundColor()
     }
 
