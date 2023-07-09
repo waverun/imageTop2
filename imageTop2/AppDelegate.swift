@@ -74,7 +74,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 //        }
     }
 
-    var prevSeconds: CFTimeInterval = 0
+//    var prevSeconds: CFTimeInterval = 0
     var inactivityTimer: Timer!
     var inactivityAfterLockTimer: Timer!
 
@@ -94,15 +94,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             inactivityTimer.invalidate()
         }
 
-        prevSeconds = getLastEventTime()
+//        prevSeconds = getLastEventTime()
         inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
             let currentSeconds = getLastEventTime()
             if prevEventTime != currentSeconds {
-                debugPrint("startInactivityTimer \(prevSeconds) \(currentSeconds)")
+//                debugPrint("startInactivityTimer \(prevSeconds) \(currentSeconds) startAfter: \(startAfter)")
+                debugPrint("startInactivityTimer \(currentSeconds) startAfter: \(startAfter)")
                 prevEventTime = currentSeconds
             }
-            let secondsSinceLastEvent = currentSeconds - prevSeconds
-            if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
+//            let secondsSinceLastEvent = currentSeconds - prevSeconds
+//            if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
+            if currentSeconds > startAfter { // check if the user has been inactive for more than 60 seconds
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
                     self.showWindow = true // call your method that brings the window to the front
                 }
@@ -116,15 +118,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     func startDetectLockedScreen() {
         let dnc = DistributedNotificationCenter.default()
 
-        _ = dnc.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { _ in
+        _ = dnc.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { [self] _ in
             debugPrint("Screen Locked")
             ScreenLockStatus.shared.isLocked = true
-            self.showWindow = false
+            showWindow = false
+            inactivityTimer?.invalidate()
+            inactivityTimer = nil
         }
 
-        _ = dnc.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { _ in
+        _ = dnc.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { [self] _ in
             debugPrint("Screen Unlocked")
             ScreenLockStatus.shared.isLocked = false
+            startInactivityTimer()
         }
     }
 

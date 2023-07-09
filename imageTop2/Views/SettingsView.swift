@@ -115,7 +115,7 @@ struct SettingsView: View {
                             Spacer()
                         }.padding(.leading)
                         HStack {
-                            Text("Start after (seconds)")
+                            Text("Start after (Inactiviy seconds)")
                                 .frame(width: geometry.size.width * 0.635, alignment: .leading)
                             FocusableTextField(text: Binding(get: {
                                 String(startAfter)
