@@ -117,6 +117,7 @@ struct SettingsView: View {
                         HStack {
                             Text("Start after (Inactiviy seconds)")
                                 .frame(width: geometry.size.width * 0.635, alignment: .leading)
+                                .opacity(appDelegate.autoStart ? 1.0 : 0.5) // Add this line
                             FocusableTextField(text: Binding(get: {
                                 String(startAfter)
                             }, set: { newValue in

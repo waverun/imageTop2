@@ -17,8 +17,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var networkIsReachable = false
     @Published var isFullScreen = false
     @Published var monitor: Any?
+    @Published var autoStart: Bool = true {
+        didSet {
+            // Update the title of the menu item when autoStart changes
+            autoStartItem.title = (autoStart ? "Disable" : "Enable") + " Auto (Inactivity) Start"
+        }
+    }
 
     var statusBarItem: NSStatusItem!
+    var autoStartItem: NSMenuItem! // This is the menu item we want to update
+
     var settingsWindow: NSWindow!
     var externalDisplayCount: Int = 0
     var screenChangeDetected: Bool = false
@@ -94,6 +102,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             inactivityTimer.invalidate()
         }
 
+        if !autoStart {
+            return
+        }
+
 //        prevSeconds = getLastEventTime()
         inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
             let currentSeconds = getLastEventTime()
@@ -105,10 +117,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 //            let secondsSinceLastEvent = currentSeconds - prevSeconds
 //            if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
             if currentSeconds > startAfter { // check if the user has been inactive for more than 60 seconds
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
-                    self.showWindow = true // call your method that brings the window to the front
+                if autoStart {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
+                        self.showWindow = true // call your method that brings the window to the front
+                    }
+                    WindowManager.shared.enterFullScreen()
                 }
-                WindowManager.shared.enterFullScreen()
                 inactivityTimer.invalidate()
                 inactivityTimer = nil
             }
@@ -154,6 +168,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         let menu = NSMenu()
         menu.addItem(withTitle: "Show", action: #selector(showMainWindow), keyEquivalent: "")
         menu.addItem(withTitle: "Settings", action: #selector(openSettings), keyEquivalent: "")
+        autoStartItem = menu.addItem(withTitle: (autoStart ? "Disable" : "Enable") + " Auto (Inactivity) Start", action: #selector(handleAutoStart), keyEquivalent: "")
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "Start at login", action: #selector(openLoginItemsPreferences), keyEquivalent: "")
         menu.addItem(withTitle: "Quit", action: #selector(quitApp), keyEquivalent: "q")
@@ -188,6 +203,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         showWindow = true
 
         networkManager = NetworkManager(appDelegate: self)
+    }
+
+    @objc func handleAutoStart() {
+        autoStart.toggle()
+        switch true {
+            case autoStart: startInactivityTimer()
+            default:
+                inactivityTimer?.invalidate()
+                inactivityTimer = nil
+        }
     }
 
     @objc func handleDisplayConnection(notification: Notification) {
