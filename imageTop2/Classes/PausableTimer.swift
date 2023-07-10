@@ -42,29 +42,32 @@ class PausableTimer {
         debugPrint("timer: \(index!) resume: \(interval) \(timeElapsedWhenPaused)")
 
         interval = interval - timeElapsedWhenPaused
-        if interval <= 0,
-           let block = block,
-           let timer = timer {
-            block(timer)
+        guard interval > 0,
+              let currentTime = gPlayers[index!]?.currentTime(),
+              let duration = gPlayers[index!]?.currentItem?.duration else {
+            if let block = block,
+               let timer = timer {
+                block(timer)
+            }
             return
         }
 
-        if let currentTime = gPlayers[index!]?.currentTime(),
-           let duration = gPlayers[index!]?.currentItem?.duration {
+        //        if let currentTime = gPlayers[index!]?.currentTime(),
+        //           let duration = gPlayers[index!]?.currentItem?.duration {
+        //
+        let playerCurrentTimeSec = CMTimeGetSeconds(currentTime)
+        let playerDurationSec = CMTimeGetSeconds(duration)
 
-           let playerCurrentTimeSec = CMTimeGetSeconds(currentTime)
-           let playerDurationSec = CMTimeGetSeconds(duration)
+        debugPrint("timer: \(index!) resume: currentTime: \(playerCurrentTimeSec)")
 
-           debugPrint("timer: \(index!) resume: currentTime: \(playerCurrentTimeSec)")
+        let remainingTimeSec = playerDurationSec - playerCurrentTimeSec
+        interval = remainingTimeSec
+        //        }
 
-           let remainingTimeSec = playerDurationSec - playerCurrentTimeSec
-           interval = remainingTimeSec
-        }
-        
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false, block: block!)
         debugPrint("timer: \(index!) resume: \(interval)")
-//        { [weak self] timer in
-//            self?.start(interval: self!.timeElapsedWhenPaused, block: self!.block!)
-//        }
+        //        { [weak self] timer in
+        //            self?.start(interval: self!.timeElapsedWhenPaused, block: self!.block!)
+        //        }
     }
-}
+    }

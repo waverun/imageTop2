@@ -99,7 +99,6 @@ struct VideoPlayerView: NSViewRepresentable {
                     gTimers[index] = stateObjects.pausableTimer
                     stateObjects.pausableTimer!.start(interval: TimeInterval(iDuration - 2)) {_ in
                         startNewVideo(player)
-
                     }
                 } else {
                     setEndPlayNotification(player: player)
