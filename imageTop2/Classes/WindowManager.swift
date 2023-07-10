@@ -68,14 +68,14 @@ class WindowManager: ObservableObject {
         // Create a new timer
         enterFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
             if !ScreenLockStatus.shared.isLocked {
-                var invalidetTimerRequired = true
+                var invalidateTimerRequired = true
                 for window in windows {
                     if !window.styleMask.contains(.fullScreen) {
                         window.toggleFullScreen(nil)
-                        invalidetTimerRequired = false
+                        invalidateTimerRequired = false
                     }
                 }
-                if invalidetTimerRequired {
+                if invalidateTimerRequired {
                     timer.invalidate()
                 }
             }

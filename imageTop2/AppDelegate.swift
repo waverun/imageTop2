@@ -44,7 +44,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         if let window = notification.object as? NSWindow {
             window.orderOut(nil)
             iPrint("window.orderOut")
-            startInactivityTimer()
+            if !ScreenLockStatus.shared.isLocked {
+                startInactivityTimer()
+            }
             if let index = WindowManager.shared.getIndex(for: window),
                let player = gPlayers[index] {
                 player.pause()
