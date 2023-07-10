@@ -43,7 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         isFullScreen = false
         if let window = notification.object as? NSWindow {
             window.orderOut(nil)
-            debugPrint("window.orderOut")
+            iPrint("window.orderOut")
             startInactivityTimer()
             if let index = WindowManager.shared.getIndex(for: window),
                let player = gPlayers[index] {
@@ -51,7 +51,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                 if let timer = gTimers[index] {
                     timer.pause()
                 }
-                debugPrint("video1 pause \(index)")
+                iPrint("video1 pause \(index)")
             }
         }
 
@@ -60,7 +60,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     func windowDidEnterFullScreen(_ notification: Notification) {
         isFullScreen = true
-        debugPrint("windowDidEnterFullScreen")
+        iPrint("windowDidEnterFullScreen")
         inactivityTimer?.invalidate()
         startTimer.toggle()
         showWindow = true
@@ -69,11 +69,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 //           let index = WindowManager.shared.getIndex(for: window),
 //           index == 0 {
 //            monitor = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved]) { event in
-//                debugPrint("monitor: \(event)")
+//                iPrint("monitor: \(event)")
 //                NSCursor.unhide()
 //                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
 //                    if let monitor = self.monitor {
-//                        debugPrint("Removing monitor")
+//                        iPrint("Removing monitor")
 //                        NSEvent.removeMonitor(monitor)
 //                        self.monitor = nil
 //                    }
@@ -110,8 +110,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
             let currentSeconds = getLastEventTime()
             if prevEventTime != currentSeconds {
-//                debugPrint("startInactivityTimer \(prevSeconds) \(currentSeconds) startAfter: \(startAfter)")
-                debugPrint("startInactivityTimer \(currentSeconds) startAfter: \(startAfter)")
+//                iPrint("startInactivityTimer \(prevSeconds) \(currentSeconds) startAfter: \(startAfter)")
+                iPrint("startInactivityTimer \(currentSeconds) startAfter: \(startAfter)")
                 prevEventTime = currentSeconds
             }
 //            let secondsSinceLastEvent = currentSeconds - prevSeconds
@@ -133,7 +133,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         let dnc = DistributedNotificationCenter.default()
 
         _ = dnc.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { [self] _ in
-            debugPrint("Screen Locked")
+            iPrint("Screen Locked")
             ScreenLockStatus.shared.isLocked = true
             showWindow = false
             inactivityTimer?.invalidate()
@@ -141,7 +141,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
 
         _ = dnc.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { [self] _ in
-            debugPrint("Screen Unlocked")
+            iPrint("Screen Unlocked")
             ScreenLockStatus.shared.isLocked = false
             startInactivityTimer()
         }
@@ -219,14 +219,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         if externalDisplayCount != NSScreen.screens.count {
             externalDisplayCount = NSScreen.screens.count
 
-            debugPrint("A screen was added or removed.")
+            iPrint("A screen was added or removed.")
             // Remove all current windows
             
             restartApplication()
 
             screenChangeDetected = true // used to create windows again on user input to prevent problem when the screen was locked
         } else {
-            debugPrint("A display configuration change occurred.")
+            iPrint("A display configuration change occurred.")
             // Handle any other display configuration changes if needed
         }
     }
@@ -235,18 +235,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var createWindowsPlease = true
 
     func restartApplication() {
-        debugPrint("Restarting application...")
+        iPrint("Restarting application...")
 
         WindowManager.shared.removeAllWindows() { [self] in
             // Recreate windows for the new screen configuration
-            debugPrint("before createWindows")
+            iPrint("before createWindows")
             //??:
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
                 if createWindowsPlease {
-                    debugPrint("NSScreen.screens.count before createWindow: \(NSScreen.screens.count) ")
+                    iPrint("NSScreen.screens.count before createWindow: \(NSScreen.screens.count) ")
                     createWindows()
                 }
-                debugPrint("after createWindows")
+                iPrint("after createWindows")
             }
         }
     }
@@ -297,7 +297,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
             hideSettings()
 //            showWindow = true // To cause to call showApp.
-            debugPrint("showMainWindow")
+            iPrint("showMainWindow")
             ignoreMonitor = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [self] in
                 ignoreMonitor = false

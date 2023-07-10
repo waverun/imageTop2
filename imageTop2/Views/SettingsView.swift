@@ -174,11 +174,11 @@ struct SettingsView: View {
         .buttonStyle(PlainButtonStyle())
 //        .overlay(KeyView(dismiss: { appDelegate.hideSettings() }).allowsHitTesting(false))
         .onChange(of: usePhotosFromPexelsIsOn) { newValue in
-           debugPrint("isOn: \(usePhotosFromPexelsIsOn)")
+           iPrint("isOn: \(usePhotosFromPexelsIsOn)")
             usePhotosFromPexels = usePhotosFromPexelsIsOn
         }
         .onChange(of: useVideosFromPexelsIsOn) { newValue in
-           debugPrint("isOn: \(useVideosFromPexelsIsOn)")
+           iPrint("isOn: \(useVideosFromPexelsIsOn)")
             useVideosFromPexels = useVideosFromPexelsIsOn
         }
         .frame(width: 350, height: 325)
@@ -209,7 +209,7 @@ struct SettingsView: View {
                     selectedFolderPath = url.path
                     storedFolderPath = selectedFolderPath
                 } catch {
-                    debugPrint("Error creating security-scoped bookmark: \(error)")
+                    iPrint("Error creating security-scoped bookmark: \(error)")
                 }
             }
         }

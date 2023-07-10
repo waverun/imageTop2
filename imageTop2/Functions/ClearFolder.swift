@@ -12,6 +12,6 @@ func                     clearPexelPhotos(folderPath: String, filesToKeep: [Stri
         }
     } catch {
         // Handle the error.
-        debugPrint("Error clearing directory: \(error)")
+        iPrint("Error clearing directory: \(error)")
     }
 }

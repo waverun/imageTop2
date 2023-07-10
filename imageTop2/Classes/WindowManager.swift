@@ -11,10 +11,10 @@ class WindowManager: ObservableObject {
 
     func getMaxScreenWidth() -> Int {
         if let maxWindowWidth = windows.max(by: { $0.frame.size.width < $1.frame.size.width })?.frame.size.width {
-            debugPrint("Max window width: \(maxWindowWidth)")
+            iPrint("Max window width: \(maxWindowWidth)")
             return Int(maxWindowWidth)
         } else {
-            debugPrint("Array of windows is empty.")
+            iPrint("Array of windows is empty.")
             return 0
         }
     }
@@ -39,13 +39,13 @@ class WindowManager: ObservableObject {
         for window in windows {
             if window.styleMask.contains(.fullScreen) {
                 if exitFullStcreen {
-                    debugPrint("exitFullScreend - toggle")
+                    iPrint("exitFullScreend - toggle")
                     window.orderOut(nil) //??
                     window.toggleFullScreen(nil)
                 }
             } else {
                 if !exitFullStcreen {
-                    debugPrint("enterFullScreend - toggle")
+                    iPrint("enterFullScreend - toggle")
                     window.toggleFullScreen(nil)
                 }
             }
@@ -61,7 +61,7 @@ class WindowManager: ObservableObject {
             return
         }
 
-        debugPrint("enterFullScreen - not locked")
+        iPrint("enterFullScreen - not locked")
 //         Invalidate the timer if it exists
         exitFullScreenTimer?.invalidate()
 

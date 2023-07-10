@@ -20,7 +20,7 @@
 //            .opacity(isAppeared ? 1 : 0) // Apply opacity to the entire view
 //            .onAppear {
 //                updateTime()
-//                debugPrint("watchPosition: \(x!), \(y!)")
+//                iPrint("watchPosition: \(x!), \(y!)")
 //                watchPosition = CGPoint(x: x ?? 100, y: y ?? 100)
 //                withAnimation(.easeIn(duration: 4.0)) {
 //                    isAppeared = true
@@ -65,7 +65,7 @@ struct DigitalWatchView: View {
             .position(watchPosition)
             .onAppear {
                 updateTime()
-                debugPrint("watchPosition: \(x!), \(y!)")
+                iPrint("watchPosition: \(x!), \(y!)")
                 watchPosition = CGPoint(x: x ?? 100, y: y ?? 100)
             }
             .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in

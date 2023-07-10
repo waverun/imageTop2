@@ -18,7 +18,7 @@ struct VideoPlayerView: NSViewRepresentable {
     let finishedPlaying: () -> Void
 
     func makeNSView(context: Context) -> NSView {
-        debugPrint("videoPlayerView \(index) \(url.path)")
+        iPrint("videoPlayerView \(index) \(url.path)")
         let view = NSView()
 
 //        let url = URL(fileURLWithPath: "/Users/shyem/Downloads/pexels-camila-flores.mp4")
@@ -39,13 +39,13 @@ struct VideoPlayerView: NSViewRepresentable {
 //        getVideoLength(videoURL: url)
 
         gPlayers[index] = player
-        debugPrint("gPlayers[index]: \(index)")
+        iPrint("gPlayers[index]: \(index)")
         // create a player layer
         let playerLayer = AVPlayerLayer(player: player)
 
         // Add observer to get notified when the video finishes playing
 //        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
-//            debugPrint("Video finished playing. \(self.index)")
+//            iPrint("Video finished playing. \(self.index)")
 //                finishedPlaying()
 //            // You could do additional things here like play the next video, show a replay button, etc.
 //        }
@@ -62,7 +62,7 @@ struct VideoPlayerView: NSViewRepresentable {
         // play the video
         if appDelegate.showWindow {
             player.play()
-            debugPrint("Video1 started playing. \(self.index) url: \(url) makeNSView \(Date())")
+            iPrint("Video1 started playing. \(self.index) url: \(url) makeNSView \(Date())")
         }
         return view
     }
@@ -70,7 +70,7 @@ struct VideoPlayerView: NSViewRepresentable {
     func setEndPlayNotification(player: AVPlayer) {
         gTimers.removeValue(forKey: index)
         NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
-            debugPrint("Video finished playing. \(self.index)")
+            iPrint("Video finished playing. \(self.index)")
             startNewVideo(player)
             // You could do additional things here like play the next video, show a replay button, etc.
         }
@@ -86,9 +86,9 @@ struct VideoPlayerView: NSViewRepresentable {
         Task {
             do {
                 let duration = try await getVideoLength(videoURL: url)
-                debugPrint("Timer: \(index) Video duration: \(CMTimeGetSeconds(duration)) seconds")
+                iPrint("Timer: \(index) Video duration: \(CMTimeGetSeconds(duration)) seconds")
                 let iDuration = Int(CMTimeGetSeconds(duration))
-                debugPrint("iDuration \(index) \(iDuration)")
+                iPrint("iDuration \(index) \(iDuration)")
                 if iDuration > 4 {
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(iDuration - 2)) {
                     if let timer = stateObjects.pausableTimer {
@@ -104,7 +104,7 @@ struct VideoPlayerView: NSViewRepresentable {
                     setEndPlayNotification(player: player)
                 }
             } catch {
-                debugPrint("Failed to get video duration: \(error)")
+                iPrint("Failed to get video duration: \(error)")
                 setEndPlayNotification(player: player)
             }
         }
@@ -143,14 +143,14 @@ struct VideoPlayerView: NSViewRepresentable {
 //            player.rate = 0.2
             // Add observer to new item
 //            NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
-//                debugPrint("Video finished playing. \(self.index)")
+//                iPrint("Video finished playing. \(self.index)")
 //                    finishedPlaying()
 //            }
 
             // Play the video
             if appDelegate.showWindow {
                 player.play()
-                debugPrint("Video1 started playing. \(self.index) url: \(url) updateNSView \(Date())")
+                iPrint("Video1 started playing. \(self.index) url: \(url) updateNSView \(Date())")
             }
         }
     }

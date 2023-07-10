@@ -18,7 +18,7 @@ class PausableTimer {
     }
 
     func start(interval: TimeInterval, block: @escaping (Timer?) -> Void) {
-        debugPrint("timer: \(index!) start \(interval)")
+        iPrint("timer: \(index!) start \(interval)")
         self.interval = interval
         self.block = block
         startTime = Date()
@@ -27,7 +27,7 @@ class PausableTimer {
 
     func pause() {
         timeElapsedWhenPaused = -startTime!.timeIntervalSinceNow
-        debugPrint("timer: \(index!) pause: \(timeElapsedWhenPaused)")
+        iPrint("timer: \(index!) pause: \(timeElapsedWhenPaused)")
         timer?.invalidate()
         timer = nil
     }
@@ -39,7 +39,7 @@ class PausableTimer {
     
     func resume() {
         startTime = Date()
-        debugPrint("timer: \(index!) resume: \(interval) \(timeElapsedWhenPaused)")
+        iPrint("timer: \(index!) resume: \(interval) \(timeElapsedWhenPaused)")
 
         interval = interval - timeElapsedWhenPaused
         guard interval > 0,
@@ -58,14 +58,14 @@ class PausableTimer {
         let playerCurrentTimeSec = CMTimeGetSeconds(currentTime)
         let playerDurationSec = CMTimeGetSeconds(duration)
 
-        debugPrint("timer: \(index!) resume: currentTime: \(playerCurrentTimeSec)")
+        iPrint("timer: \(index!) resume: currentTime: \(playerCurrentTimeSec)")
 
         let remainingTimeSec = playerDurationSec - playerCurrentTimeSec
         interval = remainingTimeSec
         //        }
 
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false, block: block!)
-        debugPrint("timer: \(index!) resume: \(interval)")
+        iPrint("timer: \(index!) resume: \(interval)")
         //        { [weak self] timer in
         //            self?.start(interval: self!.timeElapsedWhenPaused, block: self!.block!)
         //        }

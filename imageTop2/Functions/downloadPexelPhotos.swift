@@ -23,7 +23,7 @@ func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
     }
 
     if !isFreeSpaceMoreThan(gigabytes: 1) {
-        debugPrint("Not enough space to download Pexels photos")
+        iPrint("Not enough space to download Pexels photos")
         return
     }
 
@@ -34,18 +34,18 @@ func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
         pageNumberParam = "&page=" + String(pageNumber)
     }
     let url = URL(string: "https://api.pexels.com/v1/search?query=" + category + "&per_page=80" + pageNumberParam)!
-    debugPrint("pexels url: \(url)")
+    iPrint("pexels url: \(url)")
     var request = URLRequest(url: url)
     request.setValue(apiKey, forHTTPHeaderField: "Authorization")
 
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
         if let error = error {
-            debugPrint("Error: \(error)")
+            iPrint("Error: \(error)")
         } else if let data = data {
             let decoder = JSONDecoder()
             do {
                 let pexelsResponse = try decoder.decode(PexelsResponse.self, from: data)
-                debugPrint("pexelsResponse photos: \(pexelsResponse.photos.count)")
+                iPrint("pexelsResponse photos: \(pexelsResponse.photos.count)")
 
                 // Create a dispatch group
                 let group = DispatchGroup()
@@ -65,7 +65,7 @@ func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
                     onDone()
                 }
             } catch {
-                debugPrint("Error decoding JSON: \(error)")
+                iPrint("Error decoding JSON: \(error)")
             }
         }
     }
@@ -82,19 +82,19 @@ func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
 //
 //    let task = URLSession.shared.dataTask(with: request) { data, response, error in
 //        if let error = error {
-//            debugPrint("Error: \(error)")
+//            iPrint("Error: \(error)")
 //        } else if let data = data {
 //            let decoder = JSONDecoder()
 //            do {
 //                let pexelsResponse = try decoder.decode(PexelsResponse.self, from: data)
-//                debugPrint("pexelsResponse photos: \(pexelsResponse.photos.count)")
+//                iPrint("pexelsResponse photos: \(pexelsResponse.photos.count)")
 //                for photo in pexelsResponse.photos {
 //                    downloadPhoto(from: photo.src.landscape, photographer: photo.photographer, to: pexelsFolder)
 //                }
 //
 //                // Use pexelsResponse here
 //            } catch {
-//                debugPrint("Error decoding JSON: \(error)")
+//                iPrint("Error decoding JSON: \(error)")
 //            }
 //        }
 //    }

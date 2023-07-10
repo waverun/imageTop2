@@ -40,6 +40,7 @@
 		50BEA38E2A51D50000F0FE19 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BEA38D2A51D50000F0FE19 /* NetworkManager.swift */; };
 		50BEA3B42A5436AB00F0FE19 /* isVideoFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BEA3B32A5436AB00F0FE19 /* isVideoFile.swift */; };
 		50C499182A2D173F00797C12 /* ScreenLockStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C499172A2D173F00797C12 /* ScreenLockStatus.swift */; };
+		50DC5B572A5C2ABD003119E8 /* indexedPrint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DC5B562A5C2ABD003119E8 /* indexedPrint.swift */; };
 		50EC4A9C2A1404BF00C4D327 /* debugPrint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50EC4A9B2A1404BF00C4D327 /* debugPrint.swift */; };
 /* End PBXBuildFile section */
 
@@ -77,6 +78,7 @@
 		50BEA38D2A51D50000F0FE19 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		50BEA3B32A5436AB00F0FE19 /* isVideoFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = isVideoFile.swift; sourceTree = "<group>"; };
 		50C499172A2D173F00797C12 /* ScreenLockStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenLockStatus.swift; sourceTree = "<group>"; };
+		50DC5B562A5C2ABD003119E8 /* indexedPrint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = indexedPrint.swift; sourceTree = "<group>"; };
 		50EC4A9B2A1404BF00C4D327 /* debugPrint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = debugPrint.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -177,6 +179,7 @@
 				50A06A0F2A3F2B7E00319BEA /* clearPexelVideos.swift */,
 				50A06A112A3F2BFE00319BEA /* deleteFile.swift */,
 				50BEA3B32A5436AB00F0FE19 /* isVideoFile.swift */,
+				50DC5B562A5C2ABD003119E8 /* indexedPrint.swift */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -287,6 +290,7 @@
 				5079FD7B2A10D2390066EC08 /* ContentView.swift in Sources */,
 				50EC4A9C2A1404BF00C4D327 /* debugPrint.swift in Sources */,
 				50A06A0E2A3CA62B00319BEA /* VideoData.swift in Sources */,
+				50DC5B572A5C2ABD003119E8 /* indexedPrint.swift in Sources */,
 				50C499182A2D173F00797C12 /* ScreenLockStatus.swift in Sources */,
 				50A06A082A39C02100319BEA /* VideoPlayerView.swift in Sources */,
 			);
