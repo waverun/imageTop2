@@ -16,7 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var pexelsVideos: [String] = []
     @Published var networkIsReachable = false
     @Published var isFullScreen = false
-    @Published var monitor: Any?
+//    @Published var monitor: Any?
     @Published var autoStart: Bool = true {
         didSet {
             // Update the title of the menu item when autoStart changes
@@ -84,7 +84,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
 //    var prevSeconds: CFTimeInterval = 0
     var inactivityTimer: Timer!
-    var inactivityAfterLockTimer: Timer!
+//    var inactivityAfterLockTimer: Timer!
 
     func getLastEventTime() -> CFTimeInterval {
         let keyUpLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .keyUp)
