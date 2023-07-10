@@ -6,7 +6,7 @@ class PausableTimer {
     private var startTime: Date?
     private var timeElapsedWhenPaused: TimeInterval = 0
     private var interval: TimeInterval = 0
-    private var block: ((Timer) -> Void)?
+    private var block: ((Timer?) -> Void)?
     var index: Int?
 
     init (index: Int) {
@@ -17,7 +17,7 @@ class PausableTimer {
         invalidate()
     }
 
-    func start(interval: TimeInterval, block: @escaping (Timer) -> Void) {
+    func start(interval: TimeInterval, block: @escaping (Timer?) -> Void) {
         debugPrint("timer: \(index!) start \(interval)")
         self.interval = interval
         self.block = block
@@ -45,8 +45,8 @@ class PausableTimer {
         guard interval > 0,
               let currentTime = gPlayers[index!]?.currentTime(),
               let duration = gPlayers[index!]?.currentItem?.duration else {
-            if let block = block,
-               let timer = timer {
+            if let block = block {
+//               let timer = timer {
                 block(timer)
             }
             return
