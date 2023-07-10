@@ -134,8 +134,9 @@ struct ContentView: View {
         .onChange(of: keyString1, perform: handleHotKeyChange)
         .onChange(of: keyString2, perform: handleHotKeyChange)
         .onChange(of: selectedFolderPath, perform: handleSelectedFolderPathChange)
-        .onChange(of: usePhotosFromPexels, perform: handleUsePhotosFromPexelsChange)
-        .onChange(of: useVideosFromPexels, perform: handleUseVideosFromPexelsChange)
+        .onChange(of: usePhotosFromPexels, perform: usePhotosFromPexelsChanged)
+        .onChange(of: useVideosFromPexels, perform: useVideosFromPexelsChanged)
+        .onChange(of: imageAndVideoNames, perform: imageAndVideoNamesChanged)
         .onDisappear(perform: onDisappearAction)
         .onReceive(appDelegate.$showWindow, perform: handleShowWindowChange)
         .onReceive(appDelegate.$startTimer, perform: handleStartTimerChange)
@@ -401,7 +402,7 @@ struct ContentView: View {
         startWatchingFolder(imageFolder: selectedFolderPath)
     }
 
-    func handleUsePhotosFromPexelsChange(_ newValue: Bool) {
+    func usePhotosFromPexelsChanged(_ newValue: Bool) {
         if newValue {
             if index == 0 {
                 handlePexelsPhotos()
@@ -416,7 +417,7 @@ struct ContentView: View {
         }
     }
 
-    func handleUseVideosFromPexelsChange(_ newValue: Bool) {
+    func useVideosFromPexelsChanged(_ newValue: Bool) {
         if newValue {
             if index == 0 {
                 handlePexelsVideos()
@@ -429,6 +430,10 @@ struct ContentView: View {
                 //                    appDelegate.loadImages.toggle()
             }
         }
+    }
+
+    func imageAndVideoNamesChanged(_ newValue: [String]) {
+        stateObjects.unusedPaths.removeAll()
     }
 
     func onDisappearAction() {
@@ -453,7 +458,7 @@ struct ContentView: View {
 
     func handleStartTimerChange(_ value: Bool) {
         if !showVideo {
-            startScreenChangeTimer()
+            startImageOrBackgroundChangeTimer()
             //                changeScreenImageVideoOrColor()
         }
         startMonitoringUserInput()
@@ -734,7 +739,7 @@ struct ContentView: View {
                     imageOrVideoMode = false
                 }
                 if imageOrBackgroundChangeTimer == nil {
-                    startScreenChangeTimer()
+                    startImageOrBackgroundChangeTimer()
                 }
         }
     }
@@ -843,7 +848,7 @@ struct ContentView: View {
     func resetImageOrBackgroundChangeTimer() {
         imageOrBackgroundChangeTimer?.invalidate()
         imageOrBackgroundChangeTimer = nil
-        startScreenChangeTimer()
+        startImageOrBackgroundChangeTimer()
     }
 
     func randomGentleColor() -> Color {
@@ -885,7 +890,7 @@ struct ContentView: View {
         }
     }
 
-    func startScreenChangeTimer() {
+    func startImageOrBackgroundChangeTimer() {
         if imageOrBackgroundChangeTimer != nil {
             iPrint("invalidate existing timer")
             stopChangeTimer()
@@ -914,6 +919,10 @@ struct ContentView: View {
     func loadRandomImageOrVideo() {
         if !appDelegate.isFullScreen {
             gTimers[index]?.pause()
+            return
+        }
+        if showVideo && imageAndVideoNames.count < 2 { // may happen after bad loading of videos
+            startImageOrBackgroundChangeTimer()
             return
         }
         iPrint("video loadRandomImageOrVideo \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
@@ -1035,7 +1044,7 @@ struct ContentView: View {
     private func manageVideoToImageTransition() {
         if showVideo {
             startShowImage = true
-            startScreenChangeTimer()
+            startImageOrBackgroundChangeTimer()
             showVideo = false
         }
     }
@@ -1165,6 +1174,10 @@ struct ContentView: View {
             getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl) { videosList in
                 DispatchQueue.main.async {
                     appDelegate.pexelsVideos = videosList
+//                    if videosList.count < 2 {
+//                        useVideosFromPexels = false // Indicate that load videos has failed.
+//                        return
+//                    }
                     appDelegate.loadImagesAndVideos.toggle()
                 }
             }
@@ -1178,10 +1191,13 @@ struct ContentView: View {
             appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
             DispatchQueue.global().async {
                 pexelDownloadSemaphore.wait()
-                if appDelegate.pexelsPhotos.count == 0 {
+                if appDelegate.pexelsPhotos.count < 2 {
                     downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
                         appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
                         pexelDownloadSemaphore.signal()
+//                        if appDelegate.pexelsPhotos.count < 2 {
+//                            usePhotosFromPexels = false // Indicate no pexels photos downloaded
+//                        }
                         if !useVideosFromPexels {
                             appDelegate.loadImagesAndVideos.toggle()
                         }

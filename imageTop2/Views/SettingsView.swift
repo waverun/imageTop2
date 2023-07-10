@@ -130,7 +130,7 @@ struct SettingsView: View {
                             Spacer()
                         }.padding(.leading)
                         HStack {
-                            Text("Image Folder")
+                            Text("Images and Videos Folder")
                                 .frame(width: geometry.size.width * 0.58, alignment: .leading)
                             Button("Select...") {
                                 openFolderPicker()
@@ -180,6 +180,18 @@ struct SettingsView: View {
         .onChange(of: useVideosFromPexelsIsOn) { newValue in
            iPrint("isOn: \(useVideosFromPexelsIsOn)")
             useVideosFromPexels = useVideosFromPexelsIsOn
+        }
+        .onChange(of: appDelegate.pexelsPhotos) { pexelsPhotos in
+            if pexelsPhotos.count < 2 {
+                usePhotosFromPexelsIsOn = false
+                usePhotosFromPexels = false
+            }
+        }
+        .onChange(of: appDelegate.pexelsVideos) { pexelsVideos in
+            if pexelsVideos.count < 2 {
+                useVideosFromPexelsIsOn = false
+                useVideosFromPexels = false
+            }
         }
         .frame(width: 350, height: 325)
         .onAppear {

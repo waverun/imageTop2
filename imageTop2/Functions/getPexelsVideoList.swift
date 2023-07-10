@@ -58,6 +58,7 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
         if let error = error {
             iPrint("Error: \(error)")
+
         } else if let data = data {
             _ = JSONDecoder()
             do {
@@ -83,6 +84,7 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
                 }
                 let videoList = videoLinks.joined(separator: "\n")
                 writeFile(directoryURL: pexelsFolder, fileName: pexelsVideoList, contents: videoList)
+                iPrint("videoLinks.count: \(videoLinks.count)")
                 onDone(videoLinks)
             } catch {
                 iPrint("Error decoding JSON: \(error)")

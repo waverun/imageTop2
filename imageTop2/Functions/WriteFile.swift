@@ -6,7 +6,7 @@ func writeFile(directoryURL: URL, fileName: String, contents: String) {
 
     do {
         try contents.write(to: fileURL, atomically: true, encoding: .utf8)
-        iPrint("File is written successfully")
+        iPrint("File is written successfully \(fileURL)")
     } catch {
         iPrint("Error writing file: \(error)")
     }

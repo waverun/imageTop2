@@ -7,6 +7,6 @@ func deleteFile(at fileURL: URL) {
         try fileManager.removeItem(at: fileURL)
         iPrint("File deleted successfully.")
     } catch {
-        iPrint("Error deleting file: \(error.localizedDescription)")
+        iPrint("Error deleting file: \(error.localizedDescription) \(fileURL)")
     }
 }
