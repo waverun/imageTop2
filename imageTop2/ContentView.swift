@@ -460,7 +460,7 @@ struct ContentView: View {
 
     func handleStartTimerChange(_ value: Bool) {
         if !showVideo {
-            startImageOrBackgroundChangeTimer()
+            startChangeTimer()
             //                changeScreenImageVideoOrColor()
         }
         startMonitoringUserInput()
@@ -741,7 +741,7 @@ struct ContentView: View {
                     imageOrVideoMode = false
                 }
                 if imageOrBackgroundChangeTimer == nil {
-                    startImageOrBackgroundChangeTimer()
+                    startChangeTimer()
                 }
         }
     }
@@ -854,7 +854,7 @@ struct ContentView: View {
     func resetImageOrBackgroundChangeTimer() {
         imageOrBackgroundChangeTimer?.invalidate()
         imageOrBackgroundChangeTimer = nil
-        startImageOrBackgroundChangeTimer()
+        startChangeTimer()
     }
 
     func randomGentleColor() -> Color {
@@ -896,7 +896,7 @@ struct ContentView: View {
         }
     }
 
-    func startImageOrBackgroundChangeTimer() {
+    func startChangeTimer(addTime: Double = 0) { // Add time is required when changing from video to image. In that case the timer should play longer due to the longer time of the fade.
         if imageOrBackgroundChangeTimer != nil {
             iPrint("invalidate existing timer")
             stopChangeTimer()
@@ -910,9 +910,12 @@ struct ContentView: View {
 
         iPrint("startScreenChangeTimer: \(index) \(Date())")
 
-        imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter, repeats: true) { [self] _ in
+        imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter + addTime , repeats: addTime == 0) { [self] _ in
             iPrint("imageOrBackgroundChangeTimer: \(index) \(Date())")
             changeScreenImageVideoOrColor()
+            if addTime > 0 { //Start the timer with regular time after fading from image to movie
+                startChangeTimer()
+            }
         }
     }
 
@@ -928,7 +931,7 @@ struct ContentView: View {
             return
         }
         if showVideo && imageAndVideoNames.count < 2 { // may happen after bad loading of videos
-            startImageOrBackgroundChangeTimer()
+            startChangeTimer()
             return
         }
         iPrint("video loadRandomImageOrVideo \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
@@ -1012,7 +1015,6 @@ struct ContentView: View {
             stopChangeTimer()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 startShowVideo = true
-                startImageOrBackgroundChangeTimer()
                 showVideo = true
                 showSecondVideo.toggle()
             }
@@ -1051,7 +1053,7 @@ struct ContentView: View {
     private func manageVideoToImageTransition() {
         if showVideo {
             startShowImage = true
-            startImageOrBackgroundChangeTimer()
+            startChangeTimer(addTime: 3)
             showVideo = false
         }
     }
