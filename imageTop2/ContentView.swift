@@ -28,6 +28,8 @@ func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
 
 struct ContentView: View {
     var index: Int
+    var videoFadeTime = 4.0
+    var imageFadeTime = 1.0
 
     @StateObject var stateObjects = ContentViewStateObjectVariables()
 
@@ -185,7 +187,7 @@ struct ContentView: View {
                     changeScreenImageVideoOrColor()
                 }
                     .opacity(condition ? 1 : 0)
-                    .animation(.easeIn(duration: condition ? 4 : 4), value: condition)
+                    .animation(.easeIn(duration: condition ? videoFadeTime : videoFadeTime), value: condition)
                     .edgesIgnoringSafeArea(.all)
                     .overlay(
                         VStack {
@@ -198,7 +200,7 @@ struct ContentView: View {
                                     .padding(.bottom, 50)
                                     .padding(.leading, 50)
                                     .opacity(condition ? 1 : 0)
-                                    .animation(.easeIn(duration: condition ? 4 : 4), value: condition)
+                                    .animation(.easeIn(duration: condition ? videoFadeTime : videoFadeTime), value: condition)
                                 Spacer()
                             }
                         }
@@ -294,13 +296,13 @@ struct ContentView: View {
                                     .padding(.bottom, 50)
                                     .padding(.leading, 50)
                                     .opacity(condition ? 1 : 0)
-                                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: condition)
+                                    .animation(.linear(duration: startShowVideo ? videoFadeTime : imageFadeTime), value: condition)
                                 Spacer()
                             }
                         }
                     )
                     .opacity(condition ? 1 : 0)
-                    .animation(.linear(duration: startShowVideo ? 4 : 1), value: condition)
+                    .animation(.linear(duration: startShowVideo ? videoFadeTime : imageFadeTime), value: condition)
             )
         } else {
             return AnyView(Color.clear)
@@ -1010,6 +1012,7 @@ struct ContentView: View {
             stopChangeTimer()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 startShowVideo = true
+                startImageOrBackgroundChangeTimer()
                 showVideo = true
                 showSecondVideo.toggle()
             }
