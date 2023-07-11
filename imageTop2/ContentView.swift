@@ -824,6 +824,10 @@ struct ContentView: View {
     }
 
     func showApp() {
+        if ScreenLockStatus.shared.isLocked {
+            appDelegate.showWindow = false
+            return
+        }
         showAccordingToNetworkReachability()
         if showVideo, networkIsReachableOrNotShowingVideos,
            let player = gPlayers[index] {
