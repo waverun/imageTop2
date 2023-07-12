@@ -267,10 +267,20 @@ struct ContentView: View {
 //        }
 //    }
 
+    var firstImageView: some View {
+        imageViewBuilder(image: firstImage, photographer: firstPhotographer, condition: !(showSecondImage || showVideo || loadingImage))
+    }
+
+    var secondImageView: some View {
+        imageViewBuilder(image: secondImage, photographer: secondPhotographer, condition: showSecondImage && !showVideo && !loadingImage)
+    }
+
     var imageView: some View {
         ZStack {
-            imageViewBuilder(image: firstImage, photographer: firstPhotographer, condition: !(showSecondImage || showVideo || loadingImage))
-            imageViewBuilder(image: secondImage, photographer: secondPhotographer, condition: showSecondImage && !showVideo && !loadingImage)
+            firstImageView
+            secondImageView
+//            imageViewBuilder(image: firstImage, photographer: firstPhotographer, condition: !(showSecondImage || showVideo || loadingImage))
+//            imageViewBuilder(image: secondImage, photographer: secondPhotographer, condition: showSecondImage && !showVideo && !loadingImage)
 
             if index == 0 {
                 DigitalWatchView(x: x, y: y)

@@ -63,7 +63,6 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
             _ = JSONDecoder()
             do {
                 let videoData = try JSONDecoder().decode(VideoData.self, from: data)
-
                 iPrint("pexelsResponse photos: \(videoData.videos.count)")
 
                 var videoLinks: [String] = []
