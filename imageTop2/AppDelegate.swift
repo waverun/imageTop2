@@ -43,7 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         isFullScreen = false
         if let window = notification.object as? NSWindow {
             window.orderOut(nil)
-            iPrint("window.orderOut")
+            iPrint("window.orderOut \(String(describing: index))")
             if !ScreenLockStatus.shared.isLocked {
                 startInactivityTimer()
             }
@@ -54,6 +54,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                     timer.pause()
                 }
                 iPrint("video1 pause \(index)")
+                if index == WindowManager.shared.windows.count - 1 {
+                    for window in NSApp.windows {
+                        window.orderOut(nil)
+                    }
+                }
             }
         }
 
