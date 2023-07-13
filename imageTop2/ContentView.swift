@@ -48,9 +48,8 @@ struct ContentView: View {
     @State var firstPhotographer = ""
     @State var secondPhotographer = ""
     @State var showVideo = false
+    @State var hideVideos = false // Used to preveint showing videos when replacing images. Sometime, on old video is sean when images are replaced
 
-//    @State var stateObject.firstVideoPath = ""
-//    @State var stateObject.secondVideoPath = ""
     @State var startShowVideo = false
     @State var startShowImage = false
     @State var networkIsReachableOrNotShowingVideos = false
@@ -122,7 +121,9 @@ struct ContentView: View {
         GeometryReader { geometry in
             ZStack {
                 backgroundView
-                videoPlayerView
+                if !hideVideos {
+                    videoPlayerView
+                }
                 imageView
                 if index == 0 {
                     DigitalWatchView(x: x, y: y)
@@ -289,6 +290,7 @@ struct ContentView: View {
     }
 
     func imageViewBuilder(image: NSImage?, photographer: String, condition: Bool) -> some View {
+        iPrint("imageViewBuilder: \(index) startShowVideo: \(startShowVideo)")
         if let image = image {
             return AnyView(
                 Image(nsImage: image)
@@ -947,10 +949,16 @@ struct ContentView: View {
         iPrint("video loadRandomImageOrVideo \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
         let newRandomImageOrVideoPath = self.generateRandomPath()
         DispatchQueue.global(qos: .userInitiated).async {
-            if self.isVideo(newRandomImageOrVideoPath) {
-                self.handleVideo(newRandomImageOrVideoPath)
-            } else {
-                self.handleImage(newRandomImageOrVideoPath)
+            switch true {
+                case self.isVideo(newRandomImageOrVideoPath):
+                    hideVideos = false
+                    self.handleVideo(newRandomImageOrVideoPath)
+                default:
+                    if showVideo == false {
+                        hideVideos = true
+                    }
+                    startShowVideo = false
+                    self.handleImage(newRandomImageOrVideoPath)
             }
         }
     }
@@ -1045,8 +1053,8 @@ struct ContentView: View {
     }
 
     private func manageImageDisplay(path: String, nsImage: NSImage, photographer: String) {
-        self.showSecondImage.toggle()
         startShowImage = false
+        self.showSecondImage.toggle()
         DispatchQueue.main.async {
             self.manageVideoToImageTransition()
             self.loadingImage = true
