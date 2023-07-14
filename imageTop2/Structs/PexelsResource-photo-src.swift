@@ -5,7 +5,7 @@ struct PexelsResponse: Codable {
     let totalResults: Int
     let nextPage: String
 
-    private enum CodingKeys: String, CodingKey {
+     enum CodingKeys: String, CodingKey {
         case page, photos, nextPage = "next_page", perPage = "per_page", totalResults = "total_results"
     }
 }
@@ -20,7 +20,7 @@ struct Photo: Codable {
     let avgColor: String
     let src: Src
 
-    private enum CodingKeys: String, CodingKey {
+     enum CodingKeys: String, CodingKey {
         case id, width, height, url, photographer, avgColor = "avg_color", photographerUrl = "photographer_url", src
     }
 }

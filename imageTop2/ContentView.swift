@@ -963,7 +963,7 @@ struct ContentView: View {
         }
     }
 
-    private func generateRandomPath() -> String {
+     func generateRandomPath() -> String {
         // Check if all paths have been used, if so, reset the unusedPaths array
         var randomPath: String?
         repeat {
@@ -983,7 +983,7 @@ struct ContentView: View {
         return randomPath!
     }
 
-//    private func generateRandomPath() -> String? {
+//     func generateRandomPath() -> String? {
 //        var newRandomImageOrVideoPath = ""
 //        repeat {
 //            if let newRandomImageName = imageAndVideoNames.randomElement() {
@@ -993,18 +993,18 @@ struct ContentView: View {
 //        return newRandomImageOrVideoPath
 //    }
 
-    private func shouldRegeneratePath(_ path: String) -> Bool {
+     func shouldRegeneratePath(_ path: String) -> Bool {
         return (path == firstImagePath && !showSecondImage)
         || (path == secondImagePath && showSecondImage)
         || (path == stateObjects.firstVideoPath && !showSecondVideo)
         || (path == stateObjects.secondVideoPath && showSecondVideo)
     }
 
-    private func isVideo(_ path: String) -> Bool {
+     func isVideo(_ path: String) -> Bool {
         return path.starts(with: "https:") || isVideoFile(atPath: path)
     }
 
-    private func handleVideo(_ path: String) {
+     func handleVideo(_ path: String) {
         iPrint("isVideFile: \(index) newRandomImageOrVideoPath: \(path)")
         let videoComponents = path.components(separatedBy: ",")
         let newVideoPath = videoComponents[0]
@@ -1012,7 +1012,7 @@ struct ContentView: View {
         setNewVideo(path: newVideoPath, photographer: photographer)
     }
 
-    private func setNewVideo(path: String, photographer: String) {
+     func setNewVideo(path: String, photographer: String) {
         if showSecondVideo {
             DispatchQueue.main.async {
                 stateObjects.firstVideoPath = path
@@ -1028,7 +1028,7 @@ struct ContentView: View {
         manageVideoDisplay()
     }
 
-    private func manageVideoDisplay() {
+     func manageVideoDisplay() {
         if !showVideo {
             stopChangeTimer()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -1041,7 +1041,7 @@ struct ContentView: View {
         }
     }
 
-    private func handleImage(_ path: String) {
+     func handleImage(_ path: String) {
         guard let nsImage = NSImage(contentsOfFile: path) else {
             imageAndVideoNames = loadImageAndVideoNames()
             loadingImage = true
@@ -1052,7 +1052,7 @@ struct ContentView: View {
         manageImageDisplay(path: path, nsImage: nsImage, photographer: photographer)
     }
 
-    private func manageImageDisplay(path: String, nsImage: NSImage, photographer: String) {
+     func manageImageDisplay(path: String, nsImage: NSImage, photographer: String) {
         startShowImage = false
         self.showSecondImage.toggle()
         DispatchQueue.main.async {
@@ -1068,7 +1068,7 @@ struct ContentView: View {
         }
     }
 
-    private func manageVideoToImageTransition() {
+     func manageVideoToImageTransition() {
         if showVideo {
             startShowImage = true
             startChangeTimer(addTime: 3)
@@ -1076,19 +1076,19 @@ struct ContentView: View {
         }
     }
 
-    private func setFirstImage(path: String, nsImage: NSImage, photographer: String) {
+     func setFirstImage(path: String, nsImage: NSImage, photographer: String) {
         self.firstImagePath = path
         self.firstImage = nsImage
         self.firstPhotographer = photographer
     }
 
-    private func setSecondImage(path: String, nsImage: NSImage, photographer: String) {
+     func setSecondImage(path: String, nsImage: NSImage, photographer: String) {
         self.secondImagePath = path
         self.secondImage = nsImage
         self.secondPhotographer = photographer
     }
 
-    private func extractNameFromFilePath(filePath: String) -> String {
+     func extractNameFromFilePath(filePath: String) -> String {
         let components = filePath.components(separatedBy: "/")
         if let pexelsIndex = components.firstIndex(of: "pexels") {
             let fileName = components[pexelsIndex + 1]

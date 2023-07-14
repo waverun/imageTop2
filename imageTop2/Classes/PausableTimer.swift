@@ -2,11 +2,11 @@ import Foundation
 import AVFoundation
 
 class PausableTimer {
-    private var timer: Timer?
-    private var startTime: Date?
-    private var timeElapsedWhenPaused: TimeInterval = 0
-    private var interval: TimeInterval = 0
-    private var block: ((Timer?) -> Void)?
+     var timer: Timer?
+     var startTime: Date?
+     var timeElapsedWhenPaused: TimeInterval = 0
+     var interval: TimeInterval = 0
+     var block: ((Timer?) -> Void)?
     var index: Int?
 
     init (index: Int) {

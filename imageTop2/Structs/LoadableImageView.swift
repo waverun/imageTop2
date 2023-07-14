@@ -5,7 +5,7 @@
 //    let onError: () -> Void
 //    let isLoading: Bool
 //
-//    @State private var imageLoadError = false
+//    @State  var imageLoadError = false
 //
 //    var body: some View {
 //        Group {
@@ -32,9 +32,9 @@
 //    let imagePath: String
 //    let onError: () -> Void
 //
-//    @State private var imageLoadError = false
+//    @State  var imageLoadError = false
 //
-//    private func loadImage() -> NSImage? {
+//     func loadImage() -> NSImage? {
 //        if let nsImage = NSImage(contentsOfFile: imagePath) {
 //            return nsImage
 //        } else {

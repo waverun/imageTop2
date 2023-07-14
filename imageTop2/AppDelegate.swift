@@ -5,7 +5,7 @@ import Quartz
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
-    @AppStorage("startAfter") private var startAfter: TimeInterval = 600
+    @AppStorage("startAfter")  var startAfter: TimeInterval = 600
 
     @Published var isMainWindowVisible: Bool = true
     @Published var showWindow: Bool = true
@@ -25,7 +25,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
-    @Published var showWatch: Bool = true {
+//    @Published var showWatch: Bool = true {
+    @AppStorage("showWatch") var showWatch = true {
         didSet {
             // Update the title of the menu item when autoStart changes
             showWatchItem.title = (showWatch ? "Hide" : "Show") + " Watch"

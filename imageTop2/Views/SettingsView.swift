@@ -4,24 +4,26 @@ import UniformTypeIdentifiers
 struct SettingsView: View {
     @EnvironmentObject var appDelegate: AppDelegate
 
-    @AppStorage("replaceImageAfter") private var replaceImageAfter: TimeInterval = 10
-    @AppStorage("startAfter") private var startAfter: TimeInterval = 600
-    @AppStorage("selectedFolderPath") private var storedFolderPath: String = ""
-    @AppStorage("imageTopFolderBookmark") private var imageTopFolderBookmarkData: Data?
-    @AppStorage("hotKeyString") private var keyString: String = "Escape"
-    @AppStorage("modifierKeyString1") private var keyString1: String = "command"
-    @AppStorage("modifierKeyString2") private var keyString2: String = "control"
-    @AppStorage("usePhotosFromPexels") private var usePhotosFromPexels: Bool = false
-    @AppStorage("useVideosFromPexels") private var useVideosFromPexels: Bool = true
+    @AppStorage("replaceImageAfter") var replaceImageAfter: TimeInterval = 10
+    @AppStorage("startAfter") var startAfter: TimeInterval = 600
+    @AppStorage("selectedFolderPath") var storedFolderPath: String = ""
+    @AppStorage("imageTopFolderBookmark") var imageTopFolderBookmarkData: Data?
+    @AppStorage("hotKeyString") var keyString: String = "Escape"
+    @AppStorage("modifierKeyString1") var keyString1: String = "command"
+    @AppStorage("modifierKeyString2") var keyString2: String = "control"
+    @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
+    @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = true
+    @AppStorage("showWatch") var showWatch = true 
 
-    @State private var usePhotosFromPexelsIsOn: Bool = false
-    @State private var useVideosFromPexelsIsOn: Bool = true
-    @State private var selectedFolderPath = ""
+    @State var usePhotosFromPexelsIsOn: Bool = false
+    @State var showWatchIsOn: Bool = false
+    @State var useVideosFromPexelsIsOn: Bool = true
+    @State var selectedFolderPath = ""
 
-    private let allKeyNames = Keyboard.keyNames
-    private let modKeyNames = Keyboard.modKeyNames
+    let allKeyNames = Keyboard.keyNames
+    let modKeyNames = Keyboard.modKeyNames
 
-    private var filteredKeys: [String] {
+    var filteredKeys: [String] {
         let searchString = ""
         return allKeyNames.filter { $0.lowercased().hasPrefix(searchString) }
     }
@@ -164,6 +166,13 @@ struct SettingsView: View {
                             .padding(.trailing, 50) // Add a gap on the right side of the button
                         }
                         .padding(.leading)
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Toggle("Show Watch", isOn: $showWatchIsOn)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading) // Add this line
+                        .padding(.leading)
                     }
                 }
             }
@@ -172,7 +181,6 @@ struct SettingsView: View {
             EmptyView()
         }.keyboardShortcut(.cancelAction)
         .buttonStyle(PlainButtonStyle())
-//        .overlay(KeyView(dismiss: { appDelegate.hideSettings() }).allowsHitTesting(false))
         .onChange(of: usePhotosFromPexelsIsOn) { newValue in
            iPrint("isOn: \(usePhotosFromPexelsIsOn)")
             usePhotosFromPexels = usePhotosFromPexelsIsOn
@@ -193,15 +201,25 @@ struct SettingsView: View {
                 useVideosFromPexels = false
             }
         }
+        .onChange(of: showWatchIsOn) { newValue in
+            iPrint("isOn: \(showWatchIsOn)")
+            showWatch = showWatchIsOn
+            appDelegate.showWatch = showWatch
+        }
+        .onChange(of: showWatch) { newValue in
+            iPrint("showWatch: \(showWatch)")
+            showWatchIsOn = newValue
+        }
         .frame(width: 350, height: 325)
         .onAppear {
             selectedFolderPath = storedFolderPath
             usePhotosFromPexelsIsOn = usePhotosFromPexels
             useVideosFromPexelsIsOn = useVideosFromPexels
+            showWatchIsOn = showWatch
         }
     }
 
-    private func openFolderPicker() {
+    func openFolderPicker() {
         appDelegate.settingsWindow.level = .normal
 
         let openPanel = NSOpenPanel()
@@ -227,9 +245,3 @@ struct SettingsView: View {
         }
     }
 }
-
-//struct SettingsView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SettingsView()
-//    }
-//}

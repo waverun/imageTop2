@@ -1,10 +1,10 @@
 //import SwiftUI
 //
 //struct DigitalWatchView: View {
-//    @State private var isAppeared = false
+//    @State  var isAppeared = false
 //    let timeFont = Font.system(size: 80, weight: .bold, design: .rounded)
-//    @State private var watchPosition = CGPoint(x: 0, y: 0)
-//    @State private var timeString = ""
+//    @State  var watchPosition = CGPoint(x: 0, y: 0)
+//    @State  var timeString = ""
 //
 //    let x: CGFloat?
 //    let y: CGFloat?
@@ -36,7 +36,7 @@
 //            }
 //    }
 //
-//    private func updateTime() {
+//     func updateTime() {
 //        let formatter = DateFormatter()
 //        formatter.dateFormat = "HH:mm"
 //        timeString = formatter.string(from: Date())
@@ -49,8 +49,8 @@ import SwiftUI
 struct DigitalWatchView: View {
     let backgroundColor = Color.black.opacity(0.6)
     let timeFont = Font.system(size: 80, weight: .bold, design: .rounded)
-    @State private var watchPosition = CGPoint(x: 0, y: 0)
-    @State private var timeString = ""
+    @State  var watchPosition = CGPoint(x: 0, y: 0)
+    @State  var timeString = ""
 
     let x: CGFloat?
     let y: CGFloat?
@@ -73,7 +73,7 @@ struct DigitalWatchView: View {
             }
     }
 
-    private func updateTime() {
+     func updateTime() {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         timeString = formatter.string(from: Date())
