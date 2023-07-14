@@ -125,7 +125,7 @@ struct ContentView: View {
                     videoPlayerView
                 }
                 imageView
-                if index == 0 {
+                if index == 0 && appDelegate.showWatch {
                     DigitalWatchView(x: x, y: y)
                 }
             }
@@ -283,9 +283,9 @@ struct ContentView: View {
 //            imageViewBuilder(image: firstImage, photographer: firstPhotographer, condition: !(showSecondImage || showVideo || loadingImage))
 //            imageViewBuilder(image: secondImage, photographer: secondPhotographer, condition: showSecondImage && !showVideo && !loadingImage)
 
-            if index == 0 {
-                DigitalWatchView(x: x, y: y)
-            }
+//            if index == 0 && appDelegate.showWatch {
+//                DigitalWatchView(x: x, y: y)
+//            }
         }
     }
 

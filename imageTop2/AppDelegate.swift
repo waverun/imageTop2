@@ -16,7 +16,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var pexelsVideos: [String] = []
     @Published var networkIsReachable = false
     @Published var isFullScreen = false
-//    @Published var monitor: Any?
+
+//    @Published var showWatch = false
     @Published var autoStart: Bool = true {
         didSet {
             // Update the title of the menu item when autoStart changes
@@ -24,8 +25,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
+    @Published var showWatch: Bool = true {
+        didSet {
+            // Update the title of the menu item when autoStart changes
+            showWatchItem.title = (showWatch ? "Hide" : "Show") + " Watch"
+        }
+    }
+
     var statusBarItem: NSStatusItem!
     var autoStartItem: NSMenuItem! // This is the menu item we want to update
+    var showWatchItem: NSMenuItem! // This is the menu item we want to update
 
     var settingsWindow: NSWindow!
     var externalDisplayCount: Int = 0
@@ -72,26 +81,26 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         startTimer.toggle()
         showWindow = true
         NSCursor.hide()
-//        if let window = notification.object as? NSWindow,
-//           let index = WindowManager.shared.getIndex(for: window),
-//           index == 0 {
-//            monitor = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved]) { event in
-//                iPrint("monitor: \(event)")
-//                NSCursor.unhide()
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                    if let monitor = self.monitor {
-//                        iPrint("Removing monitor")
-//                        NSEvent.removeMonitor(monitor)
-//                        self.monitor = nil
-//                    }
-//                }
-//            }
-//        }
+        //        if let window = notification.object as? NSWindow,
+        //           let index = WindowManager.shared.getIndex(for: window),
+        //           index == 0 {
+        //            monitor = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved]) { event in
+        //                iPrint("monitor: \(event)")
+        //                NSCursor.unhide()
+        //                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        //                    if let monitor = self.monitor {
+        //                        iPrint("Removing monitor")
+        //                        NSEvent.removeMonitor(monitor)
+        //                        self.monitor = nil
+        //                    }
+        //                }
+        //            }
+        //        }
     }
 
-//    var prevSeconds: CFTimeInterval = 0
+    //    var prevSeconds: CFTimeInterval = 0
     var inactivityTimer: Timer!
-//    var inactivityAfterLockTimer: Timer!
+    //    var inactivityAfterLockTimer: Timer!
 
     func getLastEventTime() -> CFTimeInterval {
         let keyUpLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .keyUp)
@@ -113,16 +122,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             return
         }
 
-//        prevSeconds = getLastEventTime()
+        //        prevSeconds = getLastEventTime()
         inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
             let currentSeconds = getLastEventTime()
             if prevEventTime != currentSeconds {
-//                iPrint("startInactivityTimer \(prevSeconds) \(currentSeconds) startAfter: \(startAfter)")
+                //                iPrint("startInactivityTimer \(prevSeconds) \(currentSeconds) startAfter: \(startAfter)")
                 iPrint("startInactivityTimer \(currentSeconds) startAfter: \(startAfter)")
                 prevEventTime = currentSeconds
             }
-//            let secondsSinceLastEvent = currentSeconds - prevSeconds
-//            if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
+            //            let secondsSinceLastEvent = currentSeconds - prevSeconds
+            //            if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
             if currentSeconds > startAfter { // check if the user has been inactive for more than 60 seconds
                 if autoStart {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
@@ -176,7 +185,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         menu.addItem(withTitle: "Show", action: #selector(showMainWindow), keyEquivalent: "")
         menu.addItem(withTitle: "Settings", action: #selector(openSettings), keyEquivalent: "")
         autoStartItem = menu.addItem(withTitle: (autoStart ? "Disable" : "Enable") + " Auto (Inactivity) Start", action: #selector(handleAutoStart), keyEquivalent: "")
+
         menu.addItem(NSMenuItem.separator())
+
+        showWatchItem = menu.addItem(withTitle: (showWatch ? "Hide" : "Show") + " Watch", action: #selector(showWatchToggle), keyEquivalent: "")
         menu.addItem(withTitle: "Start at login", action: #selector(openLoginItemsPreferences), keyEquivalent: "")
         menu.addItem(withTitle: "Quit", action: #selector(quitApp), keyEquivalent: "q")
 
@@ -210,6 +222,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         showWindow = true
 
         networkManager = NetworkManager(appDelegate: self)
+    }
+
+    @objc func showWatchToggle() {
+        showWatch.toggle()
     }
 
     @objc func handleAutoStart() {
