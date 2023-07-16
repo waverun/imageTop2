@@ -292,7 +292,7 @@ struct ContentView: View {
     func imageViewBuilder(image: NSImage?, photographer: String, condition: Bool) -> some View {
         iPrint("imageViewBuilder: \(index) startShowVideo: \(startShowVideo)")
         if let image = image {
-            return AnyView(
+            return AnyView (
                 Image(nsImage: image)
                     .resizable()
                     .clipped()
@@ -401,6 +401,11 @@ struct ContentView: View {
             handlePexelsPhotos()
             handlePexelsVideos()
         }
+
+#if DEBUG
+        iPrint("Memory: \(index) onAppear: \(reportMemory())")
+#endif
+
     }
 
     func handleReplaceImageAfterChange(_ newValue: Double) {
@@ -451,14 +456,17 @@ struct ContentView: View {
     }
 
     func onDisappearAction() {
-        iPrint("before onDisapear")
+        iPrint("before onDisappear")
         //            timer?.invalidate()
         resetWatchPosition()
         stopChangeTimer()
         if let url = URL(string: selectedFolderPath) {
             url.stopAccessingSecurityScopedResource()
         }
-        iPrint("after onDisapear")
+        iPrint("after onDisappear")
+#if DEBUG
+        iPrint("Memory: \(index) onDisappear: \(reportMemory())")
+#endif
     }
 
     func handleShowWindowChange(showWindow: Bool) {
@@ -939,7 +947,7 @@ struct ContentView: View {
 
     func loadRandomImageOrVideo() {
 #if DEBUG
-        iPrint("Memory: Start loadRandomImageOrVideo: \(reportMemory())")
+        iPrint("Memory: \(index) Start loadRandomImageOrVideo: \(reportMemory())")
 #endif
 
         if !appDelegate.isFullScreen {
@@ -1046,7 +1054,7 @@ struct ContentView: View {
     }
 
      func handleImage(_ path: String) {
-        guard let nsImage = NSImage(contentsOfFile: path) else {
+        guard var nsImage = NSImage(contentsOfFile: path) else {
             imageAndVideoNames = loadImageAndVideoNames()
             loadingImage = true
             return

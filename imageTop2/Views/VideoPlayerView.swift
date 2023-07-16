@@ -47,7 +47,7 @@ struct VideoPlayerView: NSViewRepresentable {
         }
 
 #if DEBUG
-        iPrint("Memory: Play makeNSView: \(reportMemory())")
+        iPrint("Memory: \(index) Play makeNSView: \(reportMemory())")
 #endif
 
         return view
@@ -69,6 +69,7 @@ struct VideoPlayerView: NSViewRepresentable {
     }
 
     func startGetVideoLengthTask(player: AVPlayer, url: URL) {
+        iPrint("startGetVideoLengthTask: \(index) url: \(url)")
         Task {
             do {
                 let duration = try await getVideoLength(videoURL: url)
@@ -110,13 +111,13 @@ struct VideoPlayerView: NSViewRepresentable {
 
         // Check if the player's URL is different from the new URL
         if let currentURL = player.currentItem?.asset as? AVURLAsset, currentURL.url.path != url.path {
-            startGetVideoLengthTask(player: player, url: url)
-
             NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
 
             let item = AVPlayerItem(url: url)
 
             player.replaceCurrentItem(with: item)
+
+            startGetVideoLengthTask(player: player, url: url)
 
             // Play the video
             if appDelegate.showWindow {
@@ -125,7 +126,7 @@ struct VideoPlayerView: NSViewRepresentable {
             }
         }
 #if DEBUG
-        iPrint("Memory: Play updateNSView: \(reportMemory())")
+        iPrint("Memory: \(index) Play updateNSView: \(reportMemory())")
 #endif
     }
 }
