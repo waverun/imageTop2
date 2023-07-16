@@ -938,6 +938,10 @@ struct ContentView: View {
     }
 
     func loadRandomImageOrVideo() {
+#if DEBUG
+        iPrint("Memory: Start loadRandomImageOrVideo: \(reportMemory())")
+#endif
+
         if !appDelegate.isFullScreen {
             gTimers[index]?.pause()
             return

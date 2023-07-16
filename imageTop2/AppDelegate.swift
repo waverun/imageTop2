@@ -166,6 +166,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+#if DEBUG
+        iPrint("Memory: Start applicationDidFinishLaunching: \(reportMemory())")
+#endif
+
         for window in NSApplication.shared.windows {
             if window.title == "Window" {
                 window.orderOut(nil)
@@ -223,6 +227,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         showWindow = true
 
         networkManager = NetworkManager(appDelegate: self)
+
+#if DEBUG
+        iPrint("Finished: Start applicationDidFinishLaunching: \(reportMemory())")
+#endif
+
     }
 
     @objc func showWatchToggle() {
