@@ -28,7 +28,7 @@ struct SettingsView: View {
         return allKeyNames.filter { $0.lowercased().hasPrefix(searchString) }
     }
 
-    var body: some View {
+    @ViewBuilder var body: some View {
         VStack {
             Text("Settings")
                 .font(.title)

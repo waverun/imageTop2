@@ -43,7 +43,7 @@ struct VideoPlayerView: NSViewRepresentable {
         // play the video
         if appDelegate.showWindow {
             player.play()
-            iPrint("Video1 started playing. \(self.index) url: \(url) makeNSView \(Date())")
+            iPrint("Video1 started playing. \(index) url: \(url) makeNSView \(Date())")
         }
 
 #if DEBUG
@@ -56,7 +56,7 @@ struct VideoPlayerView: NSViewRepresentable {
     func setEndPlayNotification(player: AVPlayer) {
         gTimers.removeValue(forKey: index)
         NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
-            iPrint("Video finished playing. \(self.index)")
+            iPrint("Video finished playing. \(index)")
             startNewVideo(player)
             // You could do additional things here like play the next video, show a replay button, etc.
         }
@@ -122,11 +122,11 @@ struct VideoPlayerView: NSViewRepresentable {
             // Play the video
             if appDelegate.showWindow {
                 player.play()
-                iPrint("Video1 started playing. \(self.index) url: \(url) updateNSView \(Date())")
+                iPrint("Video1 started playing. \(index) url: \(url) updateNSView \(Date())")
             }
-        }
 #if DEBUG
-        iPrint("Memory: \(index) Play updateNSView: \(reportMemory())")
+            iPrint("Memory: \(index) Play updateNSView: \(reportMemory())")
 #endif
+        }
     }
 }

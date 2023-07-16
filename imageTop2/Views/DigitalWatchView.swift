@@ -55,7 +55,7 @@ struct DigitalWatchView: View {
     let x: CGFloat?
     let y: CGFloat?
 
-    var body: some View {
+    @ViewBuilder var body: some View {
         Text(timeString)
             .font(timeFont)
             .foregroundColor(.white)

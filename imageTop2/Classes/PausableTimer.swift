@@ -2,11 +2,11 @@ import Foundation
 import AVFoundation
 
 class PausableTimer {
-     var timer: Timer?
-     var startTime: Date?
-     var timeElapsedWhenPaused: TimeInterval = 0
-     var interval: TimeInterval = 0
-     var block: ((Timer?) -> Void)?
+    var timer: Timer?
+    var startTime: Date?
+    var timeElapsedWhenPaused: TimeInterval = 0
+    var interval: TimeInterval = 0
+    var block: ((Timer?) -> Void)?
     var index: Int?
 
     init (index: Int) {
@@ -46,15 +46,11 @@ class PausableTimer {
               let currentTime = gPlayers[index!]?.currentTime(),
               let duration = gPlayers[index!]?.currentItem?.duration else {
             if let block = block {
-//               let timer = timer {
                 block(timer)
             }
             return
         }
 
-        //        if let currentTime = gPlayers[index!]?.currentTime(),
-        //           let duration = gPlayers[index!]?.currentItem?.duration {
-        //
         let playerCurrentTimeSec = CMTimeGetSeconds(currentTime)
         let playerDurationSec = CMTimeGetSeconds(duration)
 
@@ -62,12 +58,8 @@ class PausableTimer {
 
         let remainingTimeSec = playerDurationSec - playerCurrentTimeSec
         interval = remainingTimeSec
-        //        }
 
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false, block: block!)
         iPrint("timer: \(index!) resume: \(interval)")
-        //        { [weak self] timer in
-        //            self?.start(interval: self!.timeElapsedWhenPaused, block: self!.block!)
-        //        }
     }
-    }
+}

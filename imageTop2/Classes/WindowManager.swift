@@ -29,8 +29,8 @@ class WindowManager: ObservableObject {
     }
 
     func removeAllWindows(completion: @escaping () -> Void) {
-        exitFullScreen() { [self] in
-            windows.removeAll()
+        exitFullScreen() { [weak self] in
+            self?.windows.removeAll()
             completion()
         }
     }
@@ -66,13 +66,15 @@ class WindowManager: ObservableObject {
         exitFullScreenTimer?.invalidate()
 
         // Create a new timer
-        enterFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
+        enterFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             if !ScreenLockStatus.shared.isLocked {
                 var invalidateTimerRequired = true
-                for window in windows {
-                    if !window.styleMask.contains(.fullScreen) {
-                        window.toggleFullScreen(nil)
-                        invalidateTimerRequired = false
+                if let windows = self?.windows {
+                    for window in windows {
+                        if !window.styleMask.contains(.fullScreen) {
+                            window.toggleFullScreen(nil)
+                            invalidateTimerRequired = false
+                        }
                     }
                 }
                 if invalidateTimerRequired {
@@ -98,13 +100,15 @@ class WindowManager: ObservableObject {
         enterFullScreenTimer?.invalidate()
 
         // Create a new timer
-        exitFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
+        exitFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             if !ScreenLockStatus.shared.isLocked {
                 var invalidetTimerRequired = true
-                for window in windows {
-                    if window.styleMask.contains(.fullScreen) {
-                        window.toggleFullScreen(nil)
-                        invalidetTimerRequired = false
+                if let windows = self?.windows {
+                    for window in windows {
+                        if window.styleMask.contains(.fullScreen) {
+                            window.toggleFullScreen(nil)
+                            invalidetTimerRequired = false
+                        }
                     }
                 }
                 if invalidetTimerRequired {

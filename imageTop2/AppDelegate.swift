@@ -72,7 +72,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             }
         }
 
-        self.isMainWindowVisible = false
+        isMainWindowVisible = false
     }
 
     func windowDidEnterFullScreen(_ notification: Notification) {
@@ -82,26 +82,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         startTimer.toggle()
         showWindow = true
         NSCursor.hide()
-        //        if let window = notification.object as? NSWindow,
-        //           let index = WindowManager.shared.getIndex(for: window),
-        //           index == 0 {
-        //            monitor = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved]) { event in
-        //                iPrint("monitor: \(event)")
-        //                NSCursor.unhide()
-        //                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-        //                    if let monitor = self.monitor {
-        //                        iPrint("Removing monitor")
-        //                        NSEvent.removeMonitor(monitor)
-        //                        self.monitor = nil
-        //                    }
-        //                }
-        //            }
-        //        }
     }
 
-    //    var prevSeconds: CFTimeInterval = 0
     var inactivityTimer: Timer!
-    //    var inactivityAfterLockTimer: Timer!
 
     func getLastEventTime() -> CFTimeInterval {
         let keyUpLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .keyUp)
@@ -112,7 +95,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         return min(keyUpLastTime, mouseMoveLastTime, mouseDownLastTime, scrollLastTime)
     }
 
-    var prevEventTime: CFTimeInterval = 0
+//    var prevEventTime: CFTimeInterval = 0
 
     func startInactivityTimer() {
         if let inactivityTimer = inactivityTimer {
@@ -124,24 +107,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
 
         //        prevSeconds = getLastEventTime()
-        inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [self] timer in
-            let currentSeconds = getLastEventTime()
-            if prevEventTime != currentSeconds {
-                //                iPrint("startInactivityTimer \(prevSeconds) \(currentSeconds) startAfter: \(startAfter)")
-                iPrint("startInactivityTimer \(currentSeconds) startAfter: \(startAfter)")
-                prevEventTime = currentSeconds
-            }
+        inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            let currentSeconds = self?.getLastEventTime()
+//            if prevEventTime != currentSeconds {
+//                //                iPrint("startInactivityTimer \(prevSeconds) \(currentSeconds) startAfter: \(startAfter)")
+//                iPrint("startInactivityTimer \(currentSeconds) startAfter: \(startAfter)")
+//                prevEventTime = self?.currentSeconds
+//            }
             //            let secondsSinceLastEvent = currentSeconds - prevSeconds
             //            if secondsSinceLastEvent > startAfter { // check if the user has been inactive for more than 60 seconds
-            if currentSeconds > startAfter { // check if the user has been inactive for more than 60 seconds
+            if let currentSeconds = currentSeconds,
+               let startAfter = self?.startAfter,
+               let autoStart = self?.autoStart,
+               currentSeconds > startAfter { // check if the user has been inactive for more than 60 seconds
                 if autoStart {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
-                        self.showWindow = true // call your method that brings the window to the front
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+                        self?.showWindow = true // call your method that brings the window to the front
                     }
                     WindowManager.shared.enterFullScreen()
                 }
-                inactivityTimer.invalidate()
-                inactivityTimer = nil
+                self?.inactivityTimer.invalidate()
+                self?.inactivityTimer = nil
             }
         }
     }
@@ -149,18 +135,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     func startDetectLockedScreen() {
         let dnc = DistributedNotificationCenter.default()
 
-        _ = dnc.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { [self] _ in
+        _ = dnc.addObserver(forName: .init("com.apple.screenIsLocked"), object: nil, queue: .main) { [weak self] _ in
             iPrint("Screen Locked")
             ScreenLockStatus.shared.isLocked = true
-            showWindow = false
-            inactivityTimer?.invalidate()
-            inactivityTimer = nil
+            self?.showWindow = false
+            self?.inactivityTimer?.invalidate()
+            self?.inactivityTimer = nil
         }
 
-        _ = dnc.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { [self] _ in
+        _ = dnc.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { [weak self] _ in
             iPrint("Screen Unlocked")
             ScreenLockStatus.shared.isLocked = false
-            startInactivityTimer()
+            self?.startInactivityTimer()
         }
     }
 
@@ -270,14 +256,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     func restartApplication() {
         iPrint("Restarting application...")
 
-        WindowManager.shared.removeAllWindows() { [self] in
+        WindowManager.shared.removeAllWindows() { [weak self] in
             // Recreate windows for the new screen configuration
             iPrint("before createWindows")
             //??:
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
-                if createWindowsPlease {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                if let createWindowsPlease = self?.createWindowsPlease,
+                   createWindowsPlease {
                     iPrint("NSScreen.screens.count before createWindow: \(NSScreen.screens.count) ")
-                    createWindows()
+                    self?.createWindows()
                 }
                 iPrint("after createWindows")
             }
@@ -329,13 +316,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         if autoStart {
             WindowManager.shared.enterFullScreen()
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [self] in
-            hideSettings()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+            self?.hideSettings()
 //            showWindow = true // To cause to call showApp.
             iPrint("showMainWindow")
-            ignoreMonitor = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [self] in
-                ignoreMonitor = false
+            self?.ignoreMonitor = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.ignoreMonitor = false
             }
         }
     }

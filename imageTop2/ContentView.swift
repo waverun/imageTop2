@@ -117,7 +117,7 @@ struct ContentView: View {
         }
     }
 
-    var body: some View {
+    @ViewBuilder var body: some View {
         GeometryReader { geometry in
             ZStack {
                 backgroundView
@@ -147,7 +147,7 @@ struct ContentView: View {
         .onReceive(appDelegate.$networkIsReachable, perform: handleNetworkReachabilityChange)
     }
 
-    var backgroundView: some View {
+    @ViewBuilder var backgroundView: some View {
         ZStack {
             backgroundColor
                 .opacity(showFadeColor ? 0 : 1)
@@ -161,7 +161,7 @@ struct ContentView: View {
         }
     }
 
-    var videoPlayerView: some View {
+    @ViewBuilder var videoPlayerView: some View {
         ZStack {
             videoPlayerBuilder(videoPath: stateObjects.firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
 //                .onAppear { videoAppeared(firstVideo: true) }
@@ -268,15 +268,15 @@ struct ContentView: View {
 //        }
 //    }
 
-    var firstImageView: some View {
+    @ViewBuilder var firstImageView: some View {
         imageViewBuilder(image: firstImage, photographer: firstPhotographer, condition: !(showSecondImage || showVideo || loadingImage))
     }
 
-    var secondImageView: some View {
+    @ViewBuilder var secondImageView: some View {
         imageViewBuilder(image: secondImage, photographer: secondPhotographer, condition: showSecondImage && !showVideo && !loadingImage)
     }
 
-    var imageView: some View {
+    @ViewBuilder var imageView: some View {
         ZStack {
             firstImageView
             secondImageView
@@ -780,14 +780,7 @@ struct ContentView: View {
         appDelegate.keyAndMouseEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
             iPrint("in startMonitoringUserInput showWindow: \(appDelegate.showWindow)")
 
-            //            self.hideApp()
-//            stateObject.firstVideoPath = ""
-//            stateObject.secondVideoPath = ""
             if !appDelegate.ignoreMonitor {
-//                for player in gPlayers.enumerated() {
-//                    player.element.value.pause()
-//                    WindowManager.shared.windows[player.offset].orderOut(nil)
-//                }
                 appDelegate.showWindow = false
                 iPrint("show - startMonitoringUserInput")
             }
@@ -959,18 +952,18 @@ struct ContentView: View {
             return
         }
         iPrint("video loadRandomImageOrVideo \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
-        let newRandomImageOrVideoPath = self.generateRandomPath()
+        let newRandomImageOrVideoPath = generateRandomPath()
         DispatchQueue.global(qos: .userInitiated).async {
             switch true {
-                case self.isVideo(newRandomImageOrVideoPath):
+                case isVideo(newRandomImageOrVideoPath):
                     hideVideos = false
-                    self.handleVideo(newRandomImageOrVideoPath)
+                    handleVideo(newRandomImageOrVideoPath)
                 default:
                     if showVideo == false {
                         hideVideos = true
                     }
                     startShowVideo = false
-                    self.handleImage(newRandomImageOrVideoPath)
+                    handleImage(newRandomImageOrVideoPath)
             }
         }
     }
@@ -1054,7 +1047,7 @@ struct ContentView: View {
     }
 
      func handleImage(_ path: String) {
-        guard var nsImage = NSImage(contentsOfFile: path) else {
+        guard let nsImage = NSImage(contentsOfFile: path) else {
             imageAndVideoNames = loadImageAndVideoNames()
             loadingImage = true
             return
@@ -1066,17 +1059,17 @@ struct ContentView: View {
 
      func manageImageDisplay(path: String, nsImage: NSImage, photographer: String) {
         startShowImage = false
-        self.showSecondImage.toggle()
+        showSecondImage.toggle()
         DispatchQueue.main.async {
-            self.manageVideoToImageTransition()
-            self.loadingImage = true
+            manageVideoToImageTransition()
+            loadingImage = true
             if showSecondImage {
-                self.setFirstImage(path: path, nsImage: nsImage, photographer: photographer)
+                setFirstImage(path: path, nsImage: nsImage, photographer: photographer)
             } else {
-                self.setSecondImage(path: path, nsImage: nsImage, photographer: photographer)
+                setSecondImage(path: path, nsImage: nsImage, photographer: photographer)
             }
-            self.showSecondImage.toggle()
-            self.loadingImage = false
+            showSecondImage.toggle()
+            loadingImage = false
         }
     }
 
@@ -1089,15 +1082,15 @@ struct ContentView: View {
     }
 
      func setFirstImage(path: String, nsImage: NSImage, photographer: String) {
-        self.firstImagePath = path
-        self.firstImage = nsImage
-        self.firstPhotographer = photographer
+        firstImagePath = path
+        firstImage = nsImage
+        firstPhotographer = photographer
     }
 
      func setSecondImage(path: String, nsImage: NSImage, photographer: String) {
-        self.secondImagePath = path
-        self.secondImage = nsImage
-        self.secondPhotographer = photographer
+        secondImagePath = path
+        secondImage = nsImage
+        secondPhotographer = photographer
     }
 
      func extractNameFromFilePath(filePath: String) -> String {
