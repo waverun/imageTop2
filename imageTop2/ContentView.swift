@@ -1249,8 +1249,6 @@ struct ContentView: View {
 
     func hideApp() {
         iPrint("hideApp \(index)")
-//        gPlayers[index]?.pause()
-//        WindowManager.shared.windows[index].orderOut(nil)
         stopChangeTimer()
         stopMonitoringUserInput()
         if index == 0 {
