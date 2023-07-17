@@ -31,6 +31,10 @@ class WindowManager: ObservableObject {
     func removeAllWindows(completion: @escaping () -> Void) {
         exitFullScreen() { [weak self] in
             guard let self = self else { return }
+            for window in windows {
+                window.contentView = nil
+//                window.close()
+            }
             self.windows.removeAll()
             self.windowIndices.removeAll()
             completion()
