@@ -260,6 +260,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             // Recreate windows for the new screen configuration
             iPrint("before createWindows")
             //??:
+            gPlayers.removeAll()
+            gTimers.removeAll()
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
                 if let createWindowsPlease = self?.createWindowsPlease,
                    createWindowsPlease {
