@@ -57,9 +57,9 @@ class WindowManager: ObservableObject {
             removePlayers()
             removeTimers()
             for window in windows {
-                window.contentView = nil
                 window.orderOut(nil)
 //                window.close()
+                window.contentView = nil
             }
             self.windows.removeAll()
             self.windowIndices.removeAll()
