@@ -117,8 +117,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         return min(keyUpLastTime, mouseMoveLastTime, mouseDownLastTime, scrollLastTime)
     }
 
-//    var prevEventTime: CFTimeInterval = 0
-
     func startInactivityTimer() {
         if let inactivityTimer = inactivityTimer {
             inactivityTimer.invalidate()
@@ -131,9 +129,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             guard let self = self else { return }
             let currentSeconds = self.getLastEventTime()
-//            if let currentSeconds = currentSeconds,
-//               let startAfter = self.startAfter,
-//               let autoStart = self.autoStart,
                if currentSeconds > startAfter { // check if the user has been inactive for more than 60 seconds
                 if autoStart {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
@@ -272,20 +267,40 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var createWindowsPlease = true
 
     func restartApplication() {
+        func removeTimers() {
+            for i in 0...gTimers.count {
+                if i < gTimers.count {
+                    if gTimers[i] != nil {
+                        gTimers[i]!.invalidate()
+                        gTimers[i] = nil
+                    }
+                }
+            }
+            gTimers.removeAll()
+        }
+
+        func removePlayers() {
+            for i in 0...gPlayers.count {
+                if i < gPlayers.count {
+                    if gPlayers[i] != nil {
+                        gPlayers[i]!.pause()
+                        gPlayers[i] = nil
+                    }
+                }
+            }
+            gPlayers.removeAll()
+        }
         iPrint("Restarting application...")
 
         WindowManager.shared.removeAllWindows() { [weak self] in
             guard let self = self else { return }
             iPrint("before createWindows")
-            gPlayers.removeAll()
-            gTimers.removeAll()
+            removePlayers()
+            removeTimers()
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
                 guard let self = self else { return }
-//                if let createWindowsPlease = self.createWindowsPlease,
-//                   createWindowsPlease {
                     iPrint("NSScreen.screens.count before createWindow: \(NSScreen.screens.count) ")
                     self.createWindows()
-//                }
                 iPrint("after createWindows")
             }
         }
@@ -339,7 +354,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
             guard let self = self else { return }
             self.hideSettings()
-//            showWindow = true // To cause to call showApp.
             iPrint("showMainWindow")
             self.ignoreMonitor = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
