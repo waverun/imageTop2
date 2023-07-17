@@ -845,6 +845,8 @@ struct ContentView: View {
         }
         showAccordingToNetworkReachability()
         if showVideo, networkIsReachableOrNotShowingVideos,
+           gPlayers.count > index,
+           gTimers.count > index,
            let player = gPlayers[index] {
             iPrint("video1 play: \(index) \(index) stateObject.firstVideoPath: \(stateObjects.firstVideoPath) stateObject.secondVideoPath: \(stateObjects.secondVideoPath)")
             player.play()
@@ -856,8 +858,6 @@ struct ContentView: View {
 
     func hotkeyPressed() {
         iPrint("hotkey pressed")
-        //        showApp()
-//        appDelegate.showWindow = true
         appDelegate.hideSettings()
         if index == 0 {
             WindowManager.shared.enterFullScreen()
@@ -915,15 +915,16 @@ struct ContentView: View {
             stopChangeTimer()
         }
 
-        if appDelegate.firstSetTimer[index] == nil {
-            appDelegate.firstSetTimer[index] = false
-            iPrint("firstsettime changeScreenImageOrColor \(index)")
-            changeScreenImageVideoOrColor()
+        if appDelegate.firstSetTimer.count > index,
+            appDelegate.firstSetTimer[index] == nil {
+                appDelegate.firstSetTimer[index] = false
+                iPrint("firstsettime changeScreenImageOrColor \(index)")
+                changeScreenImageVideoOrColor()
         }
 
         iPrint("startScreenChangeTimer: \(index) \(Date())")
 
-        imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter + addTime , repeats: addTime == 0) { [self] _ in
+        imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter + addTime , repeats: addTime == 0) { _ in
             iPrint("imageOrBackgroundChangeTimer: \(index) \(Date())")
             changeScreenImageVideoOrColor()
             if addTime > 0 { //Start the timer with regular time after fading from image to movie
@@ -943,7 +944,8 @@ struct ContentView: View {
         iPrint("Memory: \(index) Start loadRandomImageOrVideo: \(reportMemory())")
 #endif
 
-        if !appDelegate.isFullScreen {
+        if !appDelegate.isFullScreen,
+           gTimers.count > index {
             gTimers[index]?.pause()
             return
         }
@@ -1012,9 +1014,11 @@ struct ContentView: View {
      func handleVideo(_ path: String) {
         iPrint("isVideFile: \(index) newRandomImageOrVideoPath: \(path)")
         let videoComponents = path.components(separatedBy: ",")
-        let newVideoPath = videoComponents[0]
-        let photographer = videoComponents.count > 1 ? videoComponents[1] : ""
-        setNewVideo(path: newVideoPath, photographer: photographer)
+         if videoComponents.count > 0 {
+             let newVideoPath = videoComponents[0]
+             let photographer = videoComponents.count > 1 ? videoComponents[1] : ""
+             setNewVideo(path: newVideoPath, photographer: photographer)
+         }
     }
 
      func setNewVideo(path: String, photographer: String) {
@@ -1095,9 +1099,11 @@ struct ContentView: View {
 
      func extractNameFromFilePath(filePath: String) -> String {
         let components = filePath.components(separatedBy: "/")
-        if let pexelsIndex = components.firstIndex(of: "pexels") {
+        if let pexelsIndex = components.firstIndex(of: "pexels"),
+           components.count > pexelsIndex + 1 {
             let fileName = components[pexelsIndex + 1]
             let nameComponents = fileName.components(separatedBy: "_")
+            guard nameComponents.count > 0 else { return "" }
             return nameComponents[0]
         }
         return ""
@@ -1227,9 +1233,6 @@ struct ContentView: View {
                     downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
                         appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
                         pexelDownloadSemaphore.signal()
-//                        if appDelegate.pexelsPhotos.count < 2 {
-//                            usePhotosFromPexels = false // Indicate no pexels photos downloaded
-//                        }
                         if !useVideosFromPexels {
                             appDelegate.loadImagesAndVideos.toggle()
                         }

@@ -267,36 +267,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var createWindowsPlease = true
 
     func restartApplication() {
-        func removeTimers() {
-            for i in 0...gTimers.count {
-                if i < gTimers.count {
-                    if gTimers[i] != nil {
-                        gTimers[i]!.invalidate()
-                        gTimers[i] = nil
-                    }
-                }
-            }
-            gTimers.removeAll()
-        }
-
-        func removePlayers() {
-            for i in 0...gPlayers.count {
-                if i < gPlayers.count {
-                    if gPlayers[i] != nil {
-                        gPlayers[i]!.pause()
-                        gPlayers[i] = nil
-                    }
-                }
-            }
-            gPlayers.removeAll()
-        }
         iPrint("Restarting application...")
-
         WindowManager.shared.removeAllWindows() { [weak self] in
             guard let self = self else { return }
             iPrint("before createWindows")
-            removePlayers()
-            removeTimers()
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
                 guard let self = self else { return }
                     iPrint("NSScreen.screens.count before createWindow: \(NSScreen.screens.count) ")

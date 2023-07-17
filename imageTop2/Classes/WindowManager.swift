@@ -29,10 +29,36 @@ class WindowManager: ObservableObject {
     }
 
     func removeAllWindows(completion: @escaping () -> Void) {
+        func removeTimers() {
+            for i in 0...gTimers.count {
+                if i < gTimers.count {
+                    if gTimers[i] != nil {
+                        gTimers[i]!.invalidate()
+                        gTimers[i] = nil
+                    }
+                }
+            }
+            gTimers.removeAll()
+        }
+        func removePlayers() {
+            for i in 0...gPlayers.count {
+                if i < gPlayers.count {
+                    if gPlayers[i] != nil {
+                        gPlayers[i]!.pause()
+                        gPlayers[i] = nil
+                    }
+                }
+            }
+            gPlayers.removeAll()
+        }
+
         exitFullScreen() { [weak self] in
             guard let self = self else { return }
+            removePlayers()
+            removeTimers()
             for window in windows {
                 window.contentView = nil
+                window.orderOut(nil)
 //                window.close()
             }
             self.windows.removeAll()
@@ -96,9 +122,7 @@ class WindowManager: ObservableObject {
     }
 
     func exitFullScreen(completion: (() -> Void)? = nil) {
-//        if windows[0].styleMask.contains(.fullScreen) {
         toggleFullScreen(true)
-//        }
 
         if !ScreenLockStatus.shared.isLocked {
             if let completion = completion {
@@ -133,18 +157,6 @@ class WindowManager: ObservableObject {
             }
         }
     }
-
-//    func enterFullScreen() {
-//        if !windows[0].styleMask.contains(.fullScreen) {
-//            toggleFullScreen(false)
-//        }
-//    }
-//
-//    func exitFullScreen() {
-//        if windows[0].styleMask.contains(.fullScreen) {
-//            toggleFullScreen(true)
-//        }
-//    }
 
     func isFullScreen() -> Bool {
         for window in windows {
