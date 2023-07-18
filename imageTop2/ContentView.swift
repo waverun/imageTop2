@@ -287,7 +287,7 @@ struct ContentView: View {
         } else {
             if let pexelsDirectoryUrl = pexelsDirectoryUrl {
                 clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
-                appDelegate.pexelsPhotos = []
+                appDelegate.pexelsPhotos.removeAll()
                 imageAndVideoNames = loadImageAndVideoNames()
                 //                    appDelegate.loadImages.toggle()
             }
@@ -302,7 +302,7 @@ struct ContentView: View {
         } else {
             if let pexelsDirectoryUrl = pexelsDirectoryUrl {
                 clearPexelVideos(folderURL: pexelsDirectoryUrl, fileName: "videoList.txt")
-                appDelegate.pexelsVideos = []
+                appDelegate.pexelsVideos.removeAll()
                 imageAndVideoNames = loadImageAndVideoNames()
             }
         }
