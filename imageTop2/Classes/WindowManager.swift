@@ -56,14 +56,24 @@ class WindowManager: ObservableObject {
             guard let self = self else { return }
             removePlayers()
             removeTimers()
+            var index = 0
             for window in windows {
                 window.orderOut(nil)
-//                window.close()
                 window.contentView = nil
+                //                DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                iPrint("Before window.close \(index)")
+                window.isReleasedWhenClosed = true
+                window.displaysWhenScreenProfileChanges = false
+                window.disableScreenUpdatesUntilFlush()
+                window.performClose(nil)
+//                window.close()
+                //                }
+                index += 1
             }
             self.windows.removeAll()
             self.windowIndices.removeAll()
             completion()
+            iPrint("end exitFullScreen")
         }
     }
 
@@ -138,16 +148,16 @@ class WindowManager: ObservableObject {
         exitFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             guard let self = self else { return }
             if !ScreenLockStatus.shared.isLocked {
-                var invalidetTimerRequired = true
+                var invalidateTimerRequired = true
 //                if let windows = self.windows {
                     for window in windows {
                         if window.styleMask.contains(.fullScreen) {
                             window.toggleFullScreen(nil)
-                            invalidetTimerRequired = false
+                            invalidateTimerRequired = false
                         }
                     }
 //                }
-                if invalidetTimerRequired {
+                if invalidateTimerRequired {
                     timer.invalidate()
                     if let completion = completion {
                         completion()
