@@ -314,6 +314,7 @@ struct ContentView: View {
 
     func onDisappearAction() {
         iPrint("before onDisappear")
+        NSCursor.unhide()
         resetWatchPosition()
         stopChangeTimer()
         if let url = URL(string: selectedFolderPath) {
