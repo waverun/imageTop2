@@ -254,7 +254,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             iPrint("A screen was added or removed.")
             // Remove all current windows
             
-            restartApplication()
+//            restartApplication()
+            restart()
 
             screenChangeDetected = true // used to create windows again on user input to prevent problem when the screen was locked
         } else {
@@ -265,6 +266,35 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     // This is just a placeholder function, replace it with your actual restart logic
 //    var createWindowsPlease = true
+
+    func restartApp() {
+        //        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+        let task = Process()
+        task.executableURL = Bundle.main.executableURL // gets the current executable
+        do {
+            try task.run()
+        } catch {
+            print("Failed to run the task: \(error)")
+        }
+        NSApp.terminate(self)
+
+//        exit(0) // terminates the current app
+                //        }
+    }
+
+    func restart() {
+        let appleScript = "do shell script \"open -b \(Bundle.main.bundleIdentifier!)\""
+        if let scriptObject = NSAppleScript(source: appleScript) {
+            scriptObject.executeAndReturnError(nil)
+        }
+        exit(0)
+    }
+
+//    func restart() {
+//        Process.launchedProcess(launchPath: "/usr/bin/open", arguments: ["-b", Bundle.main.bundleIdentifier!])
+////        NSApp.terminate(self)
+//        exit(0)
+//    }
 
     func restartApplication() {
         iPrint("Restarting application...")
