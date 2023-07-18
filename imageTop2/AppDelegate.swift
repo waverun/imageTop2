@@ -17,7 +17,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var networkIsReachable = false
     @Published var isFullScreen = false
 
-//    @Published var showWatch = false
     @Published var autoStart: Bool = true {
         didSet {
             // Update the title of the menu item when autoStart changes
@@ -25,7 +24,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
-//    @Published var showWatch: Bool = true {
     @AppStorage("showWatch") var showWatch = true {
         didSet {
             // Update the title of the menu item when autoStart changes
@@ -233,7 +231,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 #if DEBUG
         iPrint("Finished: Start applicationDidFinishLaunching: \(reportMemory())")
 #endif
-
     }
 
     @objc func showWatchToggle() {
@@ -267,7 +264,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     // This is just a placeholder function, replace it with your actual restart logic
-    var createWindowsPlease = true
+//    var createWindowsPlease = true
 
     func restartApplication() {
         iPrint("Restarting application...")

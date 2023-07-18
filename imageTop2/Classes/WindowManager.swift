@@ -56,22 +56,24 @@ class WindowManager: ObservableObject {
             guard let self = self else { return }
             removePlayers()
             removeTimers()
+            windowIndices.removeAll()
             var index = 0
             for window in windows {
-                window.orderOut(nil)
+                window.orderOut(NSApp)
                 window.contentView = nil
                 //                DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                 iPrint("Before window.close \(index)")
                 window.isReleasedWhenClosed = true
                 window.displaysWhenScreenProfileChanges = false
                 window.disableScreenUpdatesUntilFlush()
+                window.delegate = nil
+                windows.removeAll(where: { $0 == window })
                 window.performClose(nil)
 //                window.close()
                 //                }
                 index += 1
             }
-            self.windows.removeAll()
-            self.windowIndices.removeAll()
+            windows.removeAll()
             completion()
             iPrint("end exitFullScreen")
         }
