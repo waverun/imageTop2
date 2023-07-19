@@ -8,8 +8,8 @@ var gContentViews: [Int:ContentView] = [:]
 var gStateObjects: [Int:StateObjects] = [:]
 
 struct StateObjects {
-    var firstVideoPath = ""
-    var secondVideoPath = ""
+    var firstVideoPath: String! = ""
+    var secondVideoPath: String! = ""
     var viewAppeared = false
     var ignoreFirstLoadImagesAndVideos = true
     var unusedPaths = Set<String>()
@@ -490,11 +490,11 @@ struct ContentView: View {
         showAccordingToNetworkReachability()
         if showVideo, networkIsReachableOrNotShowingVideos,
            gPlayers.count > index,
-           gTimers.count > index,
+           gPausableTimers.count > index,
            let player = gPlayers[index] {
-            iPrint("video1 play: \(index) \(index) stateObject.firstVideoPath: \(gStateObjects[index]!.firstVideoPath) stateObject.secondVideoPath: \(gStateObjects[index]!.secondVideoPath)")
+            iPrint("video1 play: \(index) \(index) stateObject.firstVideoPath: \(String(describing: gStateObjects[index]!.firstVideoPath)) stateObject.secondVideoPath: \(String(describing: gStateObjects[index]!.secondVideoPath))")
             player.play()
-            if let timer = gTimers[index] {
+            if let timer = gPausableTimers[index] {
                 timer.resume()
             }
         }
@@ -589,8 +589,8 @@ struct ContentView: View {
 #endif
 
         if !appDelegate.isFullScreen,
-           gTimers.count > index {
-            gTimers[index]?.pause()
+           gPausableTimers.count > index {
+            gPausableTimers[index]?.pause()
             return
         }
         if showVideo && imageAndVideoNames.count < 2 { // may happen after bad loading of videos

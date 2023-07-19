@@ -78,11 +78,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                 startInactivityTimer()
             }
             if let index = WindowManager.shared.getIndex(for: window),
-               gTimers.count > index,
+               gPausableTimers.count > index,
                gPlayers.count > index,
                let player = gPlayers[index] {
                 player.pause()
-                if let timer = gTimers[index] {
+                if let timer = gPausableTimers[index] {
                     timer.pause()
                 }
                 iPrint("video1 pause \(index)")

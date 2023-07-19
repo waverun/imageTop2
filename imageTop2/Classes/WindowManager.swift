@@ -30,15 +30,15 @@ class WindowManager: ObservableObject {
 
     func removeAllWindows(completion: @escaping () -> Void) {
         func removeTimers() {
-            for i in 0...gTimers.count {
-                if i < gTimers.count {
-                    if gTimers[i] != nil {
-                        gTimers[i]!.invalidate()
-                        gTimers[i] = nil
+            for i in 0...gPausableTimers.count {
+                if i < gPausableTimers.count {
+                    if gPausableTimers[i] != nil {
+                        gPausableTimers[i]!.invalidate()
+                        gPausableTimers[i] = nil
                     }
                 }
             }
-            gTimers.removeAll()
+            gPausableTimers.removeAll()
         }
         func removePlayers() {
             for i in 0...gPlayers.count {
@@ -53,8 +53,8 @@ class WindowManager: ObservableObject {
         }
         func cleanStateObjects() {
             for key in Array(gStateObjects.keys) {
-                gStateObjects[key]?.firstVideoPath = ""
-                gStateObjects[key]?.secondVideoPath = ""
+                gStateObjects[key]?.firstVideoPath = nil
+                gStateObjects[key]?.secondVideoPath = nil
                 gStateObjects[key]?.unusedPaths.removeAll()
             }
             gStateObjects = [:]
