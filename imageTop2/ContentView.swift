@@ -4,7 +4,7 @@ import AppKit
 import GameplayKit
 import HotKey
 
-var gContentViews: [Int:ContentView] = [:]
+//var gContentViews: [Int:ContentView] = [:]
 var gStateObjects: [Int:StateObjects] = [:]
 
 struct StateObjects {
@@ -115,7 +115,7 @@ struct ContentView: View {
             iPrint("_x, -Y (\(_x), \(_y)")
         }
         self.index = index
-        gContentViews[index] = self
+//        gContentViews[index] = self
         gStateObjects[index] = StateObjects()
     }
 

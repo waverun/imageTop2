@@ -4,11 +4,11 @@ import SwiftUI
 
 var gPlayers: [Int: AVPlayer] = [:]
 var gPausableTimers: [Int: PausableTimer] = [:]
-var gVideoPlayerViewStateObjects: [Int:VideoPlayerViewStateObjects] = [:]
-
-struct VideoPlayerViewStateObjects {
-    var pausableTimer : PausableTimer?
-}
+//var gVideoPlayerViewStateObjects: [Int:VideoPlayerViewStateObjects] = [:]
+//
+//struct VideoPlayerViewStateObjects {
+//    var pausableTimer : PausableTimer?
+//}
 
 //class VideoPlayerViewStateObjects: ObservableObject {
 //    @Published var pausableTimer : PausableTimer?
@@ -83,13 +83,13 @@ struct VideoPlayerView: NSViewRepresentable {
                 iPrint("iDuration \(index) \(iDuration)")
                 if iDuration > 4 {
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(iDuration - 2)) {
-                    if let timer = gVideoPlayerViewStateObjects[index]?.pausableTimer {
+                    if let timer = gPausableTimers[index] {
                         timer.invalidate()
-                        gVideoPlayerViewStateObjects[index]?.pausableTimer = nil
+                        gPausableTimers[index] = nil
                     }
-                    gVideoPlayerViewStateObjects[index]?.pausableTimer = PausableTimer(index: index)
-                    gPausableTimers[index] = gVideoPlayerViewStateObjects[index]?.pausableTimer
-                    gVideoPlayerViewStateObjects[index]?.pausableTimer!.start(interval: TimeInterval(iDuration - 2)) {_ in
+                    gPausableTimers[index] = PausableTimer(index: index)
+//                    gPausableTimers[index] = gVideoPlayerViewStateObjects[index]?.pausableTimer
+                    gPausableTimers[index]?.start(interval: TimeInterval(iDuration - 2)) { _ in
                         startNewVideo(player)
                     }
                 } else {
@@ -104,7 +104,7 @@ struct VideoPlayerView: NSViewRepresentable {
 
     func startNewVideo(_ player: AVPlayer) {
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
-        gVideoPlayerViewStateObjects[index]?.pausableTimer?.invalidate()
+        gPausableTimers[index]?.invalidate()
         finishedPlaying()
     }
 
