@@ -51,11 +51,27 @@ class WindowManager: ObservableObject {
             }
             gPlayers.removeAll()
         }
-
+        func cleanStateObjects() {
+            for key in Array(gStateObjects.keys) {
+                gStateObjects[key]?.firstVideoPath = ""
+                gStateObjects[key]?.secondVideoPath = ""
+                gStateObjects[key]?.unusedPaths.removeAll()
+            }
+            gStateObjects = [:]
+        }
+//        func cleanContentViews() {
+//            for contentView in Array(gContentViews.values) {
+//                contentView.stateObjects.firstVideoPath = ""
+//                contentView.stateObjects.secondVideoPath = ""
+//                contentView.stateObjects.unusedPaths.removeAll()
+//            }
+//            gContentViews = [:]
+//        }
         exitFullScreen() { [weak self] in
             guard let self = self else { return }
             removePlayers()
             removeTimers()
+            cleanStateObjects()
             windowIndices.removeAll()
             var index = 0
             for window in windows {

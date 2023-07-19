@@ -254,8 +254,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             iPrint("A screen was added or removed.")
             // Remove all current windows
             
-//            restartApplication()
-            restart()
+            restartApplication()
+//            restart()
 
             screenChangeDetected = true // used to create windows again on user input to prevent problem when the screen was locked
         } else {
