@@ -4,8 +4,9 @@ import AppKit
 import GameplayKit
 import HotKey
 
-//var gContentViews: [Int:ContentView] = [:]
+var gContentViews: [Int:ContentView] = [:]
 var gStateObjects: [Int:StateObjects] = [:]
+var gHotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 
 struct StateObjects {
     var firstVideoPath: String! = ""
@@ -64,7 +65,7 @@ struct ContentView: View {
     @State var startShowImage = false
     @State var networkIsReachableOrNotShowingVideos = false
 
-    @State var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
+//    @State var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 
     @State var testText: String = ""
 
@@ -115,7 +116,7 @@ struct ContentView: View {
             iPrint("_x, -Y (\(_x), \(_y)")
         }
         self.index = index
-//        gContentViews[index] = self
+        gContentViews[index] = self
         gStateObjects[index] = StateObjects()
     }
 
@@ -476,9 +477,9 @@ struct ContentView: View {
             if let modifier = Keyboard.stringToModifier(keyString2) {
                 modifiers.insert(modifier)
             }
-            hotkey?.isPaused = true
-            hotkey = HotKey(key: key, modifiers: modifiers)
-            hotkey!.keyDownHandler = hotkeyPressed
+            gHotkey?.isPaused = true
+            gHotkey = HotKey(key: key, modifiers: modifiers)
+            gHotkey!.keyDownHandler = hotkeyPressed
         }
     }
 
@@ -615,8 +616,10 @@ struct ContentView: View {
     }
 
      func generateRandomPath() -> String {
-        // Check if all paths have been used, if so, reset the unusedPaths array
         var randomPath: String?
+
+        guard gStateObjects[index] != nil else { return "" }
+
         repeat {
             if gStateObjects[index]!.unusedPaths.isEmpty {
                 gStateObjects[index]!.unusedPaths = Set(imageAndVideoNames)
