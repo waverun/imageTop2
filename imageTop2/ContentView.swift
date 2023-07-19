@@ -7,6 +7,7 @@ import HotKey
 var gContentViews: [Int:ContentView] = [:]
 var gStateObjects: [Int:StateObjects] = [:]
 var gHotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
+var gImageAndVideoNames: [String] = []
 
 struct StateObjects {
     var firstVideoPath: String! = ""
@@ -78,7 +79,7 @@ struct ContentView: View {
     @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
     @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = true
 
-    @State var imageAndVideoNames: [String] = []
+//    @State var imageAndVideoNames: [String] = []
     @State var imageOrBackgroundChangeTimer: Timer? = nil
     @State var backgroundColor: Color = Color.clear
     @State var imageOrVideoMode = false
@@ -150,7 +151,7 @@ struct ContentView: View {
         .onChange(of: selectedFolderPath, perform: handleSelectedFolderPathChange)
         .onChange(of: usePhotosFromPexels, perform: usePhotosFromPexelsChanged)
         .onChange(of: useVideosFromPexels, perform: useVideosFromPexelsChanged)
-        .onChange(of: imageAndVideoNames, perform: imageAndVideoNamesChanged)
+        .onChange(of: gImageAndVideoNames, perform: imageAndVideoNamesChanged)
         .onDisappear(perform: onDisappearAction)
         .onReceive(appDelegate.$showWindow, perform: handleShowWindowChange)
         .onReceive(appDelegate.$startTimer, perform: handleStartTimerChange)
@@ -270,7 +271,7 @@ struct ContentView: View {
         updateHotKey()
 
         if !usePhotosFromPexels, !useVideosFromPexels {
-            imageAndVideoNames = loadImageAndVideoNames()
+            gImageAndVideoNames = loadImageAndVideoNames()
         }
 
         if index == 0 {
@@ -306,7 +307,7 @@ struct ContentView: View {
             if let pexelsDirectoryUrl = pexelsDirectoryUrl {
                 clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
                 appDelegate.pexelsPhotos.removeAll()
-                imageAndVideoNames = loadImageAndVideoNames()
+                gImageAndVideoNames = loadImageAndVideoNames()
                 //                    appDelegate.loadImages.toggle()
             }
         }
@@ -321,7 +322,7 @@ struct ContentView: View {
             if let pexelsDirectoryUrl = pexelsDirectoryUrl {
                 clearPexelVideos(folderURL: pexelsDirectoryUrl, fileName: "videoList.txt")
                 appDelegate.pexelsVideos.removeAll()
-                imageAndVideoNames = loadImageAndVideoNames()
+                gImageAndVideoNames = loadImageAndVideoNames()
             }
         }
     }
@@ -369,7 +370,7 @@ struct ContentView: View {
         if index > 0 && usePhotosFromPexels {
             appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
         }
-        imageAndVideoNames = loadImageAndVideoNames()
+        gImageAndVideoNames = loadImageAndVideoNames()
     }
 
     func handleNetworkReachabilityChange(_ value: Bool) {
@@ -378,7 +379,7 @@ struct ContentView: View {
     }
 
     func showAccordingToNetworkReachability () {
-        let showingVideos = imageAndVideoNames.contains(where: { imageOrVideo in
+        let showingVideos = gImageAndVideoNames.contains(where: { imageOrVideo in
             imageOrVideo.starts(with: "https:")
         })
 
@@ -392,7 +393,7 @@ struct ContentView: View {
             case gNetworkIsReachable:
 
                 networkIsReachableOrNotShowingVideos = true
-                imageOrVideoMode = imageAndVideoNames.count > 2
+                imageOrVideoMode = gImageAndVideoNames.count > 2
 
             default:
 
@@ -453,7 +454,7 @@ struct ContentView: View {
                         iPrint("Successfully accessed security-scoped resource")
                         if let loadImages = loadImages,
                            loadImages {
-                            imageAndVideoNames = loadImageAndVideoNames()
+                            gImageAndVideoNames = loadImageAndVideoNames()
                         }
                     } else {
                         iPrint("Error accessing security-scoped resource")
@@ -580,7 +581,7 @@ struct ContentView: View {
 
     func changeScreenImageVideoOrColor() {
         iPrint("changeScreenImageOrColor \(index) imageOrVideoMode: \(imageOrVideoMode) gNetworkIsReachable: \(gNetworkIsReachable)")
-        imageOrVideoMode = imageAndVideoNames.count > 2 // Done since there was an error where after sleep and network unreachable, the colors where changed but videos were not played.
+        imageOrVideoMode = gImageAndVideoNames.count > 2 // Done since there was an error where after sleep and network unreachable, the colors where changed but videos were not played.
         _ = imageOrVideoMode && networkIsReachableOrNotShowingVideos ? loadRandomImageOrVideo() : changeBackgroundColor()
     }
 
@@ -594,7 +595,7 @@ struct ContentView: View {
             gPausableTimers[index]?.pause()
             return
         }
-        if showVideo && imageAndVideoNames.count < 2 { // may happen after bad loading of videos
+        if showVideo && gImageAndVideoNames.count < 2 { // may happen after bad loading of videos
             startChangeTimer()
             return
         }
@@ -622,7 +623,7 @@ struct ContentView: View {
 
         repeat {
             if gStateObjects[index]!.unusedPaths.isEmpty {
-                gStateObjects[index]!.unusedPaths = Set(imageAndVideoNames)
+                gStateObjects[index]!.unusedPaths = Set(gImageAndVideoNames)
             }
 
             // Get a random unused path
@@ -689,7 +690,7 @@ struct ContentView: View {
 
      func handleImage(_ path: String) {
         guard let nsImage = NSImage(contentsOfFile: path) else {
-            imageAndVideoNames = loadImageAndVideoNames()
+            gImageAndVideoNames = loadImageAndVideoNames()
             loadingImage = true
             return
         }
@@ -797,7 +798,7 @@ struct ContentView: View {
     }
 
     func callLoadImageNames() {
-        imageAndVideoNames = loadImageAndVideoNames()
+        gImageAndVideoNames = loadImageAndVideoNames()
     }
 
     func startWatchingFolder(imageFolder: String) {
@@ -809,6 +810,9 @@ struct ContentView: View {
     }
 
     func loadImageAndVideoNames(fromPexel: URL? = nil) -> [String] {
+        if index > 0 {
+            return gImageAndVideoNames
+        }
         iPrint("loadImageNames: \(index) fromPexel: \(fromPexel?.absoluteString ?? "")")
         let imageFolder = selectedFolderPath
 
@@ -817,7 +821,7 @@ struct ContentView: View {
         imageOrVideoMode = false
         startShowVideo = false
         var imageOrVideoNames: [String] = []
-        imageAndVideoNames.removeAll()
+        gImageAndVideoNames.removeAll()
         do {
             let contents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             imageOrVideoNames = contents.compactMap { url -> String? in
