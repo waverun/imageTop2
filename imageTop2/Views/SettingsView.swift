@@ -19,6 +19,7 @@ struct SettingsView: View {
     @State var showWatchIsOn: Bool = false
     @State var useVideosFromPexelsIsOn: Bool = true
     @State var selectedFolderPath = ""
+    @State var disabled = false
 
     let allKeyNames = Keyboard.keyNames
     let modKeyNames = Keyboard.modKeyNames
@@ -152,18 +153,26 @@ struct SettingsView: View {
                                 Spacer()
                             }
                             Spacer()
-                            Button(action: {
-                                if let url = URL(string: "https://www.pexels.com") {
-                                    NSWorkspace.shared.open(url)
+                            ZStack {
+                                Button(action: {
+                                    if let url = URL(string: "https://www.pexels.com") {
+                                        NSWorkspace.shared.open(url)
+                                    }
+                                }) {
+                                    Image("pexels")
+                                        .resizable()
+                                        .frame(width: 32, height: 32)
+                                        .offset(y: -3)  // This line moves the button up by 10 points
                                 }
-                            }) {
-                                Image("pexels")
-                                    .resizable()
-                                    .frame(width: 32, height: 32)
-                                    .offset(y: -3)  // This line moves the button up by 10 points
+                                .buttonStyle(PlainButtonStyle())
+                                .padding(.trailing, 50) // Add a gap on the right side of the button
+                                if disabled {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle())
+                                        .scaleEffect(0.75)  // This line reduces the size of the spinner to half
+                                        .offset(x: -25, y: -4) // This line moves the spinner 15 points to the left
+                                }
                             }
-                            .buttonStyle(PlainButtonStyle())
-                            .padding(.trailing, 50) // Add a gap on the right side of the button
                         }
                         .padding(.leading)
                         HStack {
@@ -177,6 +186,7 @@ struct SettingsView: View {
                 }
             }
         }
+        .disabled(disabled)
         Button(action: { appDelegate.hideSettings() }) {
             EmptyView()
         }.keyboardShortcut(.cancelAction)
@@ -209,6 +219,10 @@ struct SettingsView: View {
         .onChange(of: showWatch) { newValue in
             iPrint("showWatch: \(showWatch)")
             showWatchIsOn = newValue
+        }
+        .onReceive(appDelegate.$downloading) { newValue in
+            iPrint("appDelegate.$downloading: \(appDelegate.downloading)")
+            disabled = newValue
         }
         .frame(width: 350, height: 325)
         .onAppear {

@@ -3,7 +3,7 @@ import Foundation
 let apiKey = "haMLbq5Kxq01WHqDfOZhVrcYqTbBD1nakMA9CVPgd5qqKNKU6bV1Ljl2"
 let pexelsCategories = ["beautiful", "abstract", "dark", "nature", "landscape", "space", "beach", "sky", "food", "technology", "business", "office", "flowers", "jungle", "summer", "car", "forest", "sunset"]
 
-func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
+func downloadPexelPhotos(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @escaping () -> Void) {
     func getPageNumber(itemsPerPage: Int) -> Int? {
         func getNumberOfItems() -> Int? {
             if let numberOfItems = readFileContents(atPath: pexelsFolder.path + "/.imageTop") {
@@ -33,10 +33,13 @@ func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
     if let pageNumber = getPageNumber(itemsPerPage: 80) {
         pageNumberParam = "&page=" + String(pageNumber)
     }
+
     let url = URL(string: "https://api.pexels.com/v1/search?query=" + category + "&per_page=80" + pageNumberParam)!
     iPrint("pexels url: \(url)")
     var request = URLRequest(url: url)
     request.setValue(apiKey, forHTTPHeaderField: "Authorization")
+
+    appDelegate.setDownloading(true)
 
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
         if let error = error {
@@ -68,6 +71,7 @@ func downloadPexelPhotos(pexelsFolder: URL, onDone: @escaping () -> Void) {
                 iPrint("Error decoding JSON: \(error)")
             }
         }
+        appDelegate.setDownloading(false)
     }
 
     task.resume()

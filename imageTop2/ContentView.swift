@@ -740,7 +740,7 @@ struct ContentView: View {
         secondPhotographer = photographer
     }
 
-     func extractNameFromFilePath(filePath: String) -> String {
+    func extractNameFromFilePath(filePath: String) -> String {
         let components = filePath.components(separatedBy: "/")
         if let pexelsIndex = components.firstIndex(of: "pexels"),
            components.count > pexelsIndex + 1 {
@@ -756,7 +756,7 @@ struct ContentView: View {
         iPrint("handlePexelsVideos: \(index)")
         if useVideosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
-            getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl) { videosList in
+            getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl, appDelegate: appDelegate) { videosList in
                 DispatchQueue.main.async {
                     appDelegate.pexelsVideos = videosList
                     appDelegate.loadImagesAndVideos.toggle()
@@ -773,7 +773,7 @@ struct ContentView: View {
             DispatchQueue.global().async {
                 pexelDownloadSemaphore.wait()
                 if appDelegate.pexelsPhotos.count < 2 {
-                    downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
+                    downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl, appDelegate: appDelegate) {
                         appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
                         pexelDownloadSemaphore.signal()
                         if !useVideosFromPexels {

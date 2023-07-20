@@ -17,6 +17,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var networkIsReachable = false
     @Published var isFullScreen = false
     @Published var setImageOrVideoModeToggle = false
+    @Published var downloading = false
+
     @Published var autoStart: Bool = true {
         didSet {
             // Update the title of the menu item when autoStart changes
@@ -50,6 +52,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         NotificationCenter.default.removeObserver(self, name: NSApplication.didChangeScreenParametersNotification, object: nil)
         stopDetectLockedScreen()
         dnc.removeObserver(self)
+    }
+
+    func setDownloading(_ value: Bool) {
+        DispatchQueue.main.async { [weak self] in
+            self?.downloading = value
+        }
     }
 
     func stopDetectLockedScreen() {

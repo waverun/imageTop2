@@ -1,7 +1,7 @@
 import Foundation
 import AppKit
 
-func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Void) {
+func getPexelsVideoList(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @escaping (_: [String]) -> Void) {
     let pexelsVideoList = "videoList.txt"
 
     func loadVideoNames(from: URL) -> [String]? {
@@ -55,6 +55,8 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
         screenWidth = Int(Double(screenWidth) * 0.9)
     }
 
+    appDelegate.setDownloading(false)
+
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
         if let error = error {
             iPrint("Error: \(error)")
@@ -89,6 +91,7 @@ func getPexelsVideoList(pexelsFolder: URL, onDone: @escaping (_: [String]) -> Vo
                 iPrint("Error decoding JSON: \(error)")
             }
         }
+        appDelegate.setDownloading(false)
     }
 
     task.resume()
