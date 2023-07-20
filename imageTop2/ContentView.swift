@@ -13,7 +13,7 @@ struct StateObjects {
     var firstVideoPath: String! = ""
     var secondVideoPath: String! = ""
     var viewAppeared = false
-    var ignoreFirstLoadImagesAndVideos = true
+//    var ignoreFirstLoadImagesAndVideos = true
     var unusedPaths = Set<String>()
 }
 
@@ -298,32 +298,36 @@ struct ContentView: View {
         startWatchingFolder(imageFolder: selectedFolderPath)
     }
 
-    func usePhotosFromPexelsChanged(_ newValue: Bool) {
-        if newValue {
-            if index == 0 {
-                handlePexelsPhotos()
-            }
-        } else {
-            if let pexelsDirectoryUrl = pexelsDirectoryUrl {
-                clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
-                appDelegate.pexelsPhotos.removeAll()
-                gImageAndVideoNames = loadImageAndVideoNames()
-                //                    appDelegate.loadImages.toggle()
-            }
+    func usePhotosFromPexelsChanged(_ usePhotosFromPexels: Bool) {
+        switch true {
+            case usePhotosFromPexels && index == 0:
+                    handlePexelsPhotos()
+
+            case usePhotosFromPexels: setImageOrVideoMode()
+
+            default:
+                if let pexelsDirectoryUrl = pexelsDirectoryUrl {
+                    clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+                    appDelegate.pexelsPhotos.removeAll()
+                    gImageAndVideoNames = loadImageAndVideoNames()
+                    //                    appDelegate.loadImages.toggle()
+                }
         }
     }
 
-    func useVideosFromPexelsChanged(_ newValue: Bool) {
-        if newValue {
-            if index == 0 {
+    func useVideosFromPexelsChanged(_ useVideosFromPexels: Bool) {
+        switch true {
+            case useVideosFromPexels && index == 0:
                 handlePexelsVideos()
-            }
-        } else {
-            if let pexelsDirectoryUrl = pexelsDirectoryUrl {
-                clearPexelVideos(folderURL: pexelsDirectoryUrl, fileName: "videoList.txt")
-                appDelegate.pexelsVideos.removeAll()
-                gImageAndVideoNames = loadImageAndVideoNames()
-            }
+
+            case useVideosFromPexels: setImageOrVideoMode()
+                
+            default:
+                if let pexelsDirectoryUrl = pexelsDirectoryUrl {
+                    clearPexelVideos(folderURL: pexelsDirectoryUrl, fileName: "videoList.txt")
+                    appDelegate.pexelsVideos.removeAll()
+                    gImageAndVideoNames = loadImageAndVideoNames()
+                }
         }
     }
 
@@ -362,11 +366,11 @@ struct ContentView: View {
     }
 
     func handleLoadImagesAndVideosChange(_ value: Bool) {
-        iPrint("loadImagesAndVideos: \(index)")
-        if gStateObjects[index]!.ignoreFirstLoadImagesAndVideos {
-            gStateObjects[index]!.ignoreFirstLoadImagesAndVideos = false
-            return
-        }
+//        iPrint("loadImagesAndVideos: \(index)")
+//        if gStateObjects[index]!.ignoreFirstLoadImagesAndVideos {
+//            gStateObjects[index]!.ignoreFirstLoadImagesAndVideos = false
+//            return
+//        }
         if index > 0 && usePhotosFromPexels {
             appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
         }
@@ -384,7 +388,6 @@ struct ContentView: View {
         })
 
         switch true {
-
             case !showingVideos:
 
                 networkIsReachableOrNotShowingVideos = true
@@ -551,7 +554,7 @@ struct ContentView: View {
         }
         withAnimation(.linear(duration: 1)) {
             showFadeColor.toggle()
-            iPrint("backgroundColor: \(backgroundColor) fadeColor: \(fadeColor)")
+            iPrint("backgroundColor: \(index) \(backgroundColor) fadeColor: \(fadeColor)")
         }
     }
 
@@ -581,7 +584,7 @@ struct ContentView: View {
 
     func changeScreenImageVideoOrColor() {
         iPrint("changeScreenImageOrColor \(index) imageOrVideoMode: \(imageOrVideoMode) gNetworkIsReachable: \(gNetworkIsReachable)")
-        imageOrVideoMode = gImageAndVideoNames.count > 2 // Done since there was an error where after sleep and network unreachable, the colors where changed but videos were not played.
+        setImageOrVideoMode() // Done since there was an error where after sleep and network unreachable, the colors where changed but videos were not played.
         _ = imageOrVideoMode && networkIsReachableOrNotShowingVideos ? loadRandomImageOrVideo() : changeBackgroundColor()
     }
 
@@ -810,7 +813,9 @@ struct ContentView: View {
     }
 
     func loadImageAndVideoNames(fromPexel: URL? = nil) -> [String] {
+        startShowVideo = false //?
         if index > 0 {
+            setImageOrVideoMode()
             return gImageAndVideoNames
         }
         iPrint("loadImageNames: \(index) fromPexel: \(fromPexel?.absoluteString ?? "")")
@@ -818,8 +823,8 @@ struct ContentView: View {
 
         let folderURL = fromPexel == nil ? URL(fileURLWithPath: imageFolder) : fromPexel!
         let fileManager = FileManager.default
-        imageOrVideoMode = false
-        startShowVideo = false
+//        imageOrVideoMode = false
+//        startShowVideo = false
         var imageOrVideoNames: [String] = []
         gImageAndVideoNames.removeAll()
         do {
@@ -846,17 +851,28 @@ struct ContentView: View {
                 imageOrVideoNames.append(contentsOf: appDelegate.pexelsVideos)
                 iPrint("pexelVideos: \(index) \(appDelegate.pexelsVideos.count)")
             }
-            imageOrVideoMode = imageOrVideoNames.count >= 2
-            iPrint("imageMode: \(index) \(imageOrVideoMode)")
-            if !imageOrVideoMode {
-                firstImage = nil
-                secondImage = nil
-                gStateObjects[index]!.firstVideoPath = ""
-                gStateObjects[index]!.secondVideoPath = ""
-            }
+            setImageOrVideoMode()
+//            imageOrVideoMode = imageOrVideoNames.count >= 2
+//            iPrint("imageMode: \(index) \(imageOrVideoMode)")
+//            if !imageOrVideoMode {
+//                firstImage = nil
+//                secondImage = nil
+//                gStateObjects[index]!.firstVideoPath = ""
+//                gStateObjects[index]!.secondVideoPath = ""
+//            }
         } catch {
             iPrint("Error loading image names: \(error)")
         }
         return imageOrVideoNames
+    }
+
+    func setImageOrVideoMode() {
+        imageOrVideoMode = gImageAndVideoNames.count > 2
+        if !imageOrVideoMode {
+            firstImage = nil
+            secondImage = nil
+            gStateObjects[index]!.firstVideoPath = ""
+            gStateObjects[index]!.secondVideoPath = ""
+        }
     }
 }
