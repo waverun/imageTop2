@@ -372,8 +372,9 @@ struct ContentView: View {
 //            gStateObjects[index]!.ignoreFirstLoadImagesAndVideos = false
 //            return
 //        }
-        if index > 0 && usePhotosFromPexels {
-            appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
+        if index > 0 && usePhotosFromPexels,
+           let pexelsDirectoryUrl = pexelsDirectoryUrl {
+            appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
         }
         gImageAndVideoNames = loadImageAndVideoNames()
     }
@@ -768,12 +769,12 @@ struct ContentView: View {
         iPrint("handlePexelsPhotos: \(index) usePhotosFromPexels: \(usePhotosFromPexels)")
         if usePhotosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
-            appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
+            appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
             DispatchQueue.global().async {
                 pexelDownloadSemaphore.wait()
                 if appDelegate.pexelsPhotos.count < 2 {
                     downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl) {
-                        appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexel: pexelsDirectoryUrl)
+                        appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
                         pexelDownloadSemaphore.signal()
                         if !useVideosFromPexels {
                             appDelegate.loadImagesAndVideos.toggle()
@@ -815,16 +816,20 @@ struct ContentView: View {
         }
     }
 
-    func loadImageAndVideoNames(fromPexel: URL? = nil) -> [String] {
+    func loadImageAndVideoNames(fromPexelsPhotos: URL? = nil) -> [String] {
         startShowVideo = false //?
         if index > 0 {
-            setImageOrVideoMode()
-            return gImageAndVideoNames
+            switch true {
+                case fromPexelsPhotos != nil: return appDelegate.pexelsPhotos
+                default:
+                    setImageOrVideoMode()
+                    return gImageAndVideoNames
+            }
         }
-        iPrint("loadImageNames: \(index) fromPexel: \(fromPexel?.absoluteString ?? "")")
+        iPrint("loadImageNames: \(index) fromPexel: \(fromPexelsPhotos?.absoluteString ?? "")")
         let imageFolder = selectedFolderPath
 
-        let folderURL = fromPexel == nil ? URL(fileURLWithPath: imageFolder) : fromPexel!
+        let folderURL = fromPexelsPhotos == nil ? URL(fileURLWithPath: imageFolder) : fromPexelsPhotos!
         let fileManager = FileManager.default
 //        imageOrVideoMode = false
 //        startShowVideo = false
@@ -848,13 +853,13 @@ struct ContentView: View {
             imageOrVideoNames = imageOrVideoNames.map { imageOrVideo in
                 folderString + "/" + imageOrVideo
             }
-            if fromPexel == nil {
+            if fromPexelsPhotos == nil {
                 imageOrVideoNames.append(contentsOf: appDelegate.pexelsPhotos)
                 iPrint("pexelImages: \(index) \(appDelegate.pexelsPhotos.count)")
                 imageOrVideoNames.append(contentsOf: appDelegate.pexelsVideos)
                 iPrint("pexelVideos: \(index) \(appDelegate.pexelsVideos.count)")
             }
-            setImageOrVideoMode()
+//            setImageOrVideoMode()
 //            imageOrVideoMode = imageOrVideoNames.count >= 2
 //            iPrint("imageMode: \(index) \(imageOrVideoMode)")
 //            if !imageOrVideoMode {
@@ -866,7 +871,9 @@ struct ContentView: View {
         } catch {
             iPrint("Error loading image names: \(error)")
         }
-        appDelegate.setImageOrVideoModeToggle.toggle()
+        DispatchQueue.main.async {
+            appDelegate.setImageOrVideoModeToggle.toggle()
+        }
         return imageOrVideoNames
     }
 
