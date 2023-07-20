@@ -28,7 +28,11 @@ class DirectoryWatcher {
         source?.resume()
     }
 
-    deinit {
+    func release() {
         source?.cancel()
+    }
+
+    deinit {
+        release()
     }
 }

@@ -806,6 +806,8 @@ struct ContentView: View {
     }
 
     func startWatchingFolder(imageFolder: String) {
+        directoryWatcher?.release()
+        directoryWatcher = nil
         do {
             try directoryWatcher = DirectoryWatcher(directoryPath: imageFolder, onChange: callLoadImageNames)
         } catch let error {
