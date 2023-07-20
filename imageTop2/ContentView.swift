@@ -157,6 +157,7 @@ struct ContentView: View {
         .onReceive(appDelegate.$startTimer, perform: handleStartTimerChange)
         .onReceive(appDelegate.$loadImagesAndVideos, perform: handleLoadImagesAndVideosChange)
         .onReceive(appDelegate.$networkIsReachable, perform: handleNetworkReachabilityChange)
+        .onReceive(appDelegate.$setImageOrVideoModeToggle, perform: setImageOrVideoMode)
     }
 
     @ViewBuilder var backgroundView: some View {
@@ -863,10 +864,11 @@ struct ContentView: View {
         } catch {
             iPrint("Error loading image names: \(error)")
         }
+        appDelegate.setImageOrVideoModeToggle.toggle()
         return imageOrVideoNames
     }
 
-    func setImageOrVideoMode() {
+    func setImageOrVideoMode(_ value: Bool = true) {
         imageOrVideoMode = gImageAndVideoNames.count > 2
         if !imageOrVideoMode {
             firstImage = nil

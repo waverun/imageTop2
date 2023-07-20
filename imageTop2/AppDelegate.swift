@@ -16,7 +16,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var pexelsVideos: [String] = []
     @Published var networkIsReachable = false
     @Published var isFullScreen = false
-
+    @Published var setImageOrVideoModeToggle = false
     @Published var autoStart: Bool = true {
         didSet {
             // Update the title of the menu item when autoStart changes
