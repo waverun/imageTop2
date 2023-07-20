@@ -267,8 +267,8 @@ struct ContentView: View {
         iPrint("inside onAppear: \(index)")
         backgroundColor = randomGentleColor()
 
-        startAccessingFolder()
-
+//        startAccessingFolder()
+        handleSelectedFolderPathChange("")
         updateHotKey()
 
         if !usePhotosFromPexels, !useVideosFromPexels {
@@ -807,6 +807,9 @@ struct ContentView: View {
     }
 
     func startWatchingFolder(imageFolder: String) {
+        if index > 0 {
+            return
+        }
         directoryWatcher?.release()
         directoryWatcher = nil
         do {

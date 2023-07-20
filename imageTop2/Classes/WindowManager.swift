@@ -60,13 +60,15 @@ class WindowManager: ObservableObject {
             gStateObjects = [:]
         }
         func cleanContentViews() {
-//            for contentView in Array(gContentViews.values) {
-//                contentView.hotkey?.keyDownHandler = nil
-//                contentView.hotkey = nil
-////                contentView.stateObjects.firstVideoPath = ""
-////                contentView.stateObjects.secondVideoPath = ""
-////                contentView.stateObjects.unusedPaths.removeAll()
-//            }
+            for contentView in Array(gContentViews.values) {
+                contentView.directoryWatcher?.release()
+                contentView.directoryWatcher = nil
+                //                contentView.hotkey?.keyDownHandler = nil
+                //                contentView.hotkey = nil
+                ////                contentView.stateObjects.firstVideoPath = ""
+                ////                contentView.stateObjects.secondVideoPath = ""
+                ////                contentView.stateObjects.unusedPaths.removeAll()
+            }
             gContentViews = [:]
         }
         exitFullScreen() { [weak self] in
