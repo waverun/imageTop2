@@ -65,6 +65,7 @@ func downloadPexelPhotos(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @e
                 // Wait for all downloads to complete
                 group.notify(queue: .main) {
                     // All downloads completed
+                    appDelegate.numberOfPexelsPhotos = pexelsResponse.photos.count
                     onDone()
                 }
             } catch {

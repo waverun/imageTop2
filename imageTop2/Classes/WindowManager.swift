@@ -101,16 +101,16 @@ class WindowManager: ObservableObject {
     }
 
     func toggleFullScreen(_ exitFullStcreen: Bool) {
-        for window in windows {
+        for (index, window) in windows.enumerated() {
             if window.styleMask.contains(.fullScreen) {
                 if exitFullStcreen {
-                    iPrint("exitFullScreend - toggle")
+                    iPrint("exitFullScreend - toggle \(index)")
                     window.orderOut(nil) //??
                     window.toggleFullScreen(nil)
                 }
             } else {
                 if !exitFullStcreen {
-                    iPrint("enterFullScreend - toggle")
+                    iPrint("enterFullScreend - toggle \(index)")
                     window.toggleFullScreen(nil)
                 }
             }

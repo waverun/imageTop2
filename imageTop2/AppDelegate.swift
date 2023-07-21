@@ -18,6 +18,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var isFullScreen = false
     @Published var setImageOrVideoModeToggle = false
     @Published var downloading = false
+    @Published var numberOfLocalImagesAndVideos = 0
+    @Published var numberOfPexelsPhotos = 0
+    @Published var numberOfPexelsVideos = 0
 
     @Published var autoStart: Bool = true {
         didSet {

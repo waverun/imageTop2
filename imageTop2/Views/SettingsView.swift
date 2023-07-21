@@ -20,6 +20,9 @@ struct SettingsView: View {
     @State var useVideosFromPexelsIsOn: Bool = true
     @State var selectedFolderPath = ""
     @State var disabled = false
+    @State var numberOfLocalImagesAndVideos = 0
+    @State var numberOfPexelsPhotos = 0
+    @State var numberOfPexelsVideos = 0
 
     let allKeyNames = Keyboard.keyNames
     let modKeyNames = Keyboard.modKeyNames
@@ -133,8 +136,8 @@ struct SettingsView: View {
                             Spacer()
                         }.padding(.leading)
                         HStack {
-                            Text("Images and Videos Folder")
-                                .frame(width: geometry.size.width * 0.58, alignment: .leading)
+                            Text("Images and Videos Folder (\(numberOfLocalImagesAndVideos))")
+                                .frame(width: geometry.size.width * 0.60, alignment: .leading)
                             Button("Select...") {
                                 openFolderPicker()
                             }
@@ -146,10 +149,10 @@ struct SettingsView: View {
                             .truncationMode(.middle)
                         HStack {
                             VStack(alignment: .leading) {
-                                Toggle("Photos from Pexels", isOn: $usePhotosFromPexelsIsOn)
+                                Toggle("Photos from Pexels (\(numberOfPexelsPhotos))", isOn: $usePhotosFromPexelsIsOn)
                                 Spacer()
                                     .buttonStyle(PlainButtonStyle())
-                                Toggle("Videos from Pexels", isOn: $useVideosFromPexelsIsOn)
+                                Toggle("Videos from Pexels (\(numberOfPexelsVideos))", isOn: $useVideosFromPexelsIsOn)
                                 Spacer()
                             }
                             Spacer()
@@ -223,6 +226,18 @@ struct SettingsView: View {
         .onReceive(appDelegate.$downloading) { newValue in
             iPrint("appDelegate.$downloading: \(appDelegate.downloading)")
             disabled = newValue
+        }
+        .onReceive(appDelegate.$numberOfLocalImagesAndVideos) { newValue in
+//            iPrint("appDelegate.$downloading: \(appDelegate.downloading)")
+            numberOfLocalImagesAndVideos = newValue
+        }
+        .onReceive(appDelegate.$numberOfPexelsPhotos) { newValue in
+//            iPrint("appDelegate.$downloading: \(appDelegate.downloading)")
+            numberOfPexelsPhotos = newValue
+        }
+        .onReceive(appDelegate.$numberOfPexelsVideos) { newValue in
+//            iPrint("appDelegate.$downloading: \(appDelegate.downloading)")
+            numberOfPexelsVideos = newValue
         }
         .frame(width: 350, height: 325)
         .onAppear {

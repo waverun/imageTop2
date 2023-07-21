@@ -86,6 +86,9 @@ func getPexelsVideoList(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @es
                 let videoList = videoLinks.joined(separator: "\n")
                 writeFile(directoryURL: pexelsFolder, fileName: pexelsVideoList, contents: videoList)
                 iPrint("videoLinks.count: \(videoLinks.count)")
+                DispatchQueue.main.async {
+                    appDelegate.numberOfPexelsVideos = videoLinks.count
+                }
                 onDone(videoLinks)
             } catch {
                 iPrint("Error decoding JSON: \(error)")

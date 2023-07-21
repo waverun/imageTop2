@@ -594,7 +594,6 @@ struct ContentView: View {
 #if DEBUG
         iPrint("Memory: \(index) Start loadRandomImageOrVideo: \(reportMemory())")
 #endif
-
         if !appDelegate.isFullScreen,
            gPausableTimers.count > index {
             gPausableTimers[index]?.pause()
@@ -856,6 +855,16 @@ struct ContentView: View {
             imageOrVideoNames = imageOrVideoNames.map { imageOrVideo in
                 folderString + "/" + imageOrVideo
             }
+
+            let numberOfLocalImagesAndVideos = imageOrVideoNames.count
+            if fromPexelsPhotos == nil {
+                DispatchQueue.main.async {
+                    appDelegate.numberOfLocalImagesAndVideos = numberOfLocalImagesAndVideos
+                    appDelegate.numberOfPexelsPhotos = appDelegate.pexelsPhotos.count
+                    appDelegate.numberOfPexelsVideos = appDelegate.pexelsVideos.count
+                }
+            }
+
             if fromPexelsPhotos == nil {
                 imageOrVideoNames.append(contentsOf: appDelegate.pexelsPhotos)
                 iPrint("pexelImages: \(index) \(appDelegate.pexelsPhotos.count)")
