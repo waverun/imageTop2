@@ -30,6 +30,7 @@ class DirectoryWatcher {
 
     func release() {
         source?.cancel()
+        source = nil
     }
 
     deinit {

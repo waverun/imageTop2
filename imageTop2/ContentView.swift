@@ -8,6 +8,7 @@ var gContentViews: [Int:ContentView] = [:]
 var gStateObjects: [Int:StateObjects] = [:]
 var gHotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 var gImageAndVideoNames: [String] = []
+var gDirectoryWatcher: DirectoryWatcher?
 
 struct StateObjects {
     var firstVideoPath: String! = ""
@@ -47,7 +48,7 @@ struct ContentView: View {
 
 //    @StateObject var stateObjects[index]!: ContentViewStateObjectVariables = ContentViewStateObjectVariables()
 //
-    @State  var directoryWatcher: DirectoryWatcher?
+//    @State var directoryWatcher: DirectoryWatcher?
 
     @EnvironmentObject var appDelegate: AppDelegate
 
@@ -801,18 +802,21 @@ struct ContentView: View {
         }
     }
 
-    func callLoadImageNames() {
-        gImageAndVideoNames = loadImageAndVideoNames()
-    }
+//    func callLoadImageNames() {
+//        gImageAndVideoNames = loadImageAndVideoNames()
+//    }
 
     func startWatchingFolder(imageFolder: String) {
         if index > 0 {
             return
         }
-        directoryWatcher?.release()
-        directoryWatcher = nil
+        gDirectoryWatcher?.release()
+        gDirectoryWatcher = nil
         do {
-            try directoryWatcher = DirectoryWatcher(directoryPath: imageFolder, onChange: callLoadImageNames)
+            try gDirectoryWatcher = DirectoryWatcher(directoryPath: imageFolder) {
+//                callLoadImageNames()
+                gImageAndVideoNames = loadImageAndVideoNames()
+            }
         } catch let error {
             iPrint("failed to watch directory: \(imageFolder) - \(error.localizedDescription)")
         }

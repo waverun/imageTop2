@@ -60,24 +60,30 @@ class WindowManager: ObservableObject {
             gStateObjects = [:]
         }
         func cleanContentViews() {
-            for contentView in Array(gContentViews.values) {
-                contentView.directoryWatcher?.release()
-                contentView.directoryWatcher = nil
-                //                contentView.hotkey?.keyDownHandler = nil
-                //                contentView.hotkey = nil
-                ////                contentView.stateObjects.firstVideoPath = ""
-                ////                contentView.stateObjects.secondVideoPath = ""
-                ////                contentView.stateObjects.unusedPaths.removeAll()
-            }
+//            for contentView in Array(gContentViews.values) {
+////                contentView.hotkey?.keyDownHandler = nil
+////                contentView.hotkey = nil
+////
+////                contentView.directoryWatcher?.release()
+////                contentView.directoryWatcher = nil
+//                ////                contentView.stateObjects.firstVideoPath = ""
+//                ////                contentView.stateObjects.secondVideoPath = ""
+//                ////                contentView.stateObjects.unusedPaths.removeAll()
+//            }
             gContentViews = [:]
         }
         exitFullScreen() { [weak self] in
             guard let self = self else { return }
+            gHotkey?.keyDownHandler = nil
+            gHotkey = nil
+            gDirectoryWatcher?.release()
+            gDirectoryWatcher = nil
             removePlayers()
             removeTimers()
             cleanStateObjects()
             cleanContentViews()
             windowIndices.removeAll()
+
             var index = 0
             for window in windows {
                 window.orderOut(NSApp)
