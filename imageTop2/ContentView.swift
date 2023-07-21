@@ -9,6 +9,7 @@ var gStateObjects: [Int:StateObjects] = [:]
 var gHotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 var gImageAndVideoNames: [String] = []
 var gDirectoryWatcher: DirectoryWatcher?
+var loadImagesWorkItem: DispatchWorkItem?
 
 struct StateObjects {
     var firstVideoPath: String! = ""
@@ -815,11 +816,24 @@ struct ContentView: View {
         do {
             try gDirectoryWatcher = DirectoryWatcher(directoryPath: imageFolder) {
 //                callLoadImageNames()
-                gImageAndVideoNames = loadImageAndVideoNames()
+//                gImageAndVideoNames = loadImageAndVideoNames()
+                scheduleImageLoad()
             }
         } catch let error {
             iPrint("failed to watch directory: \(imageFolder) - \(error.localizedDescription)")
         }
+    }
+
+    func scheduleImageLoad() {
+        // Cancel the previous work item if it's still pending
+        loadImagesWorkItem?.cancel()
+
+        // Schedule a new one
+        let workItem = DispatchWorkItem {
+            gImageAndVideoNames = loadImageAndVideoNames()
+        }
+        loadImagesWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
     }
 
     func loadImageAndVideoNames(fromPexelsPhotos: URL? = nil) -> [String] {
