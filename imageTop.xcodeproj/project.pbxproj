@@ -238,6 +238,7 @@
 			packageReferences = (
 				5079FD7C2A10D4D40066EC08 /* XCRemoteSwiftPackageReference "HotKey" */,
 				50BEA38A2A51CB6100F0FE19 /* XCRemoteSwiftPackageReference "Reachability" */,
+				50D13CAA2A6D3C2900E75C2E /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
 			);
 			productRefGroup = 5079FD692A10C8890066EC08 /* Products */;
 			projectDirPath = "";
@@ -523,6 +524,14 @@
 			requirement = {
 				branch = master;
 				kind = branch;
+			};
+		};
+		50D13CAA2A6D3C2900E75C2E /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
