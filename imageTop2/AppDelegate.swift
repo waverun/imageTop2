@@ -141,7 +141,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             guard let self = self else { return }
             let currentSeconds = self.getLastEventTime()
-               if currentSeconds > startAfter { // check if the user has been inactive for more than 60 seconds
+               if currentSeconds > max(startAfter, 5) {
                 if autoStart {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
                         guard let self = self else { return }

@@ -12,7 +12,7 @@ struct SettingsView: View {
     @AppStorage("modifierKeyString1") var keyString1: String = "command"
     @AppStorage("modifierKeyString2") var keyString2: String = "control"
     @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
-    @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = true
+    @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = false
     @AppStorage("showWatch") var showWatch = true 
 
     @State var usePhotosFromPexelsIsOn: Bool = false

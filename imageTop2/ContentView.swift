@@ -577,7 +577,7 @@ struct ContentView: View {
 
         iPrint("startScreenChangeTimer: \(index) \(Date())")
 
-        imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: replaceImageAfter + addTime , repeats: addTime == 0) { _ in
+        imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: max(replaceImageAfter, 1) + addTime , repeats: addTime == 0) { _ in
             iPrint("imageOrBackgroundChangeTimer: \(index) \(Date())")
             changeScreenImageVideoOrColor()
             if addTime > 0 { //Start the timer with regular time after fading from image to movie
@@ -815,8 +815,6 @@ struct ContentView: View {
         gDirectoryWatcher = nil
         do {
             try gDirectoryWatcher = DirectoryWatcher(directoryPath: imageFolder) {
-//                callLoadImageNames()
-//                gImageAndVideoNames = loadImageAndVideoNames()
                 scheduleImageLoad()
             }
         } catch let error {
