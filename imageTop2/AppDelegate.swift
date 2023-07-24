@@ -129,7 +129,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         return min(keyUpLastTime, mouseMoveLastTime, mouseDownLastTime, scrollLastTime)
     }
 
-    func startInactivityTimer() {
+    func startInactivityTimer(passTime: Double = 0) {
         if let inactivityTimer = inactivityTimer {
             inactivityTimer.invalidate()
         }
@@ -138,19 +138,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             return
         }
 
-        inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+        inactivityTimer = Timer.scheduledTimer(withTimeInterval: startAfter - passTime, repeats: false) { [weak self] timer in
             guard let self = self else { return }
             let currentSeconds = self.getLastEventTime()
-               if currentSeconds > max(startAfter, 5) {
-                if autoStart {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-                        guard let self = self else { return }
-                        self.showWindow = true // call your method that brings the window to the front
-                    }
-                    WindowManager.shared.enterFullScreen()
-                }
-                inactivityTimer.invalidate()
-                inactivityTimer = nil
+            let remainingTime = max(self.startAfter, 5) - currentSeconds
+            switch true {
+                case remainingTime <= 0:
+                        if autoStart {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+                                guard let self = self else { return }
+                                self.showWindow = true // call your method that brings the window to the front
+                            }
+                            WindowManager.shared.enterFullScreen()
+                        }
+                        inactivityTimer.invalidate()
+                        inactivityTimer = nil
+                default : startInactivityTimer(passTime: remainingTime)
             }
         }
     }
