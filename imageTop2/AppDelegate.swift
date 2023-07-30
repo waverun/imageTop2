@@ -145,10 +145,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             switch true {
                 case remainingTime <= 0:
                         if autoStart {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-                                guard let self = self else { return }
-                                self.showWindow = true // call your method that brings the window to the front
-                            }
+//                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+//                                guard let self = self else { return }
+//                                self.showWindow = true // call your method that brings the window to the front
+//                            }
                             WindowManager.shared.enterFullScreen()
                         }
                         inactivityTimer.invalidate()
