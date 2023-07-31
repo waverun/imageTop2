@@ -369,9 +369,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     @objc func showMainWindow() {
-        if autoStart {
-            WindowManager.shared.enterFullScreen()
-        }
+//        if autoStart {
+        WindowManager.shared.enterFullScreen()
+//        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
             guard let self = self else { return }
             self.hideSettings()
