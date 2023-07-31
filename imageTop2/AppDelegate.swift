@@ -98,7 +98,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                 }
                 iPrint("video1 pause \(index)")
                 if index == WindowManager.shared.windows.count - 1 {
-//                    for window in NSApp.windows {
+                    //                    for window in NSApp.windows {
                     for window in WindowManager.shared.windows {
                         window.orderOut(nil)
                     }
@@ -113,9 +113,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         isFullScreen = true
         iPrint("windowDidEnterFullScreen")
         inactivityTimer?.invalidate()
-        startTimer.toggle()
-        showWindow = true
         NSCursor.hide()
+        WindowManager.shared.didntEnterFullScreenYet -= 1
+        if WindowManager.shared.didntEnterFullScreenYet == 0 {
+            startTimer.toggle()
+            showWindow = true
+        }
     }
 
     var inactivityTimer: Timer!

@@ -8,6 +8,7 @@ class WindowManager: ObservableObject {
     static let shared = WindowManager()
     var windows: [NSWindow] = []
     var windowIndices: [NSWindow: Int] = [:] // new dictionary to hold window indices
+    var didntEnterFullScreenYet = 0
 
     func getMaxScreenWidth() -> Int {
         if let maxWindowWidth = windows.max(by: { $0.frame.size.width < $1.frame.size.width })?.frame.size.width {
@@ -60,16 +61,6 @@ class WindowManager: ObservableObject {
             gStateObjects = [:]
         }
         func cleanContentViews() {
-//            for contentView in Array(gContentViews.values) {
-////                contentView.hotkey?.keyDownHandler = nil
-////                contentView.hotkey = nil
-////
-////                contentView.directoryWatcher?.release()
-////                contentView.directoryWatcher = nil
-//                ////                contentView.stateObjects.firstVideoPath = ""
-//                ////                contentView.stateObjects.secondVideoPath = ""
-//                ////                contentView.stateObjects.unusedPaths.removeAll()
-//            }
             gContentViews = [:]
         }
         exitFullScreen() { [weak self] in
@@ -96,8 +87,6 @@ class WindowManager: ObservableObject {
                 window.delegate = nil
                 windows.removeAll(where: { $0 == window })
                 window.performClose(nil)
-//                window.close()
-                //                }
                 index += 1
             }
             windows.removeAll()
@@ -128,6 +117,8 @@ class WindowManager: ObservableObject {
             return
         }
 
+        didntEnterFullScreenYet = windows.count
+        
         if !windows[0].styleMask.contains(.fullScreen) {
             toggleFullScreen(false)
         }
