@@ -10,7 +10,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var isMainWindowVisible: Bool = true
     @Published var showWindow: Bool = true
     @Published var loadImagesAndVideos: Bool = false
-    @Published var startTimer: Bool = false
+    @Published var startMonitoringUserInputTimer: Bool = false
     @Published var keyAndMouseEventMonitor: Any?
     @Published var pexelsPhotos: [String] = []
     @Published var pexelsVideos: [String] = []
@@ -116,7 +116,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         NSCursor.hide()
         WindowManager.shared.didntEnterFullScreenYet -= 1
         if WindowManager.shared.didntEnterFullScreenYet == 0 {
-            startTimer.toggle()
+            startMonitoringUserInputTimer.toggle()
             showWindow = true
         }
     }

@@ -15,21 +15,8 @@ struct StateObjects {
     var firstVideoPath: String! = ""
     var secondVideoPath: String! = ""
     var viewAppeared = false
-//    var ignoreFirstLoadImagesAndVideos = true
     var unusedPaths = Set<String>()
 }
-
-//class ContentViewStateObjectVariables: ObservableObject {
-//    @Published var firstVideoPath = ""
-//    @Published var secondVideoPath = ""
-//    @Published var viewAppeared = false
-//    @Published var ignoreFirstLoadImagesAndVideos = true
-//    @Published var unusedPaths = Set<String>()
-//
-//    deinit {
-//        print("ContentViewStateObjectVariables has been deallocated")
-//    }
-//}
 
 func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
     var seed = UInt64(Date().timeIntervalSince1970)
@@ -46,10 +33,6 @@ struct ContentView: View {
     var index: Int
     var videoFadeTime = 4.0
     var imageFadeTime = 1.0
-
-//    @StateObject var stateObjects[index]!: ContentViewStateObjectVariables = ContentViewStateObjectVariables()
-//
-//    @State var directoryWatcher: DirectoryWatcher?
 
     @EnvironmentObject var appDelegate: AppDelegate
 
@@ -68,8 +51,6 @@ struct ContentView: View {
     @State var startShowImage = false
     @State var networkIsReachableOrNotShowingVideos = false
 
-//    @State var hotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
-
     @State var testText: String = ""
 
     @AppStorage("replaceImageAfter") var replaceImageAfter: TimeInterval = 10
@@ -81,7 +62,6 @@ struct ContentView: View {
     @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
     @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = true
 
-//    @State var imageAndVideoNames: [String] = []
     @State var imageOrBackgroundChangeTimer: Timer? = nil
     @State var backgroundColor: Color = Color.clear
     @State var imageOrVideoMode = false
@@ -156,7 +136,7 @@ struct ContentView: View {
         .onChange(of: gImageAndVideoNames, perform: imageAndVideoNamesChanged)
         .onDisappear(perform: onDisappearAction)
         .onReceive(appDelegate.$showWindow, perform: handleShowWindowChange)
-        .onReceive(appDelegate.$startTimer, perform: handleStartTimerChange)
+        .onReceive(appDelegate.$startMonitoringUserInputTimer, perform: handleStartTimerChange)
         .onReceive(appDelegate.$loadImagesAndVideos, perform: handleLoadImagesAndVideosChange)
         .onReceive(appDelegate.$networkIsReachable, perform: handleNetworkReachabilityChange)
         .onReceive(appDelegate.$setImageOrVideoModeToggle, perform: setImageOrVideoMode)
