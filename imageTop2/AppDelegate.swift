@@ -112,7 +112,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     func windowDidEnterFullScreen(_ notification: Notification) {
         isFullScreen = true
-        iPrint("windowDidEnterFullScreen")
+        iPrint("windowDidEnterFullScreen didntEnterFullScreenYet: \(WindowManager.shared.didntEnterFullScreenYet)")
         inactivityTimer?.invalidate()
         NSCursor.hide()
         WindowManager.shared.didntEnterFullScreenYet -= 1
@@ -167,6 +167,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                         inactivityTimer = nil
                 default : startInactivityTimer(passTime: remainingTime)
             }
+        }
+    }
+
+    func applicationDidResignActive(_ aNotification: Notification) {
+        // This method is called when the application loses focus
+        print("Application is not active")
+        if WindowManager.shared.windows[0].styleMask.contains(.fullScreen) {
+            showWindow = false
         }
     }
 
