@@ -42,7 +42,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     var settingsWindow: NSWindow!
     var externalDisplayCount: Int = 0
-//    var screenChangeDetected: Bool = false
     var ignoreMonitor = false // To ignore key after Show menu
     var firstSetTimer: [Int : Bool] = [:]
     var networkManager = NetworkManager(appDelegate: nil)
@@ -122,14 +121,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
-//    func setShowWindowOrRestart(value: Bool) {
-//        switch true {
-//            case showWindow == value:
-//                restartApplication()
-//            default: showWindow = value
-//        }
-//    }
-
     var inactivityTimer: Timer!
 
     func getLastEventTime() -> CFTimeInterval {
@@ -157,10 +148,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             switch true {
                 case remainingTime <= 0:
                         if autoStart {
-//                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-//                                guard let self = self else { return }
-//                                self.showWindow = true // call your method that brings the window to the front
-//                            }
                             WindowManager.shared.enterFullScreen()
                         }
                         inactivityTimer.invalidate()
@@ -186,7 +173,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             iPrint("Screen Locked")
             ScreenLockStatus.shared.isLocked = true
             showWindow = false
-//            setShowWindowOrRestart(value: false)
             inactivityTimer?.invalidate()
             inactivityTimer = nil
         }
@@ -294,38 +280,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             iPrint("A screen was added or removed.")
 
             restartApplication()
-
-//            screenChangeDetected = true // used to create windows again on user input to prevent problem when the screen was locked
         } else {
             iPrint("A display configuration change occurred.")
             // Handle any other display configuration changes if needed
         }
     }
-
-//    func restartApp() {
-//        let task = Process()
-//        task.executableURL = Bundle.main.executableURL // gets the current executable
-//        do {
-//            try task.run()
-//        } catch {
-//            print("Failed to run the task: \(error)")
-//        }
-//        NSApp.terminate(self)
-//    }
-//
-//    func restart() {
-//        let appleScript = "do shell script \"open -b \(Bundle.main.bundleIdentifier!)\""
-//        if let scriptObject = NSAppleScript(source: appleScript) {
-//            scriptObject.executeAndReturnError(nil)
-//        }
-//        exit(0)
-//    }
-
-//    func restart() {
-//        Process.launchedProcess(launchPath: "/usr/bin/open", arguments: ["-b", Bundle.main.bundleIdentifier!])
-////        NSApp.terminate(self)
-//        exit(0)
-//    }
 
     func restartApplication() {
         if ScreenLockStatus.shared.isLocked {
@@ -389,9 +348,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     @objc func showMainWindow() {
-//        if autoStart {
+        if !autoStart {
+            handleAutoStart()
+        }
         WindowManager.shared.enterFullScreen()
-//        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
             guard let self = self else { return }
             self.hideSettings()

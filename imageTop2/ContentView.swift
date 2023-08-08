@@ -249,7 +249,6 @@ struct ContentView: View {
         iPrint("inside onAppear: \(index)")
         backgroundColor = randomGentleColor()
 
-//        startAccessingFolder()
         handleSelectedFolderPathChange("")
         updateHotKey()
 
@@ -349,11 +348,6 @@ struct ContentView: View {
     }
 
     func handleLoadImagesAndVideosChange(_ value: Bool) {
-//        iPrint("loadImagesAndVideos: \(index)")
-//        if gStateObjects[index]!.ignoreFirstLoadImagesAndVideos {
-//            gStateObjects[index]!.ignoreFirstLoadImagesAndVideos = false
-//            return
-//        }
         if index > 0 && usePhotosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
             appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
@@ -494,6 +488,9 @@ struct ContentView: View {
         appDelegate.hideSettings()
         if index == 0 {
             WindowManager.shared.enterFullScreen()
+            if !appDelegate.autoStart {
+                appDelegate.handleAutoStart()
+            }
         }
     }
 
@@ -783,10 +780,6 @@ struct ContentView: View {
         }
     }
 
-//    func callLoadImageNames() {
-//        gImageAndVideoNames = loadImageAndVideoNames()
-//    }
-
     func startWatchingFolder(imageFolder: String) {
         if index > 0 {
             return
@@ -829,8 +822,6 @@ struct ContentView: View {
 
         let folderURL = fromPexelsPhotos == nil ? URL(fileURLWithPath: imageFolder) : fromPexelsPhotos!
         let fileManager = FileManager.default
-//        imageOrVideoMode = false
-//        startShowVideo = false
         var imageOrVideoNames: [String] = []
         gImageAndVideoNames.removeAll()
         do {
@@ -867,15 +858,6 @@ struct ContentView: View {
                 imageOrVideoNames.append(contentsOf: appDelegate.pexelsVideos)
                 iPrint("pexelVideos: \(index) \(appDelegate.pexelsVideos.count)")
             }
-//            setImageOrVideoMode()
-//            imageOrVideoMode = imageOrVideoNames.count >= 2
-//            iPrint("imageMode: \(index) \(imageOrVideoMode)")
-//            if !imageOrVideoMode {
-//                firstImage = nil
-//                secondImage = nil
-//                gStateObjects[index]!.firstVideoPath = ""
-//                gStateObjects[index]!.secondVideoPath = ""
-//            }
         } catch {
             iPrint("Error loading image names: \(error)")
         }
