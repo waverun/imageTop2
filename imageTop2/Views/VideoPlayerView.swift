@@ -4,19 +4,11 @@ import SwiftUI
 
 var gPlayers: [Int: AVPlayer] = [:]
 var gPausableTimers: [Int: PausableTimer] = [:]
-//var gVideoPlayerViewStateObjects: [Int:VideoPlayerViewStateObjects] = [:]
-//
-//struct VideoPlayerViewStateObjects {
-//    var pausableTimer : PausableTimer?
-//}
-
-//class VideoPlayerViewStateObjects: ObservableObject {
-//    @Published var pausableTimer : PausableTimer?
-//}
+var gVideoLengthTasks: [Int: Task<Void, Never>] = [:]
+var gEndPlayNotifications: [Int: NSObjectProtocol] = [:]
 
 struct VideoPlayerView: NSViewRepresentable {
     @EnvironmentObject var appDelegate: AppDelegate
-//    @StateObject var stateObjects = VideoPlayerViewStateObjects()
 
     let url: URL
     let index: Int
@@ -29,7 +21,7 @@ struct VideoPlayerView: NSViewRepresentable {
         let player = AVPlayer(url: url)
         player .isMuted = true
 
-        startGetVideoLengthTask(player: player, url: url)
+        startGetVideoLength(player: player, url: url)
 
         gPlayers[index] = player
         iPrint("gPlayers[index]: \(index)")
@@ -60,7 +52,13 @@ struct VideoPlayerView: NSViewRepresentable {
 
     func setEndPlayNotification(player: AVPlayer) {
         gPausableTimers.removeValue(forKey: index)
-        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
+        if let endPlayNotification = gEndPlayNotifications[index] {
+            NotificationCenter.default.removeObserver(endPlayNotification)
+        }
+        gEndPlayNotifications[index] = NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { _ in
+            if let startGetVideoLengthTask = gVideoLengthTasks[index] {
+                startGetVideoLengthTask.cancel()
+            }
             iPrint("Video finished playing. \(index)")
             startNewVideo(player)
             // You could do additional things here like play the next video, show a replay button, etc.
@@ -73,23 +71,27 @@ struct VideoPlayerView: NSViewRepresentable {
         return duration
     }
 
-    func startGetVideoLengthTask(player: AVPlayer, url: URL) {
+    func startGetVideoLength(player: AVPlayer, url: URL) {
         iPrint("startGetVideoLengthTask: \(index) url: \(url)")
-        Task {
+        if let startGetVideoLengthTask = gVideoLengthTasks[index] {
+            startGetVideoLengthTask.cancel()
+        }
+        gVideoLengthTasks[index] = Task {
             do {
                 let duration = try await getVideoLength(videoURL: url)
                 iPrint("Timer: \(index) Video duration: \(CMTimeGetSeconds(duration)) seconds")
                 let iDuration = Int(CMTimeGetSeconds(duration))
                 iPrint("iDuration \(index) \(iDuration)")
                 if iDuration > 4 {
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(iDuration - 2)) {
                     if let timer = gPausableTimers[index] {
                         timer.invalidate()
                         gPausableTimers[index] = nil
                     }
                     gPausableTimers[index] = PausableTimer(index: index)
-//                    gPausableTimers[index] = gVideoPlayerViewStateObjects[index]?.pausableTimer
                     gPausableTimers[index]?.start(interval: TimeInterval(iDuration - 2)) { _ in
+                        if let endPlayNotification = gEndPlayNotifications[index] {
+                            NotificationCenter.default.removeObserver(endPlayNotification)
+                        }
                         startNewVideo(player)
                     }
                 } else {
@@ -98,6 +100,11 @@ struct VideoPlayerView: NSViewRepresentable {
             } catch {
                 iPrint("Failed to get video duration: \(error)")
                 setEndPlayNotification(player: player)
+            }
+            
+            if let videoLengthTask = gVideoLengthTasks[index],
+               videoLengthTask.isCancelled {
+                return
             }
         }
     }
@@ -122,7 +129,7 @@ struct VideoPlayerView: NSViewRepresentable {
 
             player.replaceCurrentItem(with: item)
 
-            startGetVideoLengthTask(player: player, url: url)
+            startGetVideoLength(player: player, url: url)
 
             // Play the video
             if appDelegate.showWindow {

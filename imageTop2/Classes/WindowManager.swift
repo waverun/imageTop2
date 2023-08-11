@@ -41,6 +41,7 @@ class WindowManager: ObservableObject {
             }
             gPausableTimers.removeAll()
         }
+
         func removePlayers() {
             for i in 0...gPlayers.count {
                 if i < gPlayers.count {
@@ -52,6 +53,7 @@ class WindowManager: ObservableObject {
             }
             gPlayers.removeAll()
         }
+
         func cleanStateObjects() {
             for key in Array(gStateObjects.keys) {
                 gStateObjects[key]?.firstVideoPath = nil
@@ -60,9 +62,20 @@ class WindowManager: ObservableObject {
             }
             gStateObjects = [:]
         }
+
         func cleanContentViews() {
             gContentViews = [:]
         }
+
+        func cleanVideoObserversAndTasks() {
+            for videoLengthTask in gVideoLengthTasks.values {
+                videoLengthTask.cancel()
+            }
+            for endPlayNotification in gEndPlayNotifications.values {
+                NotificationCenter.default.removeObserver(endPlayNotification)
+            }
+        }
+
         exitFullScreen() { [weak self] in
             guard let self = self else { return }
             gHotkey?.keyDownHandler = nil
@@ -73,6 +86,7 @@ class WindowManager: ObservableObject {
             removeTimers()
             cleanStateObjects()
             cleanContentViews()
+            cleanVideoObserversAndTasks()
             windowIndices.removeAll()
 
             var index = 0
@@ -100,7 +114,7 @@ class WindowManager: ObservableObject {
             if window.styleMask.contains(.fullScreen) {
                 if exitFullStcreen {
                     iPrint("exitFullScreend - toggle \(index)")
-                    window.orderOut(nil) //??
+//                    window.orderOut(nil) //??
                     window.toggleFullScreen(nil)
                 }
             } else {
