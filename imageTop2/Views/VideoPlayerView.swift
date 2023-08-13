@@ -23,6 +23,7 @@ struct VideoPlayerView: NSViewRepresentable {
 
         startGetVideoLength(player: player, url: url)
 
+        iPrint("makeNSView: \(index) gPausableTimers.count: \(gPausableTimers.count)")
         gPlayers[index] = player
         iPrint("gPlayers[index]: \(index)")
         // create a player layer
@@ -36,6 +37,8 @@ struct VideoPlayerView: NSViewRepresentable {
 
         // add the player layer to the view's layer
         view.layer = playerLayer
+
+        context.coordinator.updateObservation(for: player.currentItem)
 
         // play the video
         if appDelegate.showWindow {
@@ -54,7 +57,7 @@ struct VideoPlayerView: NSViewRepresentable {
     }
 
     func setEndPlayNotification(player: AVPlayer) {
-        gPausableTimers.removeValue(forKey: index)
+//        gPausableTimers.removeValue(forKey: index)
         if let endPlayNotification = gEndPlayNotifications[index] {
             NotificationCenter.default.removeObserver(endPlayNotification)
         }
@@ -62,7 +65,13 @@ struct VideoPlayerView: NSViewRepresentable {
             if let startGetVideoLengthTask = gVideoLengthTasks[index] {
                 startGetVideoLengthTask.cancel()
             }
-            iPrint("Video finished playing. \(index)")
+#if DEBUG
+            var url = ""
+            if let urlAsset = player.currentItem?.asset as? AVURLAsset {
+                url = urlAsset.url.absoluteString
+            }
+            iPrint("Video finished playing. \(index) url: \(url)")
+#endif
             startNewVideo(player)
             // You could do additional things here like play the next video, show a replay button, etc.
         }
@@ -84,19 +93,22 @@ struct VideoPlayerView: NSViewRepresentable {
                 let duration = try await getVideoLength(videoURL: url)
                 iPrint("Timer: \(index) Video duration: \(CMTimeGetSeconds(duration)) seconds")
                 let iDuration = Int(CMTimeGetSeconds(duration))
-                iPrint("iDuration \(index) \(iDuration)")
+                iPrint("iDuration \(index) \(iDuration) url: \(url)")
                 if iDuration > 4 {
                     if let timer = gPausableTimers[index] {
                         timer.invalidate()
                         gPausableTimers[index] = nil
                     }
                     gPausableTimers[index] = PausableTimer(index: index)
+                    iPrint("startGetVideoLength: \(index) before start: gPausableTimers.count \(gPausableTimers.count)")
                     gPausableTimers[index]?.start(interval: TimeInterval(iDuration - 2)) { _ in
+                        iPrint("in PausableTimer: \(index)")
                         if let endPlayNotification = gEndPlayNotifications[index] {
                             NotificationCenter.default.removeObserver(endPlayNotification)
                         }
                         startNewVideo(player)
                     }
+                    iPrint("startGetVideoLength: \(index) afterStart: gPausableTimers.count  \(gPausableTimers.count)")
                 }
 //                else {
 //                    setEndPlayNotification(player: player)
@@ -123,6 +135,7 @@ struct VideoPlayerView: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: NSView, context: Context) {
+        iPrint("updateNSView: \(index) gPausableTimers.count: \(gPausableTimers.count)")
         guard let playerLayer = nsView.layer as? AVPlayerLayer,
               let player = playerLayer.player else {
             return
@@ -135,6 +148,8 @@ struct VideoPlayerView: NSViewRepresentable {
             let item = AVPlayerItem(url: url)
 
             player.replaceCurrentItem(with: item)
+
+            context.coordinator.updateObservation(for: item)
 
             startGetVideoLength(player: player, url: url)
 

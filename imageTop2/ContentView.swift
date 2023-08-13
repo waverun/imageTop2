@@ -466,6 +466,7 @@ struct ContentView: View {
     }
 
     func showApp() {
+        iPrint("showApp: gPausableTimers.count: \(gPausableTimers.count)")
         if ScreenLockStatus.shared.isLocked {
             appDelegate.showWindow = false
             return
