@@ -6,6 +6,7 @@ var gPlayers: [Int: AVPlayer] = [:]
 var gPausableTimers: [Int: PausableTimer] = [:]
 var gVideoLengthTasks: [Int: Task<Void, Never>] = [:]
 var gEndPlayNotifications: [Int: NSObjectProtocol] = [:]
+var gNeedToLoadImageOrVideo: [Int: Bool] = [:]
 
 struct VideoPlayerView: NSViewRepresentable {
     @EnvironmentObject var appDelegate: AppDelegate
@@ -90,7 +91,9 @@ struct VideoPlayerView: NSViewRepresentable {
         }
         gVideoLengthTasks[index] = Task {
             do {
+                iPrint("startGetVideoLength: \(index) await before url: \(url)")
                 let duration = try await getVideoLength(videoURL: url)
+                iPrint("startGetVideoLength: \(index) await after url: \(url)")
                 iPrint("Timer: \(index) Video duration: \(CMTimeGetSeconds(duration)) seconds")
                 let iDuration = Int(CMTimeGetSeconds(duration))
                 iPrint("iDuration \(index) \(iDuration) url: \(url)")
@@ -116,10 +119,11 @@ struct VideoPlayerView: NSViewRepresentable {
             }
             catch {
                 iPrint("Failed to get video duration: \(error)")
+                iPrint("startGetVideoLength: error: \n\(error) \nurl: \(url)")
 //                setEndPlayNotification(player: player)
             }
 
-            setEndPlayNotification(player: player) // Always set end of play notification to prevent stacks
+//            setEndPlayNotification(player: player) // Always set end of play notification to prevent stacks
 
             if let videoLengthTask = gVideoLengthTasks[index],
                videoLengthTask.isCancelled {

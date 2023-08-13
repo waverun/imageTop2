@@ -483,6 +483,11 @@ struct ContentView: View {
                 }
             }
         }
+        if let needToLoadImageOrVideo = gNeedToLoadImageOrVideo[index],
+           needToLoadImageOrVideo {
+            iPrint("showApp: calling due to c")
+            changeScreenImageVideoOrColor()
+        }
     }
 
     func hotkeyPressed() {
@@ -576,6 +581,7 @@ struct ContentView: View {
         iPrint("Memory: \(index) Start loadRandomImageOrVideo: \(reportMemory())")
 #endif
         if !appDelegate.isFullScreen {
+            gNeedToLoadImageOrVideo[index] = true
             if gPlayers.count > index {
                 gPlayers[index]?.pause()
             }
@@ -584,6 +590,7 @@ struct ContentView: View {
                 return
             }
         }
+        gNeedToLoadImageOrVideo[index] = false
         if showVideo && gImageAndVideoNames.count < 2 { // may happen after bad loading of videos
             startChangeTimer()
             return
