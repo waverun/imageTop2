@@ -46,8 +46,11 @@ struct VideoPlayerView: NSViewRepresentable {
 #if DEBUG
         iPrint("Memory: \(index) Play makeNSView: \(reportMemory())")
 #endif
-
         return view
+    }
+
+    func makeCoordinator() -> VideoPlayerCoordinator {
+        return VideoPlayerCoordinator(self, finishedPlaying: finishedPlaying)
     }
 
     func setEndPlayNotification(player: AVPlayer) {
@@ -94,14 +97,18 @@ struct VideoPlayerView: NSViewRepresentable {
                         }
                         startNewVideo(player)
                     }
-                } else {
-                    setEndPlayNotification(player: player)
                 }
-            } catch {
-                iPrint("Failed to get video duration: \(error)")
-                setEndPlayNotification(player: player)
+//                else {
+//                    setEndPlayNotification(player: player)
+//                }
             }
-            
+            catch {
+                iPrint("Failed to get video duration: \(error)")
+//                setEndPlayNotification(player: player)
+            }
+
+            setEndPlayNotification(player: player) // Always set end of play notification to prevent stacks
+
             if let videoLengthTask = gVideoLengthTasks[index],
                videoLengthTask.isCancelled {
                 return

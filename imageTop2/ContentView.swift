@@ -473,12 +473,13 @@ struct ContentView: View {
         showAccordingToNetworkReachability()
         if showVideo, networkIsReachableOrNotShowingVideos,
            gPlayers.count > index,
-           gPausableTimers.count > index,
            let player = gPlayers[index] {
             iPrint("video1 play: \(index) \(index) stateObject.firstVideoPath: \(String(describing: gStateObjects[index]!.firstVideoPath)) stateObject.secondVideoPath: \(String(describing: gStateObjects[index]!.secondVideoPath))")
             player.play()
-            if let timer = gPausableTimers[index] {
-                timer.resume()
+            if gPausableTimers.count > index {
+                if let timer = gPausableTimers[index] {
+                    timer.resume()
+                }
             }
         }
     }
@@ -573,10 +574,14 @@ struct ContentView: View {
 #if DEBUG
         iPrint("Memory: \(index) Start loadRandomImageOrVideo: \(reportMemory())")
 #endif
-        if !appDelegate.isFullScreen,
-           gPausableTimers.count > index {
-            gPausableTimers[index]?.pause()
-            return
+        if !appDelegate.isFullScreen {
+            if gPlayers.count > index {
+                gPlayers[index]?.pause()
+            }
+            if gPausableTimers.count > index {
+                gPausableTimers[index]?.pause()
+                return
+            }
         }
         if showVideo && gImageAndVideoNames.count < 2 { // may happen after bad loading of videos
             startChangeTimer()
