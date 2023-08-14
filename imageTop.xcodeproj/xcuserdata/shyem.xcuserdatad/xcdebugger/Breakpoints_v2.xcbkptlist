@@ -14,9 +14,9 @@
             filePath = "imageTop2/Classes/WindowManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "201"
-            endingLineNumber = "201"
-            landmarkName = "exitFullScreen(completion:)"
+            startingLineNumber = "214"
+            endingLineNumber = "214"
+            landmarkName = "isFullScreen()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -30,8 +30,8 @@
             filePath = "imageTop2/Classes/WindowManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "214"
-            endingLineNumber = "214">
+            startingLineNumber = "225"
+            endingLineNumber = "225">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -78,7 +78,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "367"
             endingLineNumber = "367"
-            landmarkName = "createWindows()"
+            landmarkName = "showMainWindow()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -93,9 +93,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "383"
-            endingLineNumber = "383"
-            landmarkName = "openLoginItemsPreferences()"
-            landmarkType = "7">
+            endingLineNumber = "383">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1721,8 +1719,8 @@
             filePath = "imageTop2/Classes/WindowManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "184"
-            endingLineNumber = "184"
+            startingLineNumber = "194"
+            endingLineNumber = "194"
             landmarkName = "exitFullScreen(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1737,9 +1735,9 @@
             filePath = "imageTop2/Classes/WindowManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "197"
-            endingLineNumber = "197"
-            landmarkName = "exitFullScreen(completion:)"
+            startingLineNumber = "210"
+            endingLineNumber = "210"
+            landmarkName = "isFullScreen()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1915,7 +1913,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "151"
             endingLineNumber = "151"
-            landmarkName = "windowDidEnterFullScreen()"
+            landmarkName = "startInactivityTimer(passTime:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1929,8 +1927,8 @@
             filePath = "imageTop2/Classes/WindowManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "153"
-            endingLineNumber = "153"
+            startingLineNumber = "155"
+            endingLineNumber = "155"
             landmarkName = "enterFullScreen()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1945,8 +1943,8 @@
             filePath = "imageTop2/Classes/WindowManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
             landmarkName = "enterFullScreen()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1963,7 +1961,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "303"
             endingLineNumber = "303"
-            landmarkName = "showWatchToggle()"
+            landmarkName = "restartApplication()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1993,8 +1991,8 @@
             filePath = "imageTop2/Classes/WindowManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "182"
-            endingLineNumber = "182"
+            startingLineNumber = "192"
+            endingLineNumber = "192"
             landmarkName = "exitFullScreen(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2058,9 +2056,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "393"
-            endingLineNumber = "393"
-            landmarkName = "showMainWindow()"
-            landmarkType = "7">
+            endingLineNumber = "393">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2079,19 +2075,19 @@
             landmarkType = "3">
             <Locations>
                <Location
-                  uuid = "6168FCAE-F473-4B52-A6C4-F65F3540865B - 823147016dace29a"
+                  uuid = "6168FCAE-F473-4B52-A6C4-F65F3540865B - 37312dae3187498d"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "imageTop.WindowManager.addWindow(__C.NSWindow) -&gt; ()"
+                  symbolName = "imageTop.WindowManager.removeAllWindows(completion: () -&gt; ()) -&gt; ()"
                   moduleName = "imageTop"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/shyem/Desktop/Projects/imageTop2/imageTop2/Classes/WindowManager.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "31"
-                  endingLineNumber = "31"
-                  offsetFromSymbolStart = "195">
+                  startingLineNumber = "79"
+                  endingLineNumber = "79"
+                  offsetFromSymbolStart = "81">
                </Location>
                <Location
                   uuid = "6168FCAE-F473-4B52-A6C4-F65F3540865B - 37312dae318749ac"
@@ -2106,21 +2102,6 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "78"
                   endingLineNumber = "78"
-                  offsetFromSymbolStart = "81">
-               </Location>
-               <Location
-                  uuid = "6168FCAE-F473-4B52-A6C4-F65F3540865B - 37312dae3187498d"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "imageTop.WindowManager.removeAllWindows(completion: () -&gt; ()) -&gt; ()"
-                  moduleName = "imageTop"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/shyem/Desktop/Projects/imageTop2/imageTop2/Classes/WindowManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "79"
-                  endingLineNumber = "79"
                   offsetFromSymbolStart = "81">
                </Location>
             </Locations>
@@ -2374,8 +2355,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "121"
             endingLineNumber = "121"
-            landmarkName = "AppDelegate"
-            landmarkType = "3">
+            landmarkName = "windowDidEnterFullScreen(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2390,7 +2371,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "152"
             endingLineNumber = "152"
-            landmarkName = "windowDidEnterFullScreen()"
+            landmarkName = "startInactivityTimer(passTime:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -2469,7 +2450,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "349"
             endingLineNumber = "349"
-            landmarkName = "createWindows()"
+            landmarkName = "hideSettings()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2499,9 +2480,9 @@
             filePath = "imageTop2/Classes/WindowManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "165"
-            endingLineNumber = "165"
-            landmarkName = "enterFullScreen()"
+            startingLineNumber = "175"
+            endingLineNumber = "175"
+            landmarkName = "exitFullScreen(completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2517,7 +2498,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "90"
             endingLineNumber = "90"
-            landmarkName = "windowIsNotInFullScreen(window:)"
+            landmarkName = "windowDidExitFullScreen(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2551,6 +2532,22 @@
             endingLineNumber = "30"
             landmarkName = "moveCursorAwayFromEdges()"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F9256D1D-FAF5-4284-A13E-54AB8028B5F1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "imageTop2/Classes/WindowManager.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "165"
+            endingLineNumber = "165"
+            landmarkName = "enterFullScreen()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

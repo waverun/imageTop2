@@ -131,6 +131,8 @@ class WindowManager: ObservableObject {
             return
         }
 
+        NSMenu.setMenuBarVisible(false)
+
         didntEnterFullScreenYet = windows.count
         
         if !windows[0].styleMask.contains(.fullScreen) {
