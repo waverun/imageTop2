@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		500CE8BE2A88BF89001E0984 /* VideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 500CE8BD2A88BF89001E0984 /* VideoPlayerCoordinator.swift */; };
 		50627A862A167148009BA1FC /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50627A852A167148009BA1FC /* DirectoryWatcher.swift */; };
+		50736EFB2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */; };
 		5079FD6E2A10C8890066EC08 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD6D2A10C8890066EC08 /* ViewController.swift */; };
 		5079FD702A10C88B0066EC08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5079FD6F2A10C88B0066EC08 /* Assets.xcassets */; };
 		5079FD732A10C88B0066EC08 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5079FD712A10C88B0066EC08 /* Main.storyboard */; };
@@ -49,6 +50,7 @@
 /* Begin PBXFileReference section */
 		500CE8BD2A88BF89001E0984 /* VideoPlayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerCoordinator.swift; sourceTree = "<group>"; };
 		50627A852A167148009BA1FC /* DirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
+		50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = culculateDigitalWatchPosition.swift; sourceTree = "<group>"; };
 		5079FD682A10C8890066EC08 /* imageTop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imageTop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5079FD6D2A10C8890066EC08 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5079FD6F2A10C88B0066EC08 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 				50BEA3B32A5436AB00F0FE19 /* isVideoFile.swift */,
 				50DC5B562A5C2ABD003119E8 /* indexedPrint.swift */,
 				50C0E1662A641B6C00470F40 /* reportMemory.swift */,
+				50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -293,6 +296,7 @@
 				5079FD832A10D5B50066EC08 /* Keyboard.swift in Sources */,
 				50B9EA992A365361002BCB4B /* downloadPhoto.swift in Sources */,
 				50B9EA932A3648F6002BCB4B /* PexelsResource-photo-src.swift in Sources */,
+				50736EFB2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift in Sources */,
 				50627A862A167148009BA1FC /* DirectoryWatcher.swift in Sources */,
 				5079FD8C2A10DB4E0066EC08 /* LoadableImageView.swift in Sources */,
 				5079FD7B2A10D2390066EC08 /* ContentView.swift in Sources */,

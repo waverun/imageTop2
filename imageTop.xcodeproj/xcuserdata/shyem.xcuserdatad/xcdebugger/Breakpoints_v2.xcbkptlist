@@ -44,8 +44,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "337"
-            endingLineNumber = "337"
+            startingLineNumber = "326"
+            endingLineNumber = "326"
             landmarkName = "handleShowWindowChange(showWindow:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -60,8 +60,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "351"
-            endingLineNumber = "351"
+            startingLineNumber = "340"
+            endingLineNumber = "340"
             landmarkName = "handleLoadImagesAndVideosChange(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -202,8 +202,8 @@
             filePath = "imageTop2/Views/VideoPlayerView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "136"
-            endingLineNumber = "136"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
             landmarkName = "startNewVideo(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -250,8 +250,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "613"
-            endingLineNumber = "613"
+            startingLineNumber = "602"
+            endingLineNumber = "602"
             landmarkName = "loadRandomImageOrVideo()"
             landmarkType = "7">
             <Locations>
@@ -448,8 +448,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "804"
-            endingLineNumber = "804"
+            startingLineNumber = "793"
+            endingLineNumber = "793"
             landmarkName = "startWatchingFolder(imageFolder:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -464,8 +464,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "806"
-            endingLineNumber = "806"
+            startingLineNumber = "795"
+            endingLineNumber = "795"
             landmarkName = "startWatchingFolder(imageFolder:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -480,8 +480,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "260"
-            endingLineNumber = "260"
+            startingLineNumber = "249"
+            endingLineNumber = "249"
             landmarkName = "onAppearAction()"
             landmarkType = "7">
             <Locations>
@@ -543,8 +543,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "460"
-            endingLineNumber = "460"
+            startingLineNumber = "449"
+            endingLineNumber = "449"
             landmarkName = "updateHotKey()"
             landmarkType = "7">
             <Locations>
@@ -591,8 +591,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "359"
-            endingLineNumber = "359"
+            startingLineNumber = "348"
+            endingLineNumber = "348"
             landmarkName = "handleNetworkReachabilityChange(_:)"
             landmarkType = "7">
             <Locations>
@@ -639,8 +639,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "367"
-            endingLineNumber = "367"
+            startingLineNumber = "356"
+            endingLineNumber = "356"
             landmarkName = "showAccordingToNetworkReachability()"
             landmarkType = "7">
             <Locations>
@@ -687,8 +687,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "362"
-            endingLineNumber = "362"
+            startingLineNumber = "351"
+            endingLineNumber = "351"
             landmarkName = "ContentView"
             landmarkType = "14">
             <Locations>
@@ -735,8 +735,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "261"
-            endingLineNumber = "261"
+            startingLineNumber = "250"
+            endingLineNumber = "250"
             landmarkName = "onAppearAction()"
             landmarkType = "7">
          </BreakpointContent>
@@ -751,8 +751,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "634"
-            endingLineNumber = "634"
+            startingLineNumber = "623"
+            endingLineNumber = "623"
             landmarkName = "generateRandomPath()"
             landmarkType = "7">
          </BreakpointContent>
@@ -781,8 +781,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "368"
-            endingLineNumber = "368"
+            startingLineNumber = "357"
+            endingLineNumber = "357"
             landmarkName = "showAccordingToNetworkReachability()"
             landmarkType = "7">
          </BreakpointContent>
@@ -875,8 +875,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "553"
-            endingLineNumber = "553"
+            startingLineNumber = "542"
+            endingLineNumber = "542"
             landmarkName = "startChangeTimer(addTime:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -891,8 +891,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "562"
-            endingLineNumber = "562"
+            startingLineNumber = "551"
+            endingLineNumber = "551"
             landmarkName = "startChangeTimer(addTime:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -907,8 +907,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "296"
-            endingLineNumber = "296"
+            startingLineNumber = "285"
+            endingLineNumber = "285"
             landmarkName = "usePhotosFromPexelsChanged(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -923,8 +923,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "298"
-            endingLineNumber = "298"
+            startingLineNumber = "287"
+            endingLineNumber = "287"
             landmarkName = "usePhotosFromPexelsChanged(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1110,8 +1110,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "609"
-            endingLineNumber = "609"
+            startingLineNumber = "598"
+            endingLineNumber = "598"
             landmarkName = "loadRandomImageOrVideo()"
             landmarkType = "7">
             <Locations>
@@ -1186,8 +1186,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "714"
-            endingLineNumber = "714"
+            startingLineNumber = "703"
+            endingLineNumber = "703"
             landmarkName = "manageVideoToImageTransition()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1278,8 +1278,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "353"
-            endingLineNumber = "353"
+            startingLineNumber = "342"
+            endingLineNumber = "342"
             landmarkName = "handleLoadImagesAndVideosChange(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1294,8 +1294,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "797"
-            endingLineNumber = "797"
+            startingLineNumber = "786"
+            endingLineNumber = "786"
             landmarkName = "startWatchingFolder(imageFolder:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1310,8 +1310,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "792"
-            endingLineNumber = "792"
+            startingLineNumber = "781"
+            endingLineNumber = "781"
             landmarkName = "hideApp()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1326,8 +1326,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "793"
-            endingLineNumber = "793"
+            startingLineNumber = "782"
+            endingLineNumber = "782"
             landmarkName = "hideApp()"
             landmarkType = "7">
             <Locations>
@@ -1374,8 +1374,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "355"
-            endingLineNumber = "355"
+            startingLineNumber = "344"
+            endingLineNumber = "344"
             landmarkName = "handleLoadImagesAndVideosChange(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1390,8 +1390,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "354"
-            endingLineNumber = "354"
+            startingLineNumber = "343"
+            endingLineNumber = "343"
             landmarkName = "handleLoadImagesAndVideosChange(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1406,8 +1406,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "824"
-            endingLineNumber = "824"
+            startingLineNumber = "813"
+            endingLineNumber = "813"
             landmarkName = "loadImageAndVideoNames(fromPexelsPhotos:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1422,8 +1422,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "834"
-            endingLineNumber = "834"
+            startingLineNumber = "823"
+            endingLineNumber = "823"
             landmarkName = "loadImageAndVideoNames(fromPexelsPhotos:)"
             landmarkType = "7">
             <Locations>
@@ -1578,8 +1578,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "796"
-            endingLineNumber = "796"
+            startingLineNumber = "785"
+            endingLineNumber = "785"
             landmarkName = "startWatchingFolder(imageFolder:)"
             landmarkType = "7">
             <Locations>
@@ -1705,8 +1705,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "859"
-            endingLineNumber = "859"
+            startingLineNumber = "848"
+            endingLineNumber = "848"
             landmarkName = "loadImageAndVideoNames(fromPexelsPhotos:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1753,8 +1753,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "598"
-            endingLineNumber = "598"
+            startingLineNumber = "587"
+            endingLineNumber = "587"
             landmarkName = "loadRandomImageOrVideo()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1897,8 +1897,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "597"
-            endingLineNumber = "597"
+            startingLineNumber = "586"
+            endingLineNumber = "586"
             landmarkName = "loadRandomImageOrVideo()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2009,8 +2009,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "483"
-            endingLineNumber = "483"
+            startingLineNumber = "472"
+            endingLineNumber = "472"
             landmarkName = "showApp()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2025,8 +2025,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "478"
-            endingLineNumber = "478"
+            startingLineNumber = "467"
+            endingLineNumber = "467"
             landmarkName = "showApp()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2119,10 +2119,10 @@
             filePath = "imageTop2/Views/VideoPlayerView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "57"
-            endingLineNumber = "57"
-            landmarkName = "makeCoordinator()"
-            landmarkType = "7">
+            startingLineNumber = "94"
+            endingLineNumber = "94"
+            landmarkName = "VideoPlayerView"
+            landmarkType = "14">
             <Locations>
                <Location
                   uuid = "59CAE1C0-2764-4292-8510-32F5D80DE73A - de38bf5d78ac8093"
@@ -2167,8 +2167,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "487"
-            endingLineNumber = "487"
+            startingLineNumber = "476"
+            endingLineNumber = "476"
             landmarkName = "showApp()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2199,8 +2199,8 @@
             filePath = "imageTop2/Views/VideoPlayerView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
             landmarkName = "startGetVideoLength(player:url:)"
             landmarkType = "7">
             <Locations>
@@ -2307,8 +2307,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "477"
-            endingLineNumber = "477"
+            startingLineNumber = "466"
+            endingLineNumber = "466"
             landmarkName = "showApp()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2339,8 +2339,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "420"
-            endingLineNumber = "420"
+            startingLineNumber = "409"
+            endingLineNumber = "409"
             landmarkName = "stopMonitoringUserInput()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2514,8 +2514,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "408"
-            endingLineNumber = "408"
+            startingLineNumber = "397"
+            endingLineNumber = "397"
             landmarkName = "startMonitoringUserInput()"
             landmarkType = "7">
          </BreakpointContent>

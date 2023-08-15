@@ -1,7 +1,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import AppKit
-import GameplayKit
+//import GameplayKit
 import HotKey
 
 var gContentViews: [Int:ContentView] = [:]
@@ -16,17 +16,6 @@ struct StateObjects {
     var secondVideoPath: String! = ""
     var viewAppeared = false
     var unusedPaths = Set<String>()
-}
-
-func calculateWatchPosition(parentSize: CGSize) -> (CGFloat, CGFloat) {
-    var seed = UInt64(Date().timeIntervalSince1970)
-    let seedData = Data(bytes: &seed, count: MemoryLayout<UInt64>.size)
-    let generator = GKARC4RandomSource(seed: seedData)
-
-    let x = CGFloat(generator.nextUniform()) * (parentSize.width * 0.8 - parentSize.width * 0.2) + parentSize.width * 0.2
-    let y = CGFloat(generator.nextUniform()) * (parentSize.height * 0.8 - parentSize.height * 0.2) + parentSize.height * 0.2
-
-    return (x, y)
 }
 
 struct ContentView: View {
@@ -93,7 +82,7 @@ struct ContentView: View {
 
     init(index: Int) {
         if let screenSize = NSScreen.main?.frame.size {
-            let (xValue, yValue) = calculateWatchPosition(parentSize: screenSize)
+            let (xValue, yValue) = calculateDigitalWatchPosition(parentSize: screenSize)
             _x = State(initialValue: xValue)
             _y = State(initialValue: yValue)
             iPrint("_x, -Y (\(_x), \(_y)")
@@ -105,7 +94,7 @@ struct ContentView: View {
 
     func resetWatchPosition() {
         if let screenSize = NSScreen.main?.frame.size {
-            let (xValue, yValue) = calculateWatchPosition(parentSize: screenSize)
+            let (xValue, yValue) = calculateDigitalWatchPosition(parentSize: screenSize)
             x = xValue
             y = yValue
         }

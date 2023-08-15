@@ -3,10 +3,40 @@ import AppKit
 import SwiftUI
 
 var gPlayers: [Int: AVPlayer] = [:]
+var gVideoFailedToPlay: [Int: VideoFailedToPlay] = [:]
 var gPausableTimers: [Int: PausableTimer] = [:]
 var gVideoLengthTasks: [Int: Task<Void, Never>] = [:]
 var gEndPlayNotifications: [Int: NSObjectProtocol] = [:]
 var gNeedToLoadImageOrVideo: [Int: Bool] = [:]
+
+class VideoFailedToPlay {
+    var playerItem: AVPlayerItem
+    var index: Int
+    var finishedPlaying: () -> Void
+
+    init(playerItem: AVPlayerItem, index: Int, finishedPlaying: @escaping () -> Void) {
+        // Add an observer for the AVPlayerItemFailedToPlayToEndTimeNotification notification
+        self.playerItem = playerItem
+        self.index = index
+        self.finishedPlaying = finishedPlaying
+
+        NotificationCenter.default.addObserver(self, selector: #selector(videoFailedToPlay), name: .AVPlayerItemFailedToPlayToEndTime, object: playerItem)
+    }
+
+    @objc func videoFailedToPlay(notification: Notification) {
+        // Check the error
+//        if let error = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? Error {
+            var url = ""
+            if let urlAsset = playerItem.asset as? AVURLAsset {
+                url = urlAsset.url.absoluteString
+            }
+            iPrint("videoFailedToPlay: currentTime: \(playerItem.currentTime().seconds) url: \(url)")
+            finishedPlaying()
+            // Handle the error or display a notification to the user
+//            displayNotification(with: "Video Playback Error", informativeText: error.localizedDescription)
+        }
+//    }
+}
 
 struct VideoPlayerView: NSViewRepresentable {
     @EnvironmentObject var appDelegate: AppDelegate
@@ -39,9 +69,16 @@ struct VideoPlayerView: NSViewRepresentable {
         // add the player layer to the view's layer
         view.layer = playerLayer
 
-        context.coordinator.updateObservation(for: player.currentItem)
+//        context.coordinator.updateObservation(for: player.currentItem)
 
-        // play the video
+        guard let playerItem = player.currentItem else {
+            iPrint("makeNSView: \(index) couldn't get playerItem url: \(url)")
+            return view
+        }
+
+        gVideoFailedToPlay[index] = VideoFailedToPlay(playerItem: playerItem, index: index, finishedPlaying: finishedPlaying)
+
+// play the video
         if appDelegate.showWindow {
             player.play()
             iPrint("Video1 started playing. \(index) url: \(url) makeNSView \(Date())")
@@ -53,9 +90,9 @@ struct VideoPlayerView: NSViewRepresentable {
         return view
     }
 
-    func makeCoordinator() -> VideoPlayerCoordinator {
-        return VideoPlayerCoordinator(self, finishedPlaying: finishedPlaying)
-    }
+//    func makeCoordinator() -> VideoPlayerCoordinator {
+//        return VideoPlayerCoordinator(self, finishedPlaying: finishedPlaying)
+//    }
 
     func setEndPlayNotification(player: AVPlayer) {
 //        gPausableTimers.removeValue(forKey: index)
@@ -142,6 +179,7 @@ struct VideoPlayerView: NSViewRepresentable {
         iPrint("updateNSView: \(index) gPausableTimers.count: \(gPausableTimers.count)")
         guard let playerLayer = nsView.layer as? AVPlayerLayer,
               let player = playerLayer.player else {
+            iPrint("updateNSView: \(index) Couldn't get player. url: \(url)")
             return
         }
 
@@ -149,20 +187,25 @@ struct VideoPlayerView: NSViewRepresentable {
         if let currentURL = player.currentItem?.asset as? AVURLAsset, currentURL.url.path != url.path {
             NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
 
+            iPrint("updateNSView: \(index) Creating new item for url: \(url)")
             gPlayers[index] = player
 
             let item = AVPlayerItem(url: url)
 
             player.replaceCurrentItem(with: item)
 
-            context.coordinator.updateObservation(for: item)
+//            context.coordinator.updateObservation(for: item)
+
+            gVideoFailedToPlay[index] = VideoFailedToPlay(playerItem: item, index: index, finishedPlaying: finishedPlaying)
 
             startGetVideoLength(player: player, url: url)
 
             // Play the video
-            if appDelegate.showWindow {
-                player.play()
-                iPrint("Video1 started playing. \(index) url: \(url) updateNSView \(Date())")
+            switch true {
+                case appDelegate.showWindow:
+                    player.play()
+                    iPrint("Video1 started playing. \(index) url: \(url) updateNSView \(Date())")
+                default: gPausableTimers[index]?.pause()
             }
 #if DEBUG
             iPrint("Memory: \(index) Play updateNSView: \(reportMemory())")
