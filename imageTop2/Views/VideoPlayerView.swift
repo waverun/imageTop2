@@ -149,6 +149,8 @@ struct VideoPlayerView: NSViewRepresentable {
         if let currentURL = player.currentItem?.asset as? AVURLAsset, currentURL.url.path != url.path {
             NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
 
+            gPlayers[index] = player
+
             let item = AVPlayerItem(url: url)
 
             player.replaceCurrentItem(with: item)

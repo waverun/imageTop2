@@ -166,6 +166,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
+    func applicationShouldHandleReopen(_ theApplication: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if !flag {
+            iPrint("applicationShouldHandleReopen")
+            if !showWindow {
+                showMainWindow()
+            }
+            // Handle the scenario where there are no visible windows when the Dock icon is clicked
+            // For instance, you can makeKeyAndOrderFront your main window here
+        }
+        return true
+    }
+
     func startDetectLockedScreen() {
         dnc = DistributedNotificationCenter.default()
 

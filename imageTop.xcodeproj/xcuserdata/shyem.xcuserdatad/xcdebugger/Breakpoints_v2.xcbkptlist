@@ -76,10 +76,10 @@
             filePath = "imageTop2/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "367"
-            endingLineNumber = "367"
-            landmarkName = "showMainWindow()"
-            landmarkType = "7">
+            startingLineNumber = "379"
+            endingLineNumber = "379"
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -93,7 +93,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "383"
-            endingLineNumber = "383">
+            endingLineNumber = "383"
+            landmarkName = "AppDelegate"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -448,7 +450,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "804"
             endingLineNumber = "804"
-            landmarkName = "hideApp()"
+            landmarkName = "startWatchingFolder(imageFolder:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -809,8 +811,8 @@
             filePath = "imageTop2/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "249"
-            endingLineNumber = "249"
+            startingLineNumber = "261"
+            endingLineNumber = "261"
             landmarkName = "applicationDidFinishLaunching(_:)"
             landmarkType = "7">
             <Locations>
@@ -857,8 +859,8 @@
             filePath = "imageTop2/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "250"
-            endingLineNumber = "250"
+            startingLineNumber = "262"
+            endingLineNumber = "262"
             landmarkName = "applicationDidFinishLaunching(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -875,7 +877,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "553"
             endingLineNumber = "553"
-            landmarkName = "changeBackgroundColor()"
+            landmarkName = "startChangeTimer(addTime:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1186,7 +1188,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "714"
             endingLineNumber = "714"
-            landmarkName = "manageImageDisplay(path:nsImage:photographer:)"
+            landmarkName = "manageVideoToImageTransition()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1294,7 +1296,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "797"
             endingLineNumber = "797"
-            landmarkName = "hideApp()"
+            landmarkName = "startWatchingFolder(imageFolder:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1310,7 +1312,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "792"
             endingLineNumber = "792"
-            landmarkName = "stopChangeTimer()"
+            landmarkName = "hideApp()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1326,7 +1328,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "793"
             endingLineNumber = "793"
-            landmarkName = "stopChangeTimer()"
+            landmarkName = "hideApp()"
             landmarkType = "7">
             <Locations>
                <Location
@@ -1406,7 +1408,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "824"
             endingLineNumber = "824"
-            landmarkName = "scheduleImageLoad()"
+            landmarkName = "loadImageAndVideoNames(fromPexelsPhotos:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1578,7 +1580,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "796"
             endingLineNumber = "796"
-            landmarkName = "hideApp()"
+            landmarkName = "startWatchingFolder(imageFolder:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -1959,8 +1961,8 @@
             filePath = "imageTop2/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "303"
-            endingLineNumber = "303"
+            startingLineNumber = "315"
+            endingLineNumber = "315"
             landmarkName = "restartApplication()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2339,7 +2341,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "420"
             endingLineNumber = "420"
-            landmarkName = "stopPlaying()"
+            landmarkName = "stopMonitoringUserInput()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2432,8 +2434,8 @@
             filePath = "imageTop2/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "238"
-            endingLineNumber = "238"
+            startingLineNumber = "250"
+            endingLineNumber = "250"
             landmarkName = "applicationDidFinishLaunching(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2448,8 +2450,8 @@
             filePath = "imageTop2/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "349"
-            endingLineNumber = "349"
+            startingLineNumber = "361"
+            endingLineNumber = "361"
             landmarkName = "hideSettings()"
             landmarkType = "7">
          </BreakpointContent>
