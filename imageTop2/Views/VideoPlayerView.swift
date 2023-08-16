@@ -188,15 +188,28 @@ struct VideoPlayerView: NSViewRepresentable {
             NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
 
             iPrint("updateNSView: \(index) Creating new item for url: \(url)")
+
+            let player = AVPlayer(url: url)
+            player.isMuted = true
+
             gPlayers[index] = player
-
-            let item = AVPlayerItem(url: url)
-
-            player.replaceCurrentItem(with: item)
+            playerLayer.player = player
+//            gPlayers[index] = player
+//
+//            let item = AVPlayerItem(url: url)
+//
+//            player.replaceCurrentItem(with: item)
 
 //            context.coordinator.updateObservation(for: item)
 
-            gVideoFailedToPlay[index] = VideoFailedToPlay(playerItem: item, index: index, finishedPlaying: finishedPlaying)
+//            gVideoFailedToPlay[index] = VideoFailedToPlay(playerItem: item, index: index, finishedPlaying: finishedPlaying)
+
+            guard let playerItem = player.currentItem else {
+                iPrint("makeNSView: \(index) couldn't get playerItem url: \(url)")
+                return
+            }
+            
+            gVideoFailedToPlay[index] = VideoFailedToPlay(playerItem: playerItem, index: index, finishedPlaying: finishedPlaying)
 
             startGetVideoLength(player: player, url: url)
 
