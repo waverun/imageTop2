@@ -29,6 +29,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
+    @AppStorage("hotKeyString") var keyString: String = "escape"
+    @AppStorage("modifierKeyString1") var keyString1: String = "command"
+    @AppStorage("modifierKeyString2") var keyString2: String = "control"
+
     @AppStorage("showWatch") var showWatch = true {
         didSet {
             // Update the title of the menu item when autoStart changes
@@ -39,6 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var statusBarItem: NSStatusItem!
     var autoStartItem: NSMenuItem! // This is the menu item we want to update
     var showWatchItem: NSMenuItem! // This is the menu item we want to update
+    var showItem: NSMenuItem! // This is the menu item we want to update
 
     var settingsWindow: NSWindow!
     var externalDisplayCount: Int = 0
@@ -226,7 +231,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
         // Create the menu
         let menu = NSMenu()
-        menu.addItem(withTitle: "Show", action: #selector(showMainWindow), keyEquivalent: "")
+
+        showItem = menu.addItem(withTitle: "Show", action: #selector(showMainWindow), keyEquivalent: "")
+
+        updateShowItem()
+
         menu.addItem(withTitle: "Settings", action: #selector(openSettings), keyEquivalent: "")
         autoStartItem = menu.addItem(withTitle: (autoStart ? "Disable" : "Enable") + " Auto (Inactivity) Start", action: #selector(handleAutoStart), keyEquivalent: "")
 
@@ -270,6 +279,59 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 #if DEBUG
         iPrint("Finished: Start applicationDidFinishLaunching: \(reportMemory())")
 #endif
+    }
+
+//    func addShowItem(menu: NSMenu) {
+
+//        let mod1 = Keyboard.stringToModifier(keyString1)
+//        let mod2 = Keyboard.stringToModifier(keyString2)
+//
+//        switch true {
+//            case (mod1 != nil && mod2 != nil):
+//                showItem = menu.addItem(withTitle: "Show", action: #selector(showMainWindow), keyEquivalent: keyString)
+//                showItem.keyEquivalentModifierMask = [mod1!, mod2!]
+//            default:
+//                showItem = menu.addItem(withTitle: "Show", action: #selector(showMainWindow), keyEquivalent: "")
+//                // Optionally handle the case where one or both modifiers were not valid
+//                print("Invalid modifier strings provided.")
+//        }
+//    }
+
+//    func updateShowItem() {
+//        let mod1 = Keyboard.stringToModifier(keyString1)
+//        let mod2 = Keyboard.stringToModifier(keyString2)
+//
+//        switch true {
+//            case (mod1 != nil && mod2 != nil):
+//                showItem.keyEquivalent = keyString
+//                showItem.keyEquivalentModifierMask = [mod1!, mod2!]
+//            default:
+//                showItem.keyEquivalent = ""
+//                showItem.keyEquivalentModifierMask = []
+//                // Optionally handle the case where one or both modifiers were not valid
+//                print("Invalid modifier strings provided.")
+//        }
+//    }
+
+    func updateShowItem() {
+        let keyString = keyString.lowercased()
+        let mod1 = keyString1 != "None" ? Keyboard.stringToModifier(keyString1) : nil
+        let mod2 = keyString2 != "None" ? Keyboard.stringToModifier(keyString2) : nil
+
+        switch (mod1, mod2) {
+            case let (mod1?, mod2?):
+                showItem.keyEquivalent = keyString
+                showItem.keyEquivalentModifierMask = [mod1, mod2]
+            case let (mod1?, nil):
+                showItem.keyEquivalent = keyString
+                showItem.keyEquivalentModifierMask = [mod1]
+            case let (nil, mod2?):
+                showItem.keyEquivalent = keyString
+                showItem.keyEquivalentModifierMask = [mod2]
+            case (nil, nil):
+                showItem.keyEquivalent = keyString
+                showItem.keyEquivalentModifierMask = []
+        }
     }
 
     @objc func showWatchToggle() {

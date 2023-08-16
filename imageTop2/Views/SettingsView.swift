@@ -8,7 +8,7 @@ struct SettingsView: View {
     @AppStorage("startAfter") var startAfter: TimeInterval = 600
     @AppStorage("selectedFolderPath") var storedFolderPath: String = ""
     @AppStorage("imageTopFolderBookmark") var imageTopFolderBookmarkData: Data?
-    @AppStorage("hotKeyString") var keyString: String = "Escape"
+    @AppStorage("hotKeyString") var keyString: String = "escape"
     @AppStorage("modifierKeyString1") var keyString1: String = "command"
     @AppStorage("modifierKeyString2") var keyString2: String = "control"
     @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
@@ -23,6 +23,8 @@ struct SettingsView: View {
     @State var numberOfLocalImagesAndVideos = 0
     @State var numberOfPexelsPhotos = 0
     @State var numberOfPexelsVideos = 0
+    @State private var filteredModKeyNames1: [String] = Keyboard.modKeyNames
+    @State private var filteredModKeyNames2: [String] = Keyboard.modKeyNames
 
     let allKeyNames = Keyboard.keyNames
     let modKeyNames = Keyboard.modKeyNames
@@ -30,6 +32,12 @@ struct SettingsView: View {
     var filteredKeys: [String] {
         let searchString = ""
         return allKeyNames.filter { $0.lowercased().hasPrefix(searchString) }
+    }
+
+    func filterModKeys(otherModeValue: String) -> [String] {
+//        let searchString = ""
+//        return allKeyNames.filter { $0.lowercased().hasPrefix(searchString) }
+        return modKeyNames.filter { $0 != otherModeValue }
     }
 
     @ViewBuilder var body: some View {
@@ -69,7 +77,7 @@ struct SettingsView: View {
                             Text("Modifier key 1")
                                 .frame(width: geometry.size.width * 0.35, alignment: .leading)
                             Menu {
-                                ForEach(modKeyNames, id: \.self) { mod in
+                                ForEach(filteredModKeyNames1, id: \.self) { mod in
                                     Button(action: {
                                         keyString1 = mod
                                     }, label: {
@@ -89,7 +97,7 @@ struct SettingsView: View {
                             Text("Modifier key 2")
                                 .frame(width: geometry.size.width * 0.35, alignment: .leading)
                             Menu {
-                                ForEach(modKeyNames, id: \.self) { mod in
+                                ForEach(filteredModKeyNames2, id: \.self) { mod in
                                     Button(action: {
                                         keyString2 = mod
                                     }, label: {
@@ -223,6 +231,20 @@ struct SettingsView: View {
             iPrint("showWatch: \(showWatch)")
             showWatchIsOn = newValue
         }
+        .onChange(of: keyString) { _ in
+            iPrint("keyString: \(keyString)")
+            appDelegate.updateShowItem()
+        }
+        .onChange(of: keyString1) { newValue in
+            iPrint("keyString1: \(keyString1)")
+            filteredModKeyNames2 = filterModKeys(otherModeValue: newValue)
+            appDelegate.updateShowItem()
+        }
+        .onChange(of: keyString2) { newValue in
+            iPrint("keyString2: \(keyString2)")
+            filteredModKeyNames1 = filterModKeys(otherModeValue: newValue)
+            appDelegate.updateShowItem()
+        }
         .onReceive(appDelegate.$downloading) { newValue in
             iPrint("appDelegate.$downloading: \(appDelegate.downloading)")
             disabled = newValue
@@ -245,6 +267,8 @@ struct SettingsView: View {
             usePhotosFromPexelsIsOn = usePhotosFromPexels
             useVideosFromPexelsIsOn = useVideosFromPexels
             showWatchIsOn = showWatch
+            filteredModKeyNames1 = filterModKeys(otherModeValue: keyString2)
+            filteredModKeyNames2 = filterModKeys(otherModeValue: keyString1)
         }
     }
 
