@@ -200,9 +200,9 @@ struct SettingsView: View {
             }
         }
         .disabled(disabled)
-        Button(action: { appDelegate.hideSettings() }) {
-            EmptyView()
-        }.keyboardShortcut(.cancelAction)
+//        Button(action: { appDelegate.hideSettings() }) {
+//            EmptyView()
+//        }.keyboardShortcut(.cancelAction)
         .buttonStyle(PlainButtonStyle())
         .onChange(of: usePhotosFromPexelsIsOn) { newValue in
            iPrint("isOn: \(usePhotosFromPexelsIsOn)")

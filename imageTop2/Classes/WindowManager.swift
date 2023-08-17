@@ -4,6 +4,7 @@ class WindowManager: ObservableObject {
 //    weak var appDelegate: AppDelegate!
     var enterFullScreenTimer: Timer? = nil
     var exitFullScreenTimer: Timer? = nil
+    var appDelegate: AppDelegate!
 
     static let shared = WindowManager()
     var windows: [NSWindow] = []
@@ -131,6 +132,8 @@ class WindowManager: ObservableObject {
             return
         }
 
+        appDelegate.hideSettings()
+        
         NSMenu.setMenuBarVisible(false)
 
         didntEnterFullScreenYet = windows.count

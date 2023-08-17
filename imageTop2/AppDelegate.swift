@@ -214,6 +214,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         iPrint("Memory: Start applicationDidFinishLaunching: \(reportMemory())")
 #endif
 
+        WindowManager.shared.appDelegate = self
+        
         for window in NSApplication.shared.windows {
             if window.title == "Window" {
                 window.orderOut(nil)
@@ -420,6 +422,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     func hideSettings() {
+        if settingsWindow == nil {
+            return
+        }
+
         if settingsWindow.isVisible {
             settingsWindow.orderOut(nil)
         }
@@ -432,7 +438,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         WindowManager.shared.enterFullScreen()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
             guard let self = self else { return }
-            self.hideSettings()
+//            self.hideSettings()
             iPrint("showMainWindow")
             self.ignoreMonitor = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in

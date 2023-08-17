@@ -481,7 +481,7 @@ struct ContentView: View {
 
     func hotkeyPressed() {
         iPrint("hotkey pressed")
-        appDelegate.hideSettings()
+//        appDelegate.hideSettings()
         if index == 0 {
             WindowManager.shared.enterFullScreen()
             if !appDelegate.autoStart {
