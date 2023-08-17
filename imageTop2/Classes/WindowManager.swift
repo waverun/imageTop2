@@ -168,6 +168,9 @@ class WindowManager: ObservableObject {
     }
 
     func exitFullScreen(completion: (() -> Void)? = nil) {
+        NSApp.deactivate()
+        NSApp.keyWindow?.resignFirstResponder()
+        
         toggleFullScreen(true)
 
         if !ScreenLockStatus.shared.isLocked {
