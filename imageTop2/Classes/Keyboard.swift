@@ -15,7 +15,7 @@ class Keyboard {
 
             // Navigation
             //            "PageUp", "PageDown", "Home", "End", "UpArrow", "RightArrow", "DownArrow", "LeftArrow",
-            "DownArrow", "End", "Home", "LeftArrow", "PageDown", "PageUp", "RightArrow", "UpArrow",
+            "DownArrow", "LeftArrow", "RightArrow", "UpArrow",
 
             // Misc
             //            "Escape", "Delete", "Help", "VolumeUp", "VolumeDown", "Mute",
@@ -26,7 +26,7 @@ class Keyboard {
 
             // Keypad
             //            "Keypad0", "Keypad1", "Keypad2", "Keypad3", "Keypad4", "Keypad5", "Keypad6", "Keypad7", "Keypad8", "Keypad9", "KeypadClear", "KeypadDecimal", "KeypadDivide", "KeypadEnter", "KeypadEquals", "KeypadMinus", "KeypadMultiply", "KeypadPlus",
-            "Keypad0", "Keypad1", "Keypad2", "Keypad3", "Keypad4", "Keypad5", "Keypad6", "Keypad7", "Keypad8", "Keypad9", "KeypadClear", "KeypadDecimal", "KeypadDivide", "KeypadEnter", "KeypadEquals", "KeypadMinus", "KeypadMultiply", "KeypadPlus",
+//            "Keypad0", "Keypad1", "Keypad2", "Keypad3", "Keypad4", "Keypad5", "Keypad6", "Keypad7", "Keypad8", "Keypad9", "KeypadClear", "KeypadDecimal", "KeypadDivide", "KeypadEnter", "KeypadEquals", "KeypadMinus", "KeypadMultiply", "KeypadPlus",
 
             // Letters
 //            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
