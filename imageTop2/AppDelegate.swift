@@ -7,6 +7,7 @@ import Quartz
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
     @AppStorage("startAfter")  var startAfter: TimeInterval = 600
 
+    @Published var videoPlayerViewOpacity = 1.0
     @Published var isMainWindowVisible: Bool = true
     @Published var showWindow: Bool = true
     @Published var loadImagesAndVideos: Bool = false

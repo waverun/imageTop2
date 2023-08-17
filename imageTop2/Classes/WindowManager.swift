@@ -132,6 +132,7 @@ class WindowManager: ObservableObject {
             return
         }
 
+        appDelegate.videoPlayerViewOpacity = 1.0
         appDelegate.hideSettings()
         
         NSMenu.setMenuBarVisible(false)
@@ -173,37 +174,42 @@ class WindowManager: ObservableObject {
     func exitFullScreen(completion: (() -> Void)? = nil) {
         NSApp.deactivate()
         NSApp.keyWindow?.resignFirstResponder()
-        
-        toggleFullScreen(true)
 
-        if !ScreenLockStatus.shared.isLocked {
-            if let completion = completion {
-                completion()
+        appDelegate.videoPlayerViewOpacity = 0.5
+
+        DispatchQueue.main.async { [weak self] in
+
+            self?.toggleFullScreen(true)
+
+            if !ScreenLockStatus.shared.isLocked {
+                if let completion = completion {
+                    completion()
+                    return
+                }
                 return
             }
-            return
-        }
-        // Invalidate the timer if it exists
-        enterFullScreenTimer?.invalidate()
+            // Invalidate the timer if it exists
+            self?.enterFullScreenTimer?.invalidate()
 
-        // Create a new timer
-        exitFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
-            guard let self = self else { return }
-            if !ScreenLockStatus.shared.isLocked {
-                var invalidateTimerRequired = true
-//                if let windows = self.windows {
+            // Create a new timer
+            self?.exitFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+                guard let self = self else { return }
+                if !ScreenLockStatus.shared.isLocked {
+                    var invalidateTimerRequired = true
+                    //                if let windows = self.windows {
                     for window in windows {
                         if window.styleMask.contains(.fullScreen) {
                             window.toggleFullScreen(nil)
                             invalidateTimerRequired = false
                         }
                     }
-//                }
-                if invalidateTimerRequired {
-                    timer.invalidate()
-                    if let completion = completion {
-                        completion()
-                        return
+                    //                }
+                    if invalidateTimerRequired {
+                        timer.invalidate()
+                        if let completion = completion {
+                            completion()
+                            return
+                        }
                     }
                 }
             }

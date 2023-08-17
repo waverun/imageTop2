@@ -25,7 +25,8 @@ struct ContentView: View {
 
     @EnvironmentObject var appDelegate: AppDelegate
 
-    @State  var loadingImage = true
+    @State var videoPlayerViewOpacity = 1.0
+    @State var loadingImage = true
 
     @State var firstImage: NSImage? = nil
     @State var secondImage: NSImage? = nil
@@ -129,6 +130,7 @@ struct ContentView: View {
         .onReceive(appDelegate.$loadImagesAndVideos, perform: handleLoadImagesAndVideosChange)
         .onReceive(appDelegate.$networkIsReachable, perform: handleNetworkReachabilityChange)
         .onReceive(appDelegate.$setImageOrVideoModeToggle, perform: setImageOrVideoMode)
+        .onReceive(appDelegate.$videoPlayerViewOpacity, perform: setVideoPlayerViewOpacity)
     }
 
     @ViewBuilder var backgroundView: some View {
@@ -150,6 +152,7 @@ struct ContentView: View {
             videoPlayerBuilder(videoPath: gStateObjects[index]!.firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
             videoPlayerBuilder(videoPath: gStateObjects[index]!.secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
         }
+        .opacity(videoPlayerViewOpacity)
     }
 
     func videoPlayerBuilder(videoPath: String, photographer: String, condition: Bool) -> some View {
@@ -877,5 +880,9 @@ struct ContentView: View {
             gStateObjects[index]!.firstVideoPath = ""
             gStateObjects[index]!.secondVideoPath = ""
         }
+    }
+
+    func setVideoPlayerViewOpacity(opacity: Double) {
+        videoPlayerViewOpacity = opacity
     }
 }
