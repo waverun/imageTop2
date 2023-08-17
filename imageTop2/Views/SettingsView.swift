@@ -23,8 +23,9 @@ struct SettingsView: View {
     @State var numberOfLocalImagesAndVideos = 0
     @State var numberOfPexelsPhotos = 0
     @State var numberOfPexelsVideos = 0
-    @State private var filteredModKeyNames1: [String] = Keyboard.modKeyNames
-    @State private var filteredModKeyNames2: [String] = Keyboard.modKeyNames
+    @State var filteredModKeyNames1: [String] = Keyboard.modKeyNames
+    @State var filteredModKeyNames2: [String] = Keyboard.modKeyNames
+    @State var keyStringSymbol = ""
 
     let allKeyNames = Keyboard.keyNames
     let modKeyNames = Keyboard.modKeyNames
@@ -58,8 +59,9 @@ struct SettingsView: View {
                                     ForEach(filteredKeys, id: \.self) { key in
                                         Button(action: {
                                             keyString = key
+                                            keyStringSymbol = Keyboard.keySymbol(from: key)
                                         }, label: {
-                                            Text(key)
+                                            Text(Keyboard.keySymbol(from: key))
                                         })
                                     }
                                 } label: {
@@ -67,7 +69,7 @@ struct SettingsView: View {
                                 }.frame(width: 60)
 
                             }
-                            TextField("", text: $keyString)
+                            TextField("", text: $keyStringSymbol)
                                 .frame(width: 120)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .allowsHitTesting(false)
@@ -267,6 +269,7 @@ struct SettingsView: View {
             usePhotosFromPexelsIsOn = usePhotosFromPexels
             useVideosFromPexelsIsOn = useVideosFromPexels
             showWatchIsOn = showWatch
+            keyStringSymbol = Keyboard.keySymbol(from: keyString)
             filteredModKeyNames1 = filterModKeys(otherModeValue: keyString2)
             filteredModKeyNames2 = filterModKeys(otherModeValue: keyString1)
         }

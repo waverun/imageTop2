@@ -314,22 +314,25 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 //    }
 
     func updateShowItem() {
-        let keyString = keyString.lowercased()
+//        let keyString = Keyboard.keySymbol(from: keyString, forMenu: true)
+        let keyString = Keyboard.keyEquivalentString(from: keyString, forMenu: true)
         let mod1 = keyString1 != "None" ? Keyboard.stringToModifier(keyString1) : nil
         let mod2 = keyString2 != "None" ? Keyboard.stringToModifier(keyString2) : nil
 
+        showItem.keyEquivalent = keyString
+
         switch (mod1, mod2) {
             case let (mod1?, mod2?):
-                showItem.keyEquivalent = keyString
+//                showItem.keyEquivalent = keyString
                 showItem.keyEquivalentModifierMask = [mod1, mod2]
             case let (mod1?, nil):
-                showItem.keyEquivalent = keyString
+//                showItem.keyEquivalent = keyString
                 showItem.keyEquivalentModifierMask = [mod1]
             case let (nil, mod2?):
-                showItem.keyEquivalent = keyString
+//                showItem.keyEquivalent = keyString
                 showItem.keyEquivalentModifierMask = [mod2]
             case (nil, nil):
-                showItem.keyEquivalent = keyString
+//                showItem.keyEquivalent = keyString
                 showItem.keyEquivalentModifierMask = []
         }
     }
