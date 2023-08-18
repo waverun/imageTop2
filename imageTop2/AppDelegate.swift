@@ -7,7 +7,6 @@ import Quartz
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
     @AppStorage("startAfter")  var startAfter: TimeInterval = 600
 
-    @Published var videoPlayerViewOpacity = 1.0
     @Published var isMainWindowVisible: Bool = true
     @Published var showWindow: Bool = true
     @Published var loadImagesAndVideos: Bool = false
@@ -22,6 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var numberOfLocalImagesAndVideos = 0
     @Published var numberOfPexelsPhotos = 0
     @Published var numberOfPexelsVideos = 0
+    @Published var isVideoBlurred = false
 
     @Published var autoStart: Bool = true {
         didSet {
@@ -61,6 +61,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         NotificationCenter.default.removeObserver(self, name: NSApplication.didChangeScreenParametersNotification, object: nil)
         stopDetectLockedScreen()
         dnc.removeObserver(self)
+    }
+
+    func toggleVideoBlur(toValue: Bool, completion: @escaping () -> Void) {
+        if isVideoBlurred == toValue {
+            return
+        }
+
+        let animationDuration: Double = 1.25
+
+        withAnimation(.easeInOut(duration: animationDuration)) {
+            isVideoBlurred.toggle()
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
+            completion()
+        }
     }
 
     func setDownloading(_ value: Bool) {

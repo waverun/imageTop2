@@ -132,7 +132,8 @@ class WindowManager: ObservableObject {
             return
         }
 
-        appDelegate.videoPlayerViewOpacity = 1.0
+        appDelegate.toggleVideoBlur(toValue: false) {}
+
         appDelegate.hideSettings()
         
         NSMenu.setMenuBarVisible(false)
@@ -171,15 +172,22 @@ class WindowManager: ObservableObject {
         }
     }
 
+    func stopPlayingVideos() {
+        for player in gPlayers {
+            player.value.pause()
+            gPausableTimers[player.key]?.pause()
+        }
+    }
+
     func exitFullScreen(completion: (() -> Void)? = nil) {
         NSApp.deactivate()
         NSApp.keyWindow?.resignFirstResponder()
 
-        appDelegate.videoPlayerViewOpacity = 0.5
+//        stopPlayingVideos()
 
-        DispatchQueue.main.async { [weak self] in
-
-            self?.toggleFullScreen(true)
+        appDelegate.toggleVideoBlur(toValue: true) {
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+            self.toggleFullScreen(true)
 
             if !ScreenLockStatus.shared.isLocked {
                 if let completion = completion {
@@ -189,10 +197,10 @@ class WindowManager: ObservableObject {
                 return
             }
             // Invalidate the timer if it exists
-            self?.enterFullScreenTimer?.invalidate()
+            self.enterFullScreenTimer?.invalidate()
 
             // Create a new timer
-            self?.exitFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            self.exitFullScreenTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
                 guard let self = self else { return }
                 if !ScreenLockStatus.shared.isLocked {
                     var invalidateTimerRequired = true
