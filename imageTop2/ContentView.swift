@@ -647,15 +647,15 @@ struct ContentView: View {
 
      func setNewVideo(path: String, photographer: String) {
         if showSecondVideo {
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 gStateObjects[index]!.firstVideoPath = path
                 firstPhotographer = photographer
-            }
+//            }
         } else {
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 gStateObjects[index]!.secondVideoPath = path
                 secondPhotographer = photographer
-            }
+//            }
         }
         startShowVideo = false
         manageVideoDisplay()

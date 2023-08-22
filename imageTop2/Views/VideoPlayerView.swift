@@ -187,6 +187,7 @@ struct VideoPlayerView: NSViewRepresentable {
         if let currentURL = player.currentItem?.asset as? AVURLAsset, currentURL.url.path != url.path {
             NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
 
+            iPrint("updateNSView: \(index) currentURL: \(currentURL)")
             iPrint("updateNSView: \(index) Creating new item for url: \(url)")
 
             let player = AVPlayer(url: url)
