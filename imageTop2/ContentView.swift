@@ -411,6 +411,7 @@ struct ContentView: View {
 
             if !appDelegate.ignoreMonitor {
                 appDelegate.showWindow = false
+                NSApp.deactivate()
                 iPrint("show - startMonitoringUserInput")
             }
             return event
