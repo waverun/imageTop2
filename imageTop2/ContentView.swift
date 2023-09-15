@@ -26,7 +26,7 @@ struct ContentView: View {
     @EnvironmentObject var appDelegate: AppDelegate
 
     @State var loadingImage = true
-
+    @State var showView = true
     @State var firstImage: NSImage? = nil
     @State var secondImage: NSImage? = nil
     @State var firstImagePath = ""
@@ -148,20 +148,32 @@ struct ContentView: View {
     @ViewBuilder var videoPlayerView: some View {
         ZStack {
             videoPlayerBuilder(videoPath: gStateObjects[index]!.firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
+            .opacity(showVideo && !showSecondVideo ? 1 : 0)
+            .animation(.easeIn(duration: showVideo && !showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && !showSecondVideo)
             videoPlayerBuilder(videoPath: gStateObjects[index]!.secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
+            .opacity(showVideo && showSecondVideo ? 1 : 0)
+            .animation(.easeIn(duration: showVideo && showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && showSecondVideo)
         }
         .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
     }
 
     func videoPlayerBuilder(videoPath: String, photographer: String, condition: Bool) -> some View {
+        //    func videoPlayerBuilder(videoPath: String, photographer: String, condition: Bool, showView: Binding<Bool>) -> some View {
+        //        showView.wrappedValue = true
+        //        if !condition { // Try to prevent cases where the new video plays but not shown...
+        //            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        //                showView.wrappedValue = false
+        //            }
+        //        }
+        //        if showView.wrappedValue {
         if videoPath != "",
            let url = videoPath.starts(with: "https:") ? URL(string: videoPath) : URL(fileURLWithPath: videoPath) {
             return AnyView(
                 VideoPlayerView(url: url, index: index) {
                     changeScreenImageVideoOrColor()
                 }
-                    .opacity(condition ? 1 : 0)
-                    .animation(.easeIn(duration: condition ? videoFadeTime : videoFadeTime), value: condition)
+//                    .opacity(condition ? 1 : 0)
+//                    .animation(.easeIn(duration: condition ? videoFadeTime : videoFadeTime), value: condition)
                     .edgesIgnoringSafeArea(.all)
                     .overlay(
                         VStack {
@@ -180,9 +192,9 @@ struct ContentView: View {
                         }
                     )
             )
-        } else {
-            return AnyView(EmptyView())
         }
+        //        }
+        return AnyView(EmptyView())
     }
 
     @ViewBuilder var firstImageView: some View {

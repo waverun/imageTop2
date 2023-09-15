@@ -65,6 +65,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     func toggleVideoBlur(toValue: Bool, completion: @escaping () -> Void) {
         if isVideoBlurred == toValue {
+            completion()
             return
         }
 
