@@ -41,6 +41,8 @@
 import SwiftUI
 
 struct DigitalWatchView: View {
+    @EnvironmentObject var appDelegate: AppDelegate
+
     let backgroundColor = Color.black.opacity(0.6)
     let timeFont = Font.system(size: 80, weight: .bold, design: .rounded)
 
@@ -88,9 +90,14 @@ struct DigitalWatchView: View {
     func updateTime() {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
-        timeString = formatter.string(from: Date())
-        // Note: getCpuUsage() and iPrint() weren't defined in the provided code, so they are commented out
-         print("CPU Usage: \(getCpuUsage())%")
-        // iPrint("Time updated")
+        switch true {
+            case appDelegate.showWatch:
+                timeString = formatter.string(from: Date())
+            case appDelegate.showCpu: timeString = getCpuUsage()
+                // Note: getCpuUsage() and iPrint() weren't defined in the provided code, so they are commented out
+                print("CPU Usage: \(getCpuUsage())%")
+                // iPrint("Time updated")
+            default: break
+        }
     }
 }
