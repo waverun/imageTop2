@@ -2,12 +2,18 @@ import AVFoundation
 import AppKit
 import SwiftUI
 
-var gPlayers: [Int: AVPlayer] = [:]
-var gVideoFailedToPlay: [Int: VideoFailedToPlay] = [:]
-var gPausableTimers: [Int: PausableTimer] = [:]
-var gVideoLengthTasks: [Int: Task<Void, Never>] = [:]
-var gEndPlayNotifications: [Int: NSObjectProtocol] = [:]
-var gNeedToLoadImageOrVideo: [Int: Bool] = [:]
+var gPlayers = ThreadSafeDict<Int, AVPlayer>()
+//var gPlayers: [Int: AVPlayer] = [:]
+var gVideoFailedToPlay = ThreadSafeDict<Int, VideoFailedToPlay>()
+//var gVideoFailedToPlay: [Int: VideoFailedToPlay] = [:]
+var gPausableTimers = ThreadSafeDict<Int, PausableTimer>()
+//var gPausableTimers: [Int: PausableTimer] = [:]
+var gVideoLengthTasks = ThreadSafeDict<Int, Task<Void, Never>>()
+//var gVideoLengthTasks: [Int: Task<Void, Never>] = [:]
+var gEndPlayNotifications = ThreadSafeDict<Int, NSObjectProtocol>()
+//var gEndPlayNotifications: [Int: NSObjectProtocol] = [:]
+var gNeedToLoadImageOrVideo = ThreadSafeDict<Int, Bool>()
+//var gNeedToLoadImageOrVideo: [Int: Bool] = [:]
 
 class VideoFailedToPlay {
     var playerItem: AVPlayerItem
@@ -194,6 +200,8 @@ struct VideoPlayerView: NSViewRepresentable {
             player.isMuted = true
 
             gPlayers[index] = player
+            playerLayer.removeAllAnimations()
+            playerLayer.player = nil
             playerLayer.player = player
 //            gPlayers[index] = player
 //

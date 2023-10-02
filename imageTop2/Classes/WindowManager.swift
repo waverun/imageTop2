@@ -8,7 +8,8 @@ class WindowManager: ObservableObject {
 
     static let shared = WindowManager()
     var windows: [NSWindow] = []
-    var windowIndices: [NSWindow: Int] = [:] // new dictionary to hold window indices
+    var windowIndices = ThreadSafeDict<NSWindow, Int>()
+//    var windowIndices: [NSWindow: Int] = [:] // new dictionary to hold window indices
     var didntEnterFullScreenYet = 0
 
     func getMaxScreenWidth() -> Int {
@@ -61,11 +62,13 @@ class WindowManager: ObservableObject {
                 gStateObjects[key]?.secondVideoPath = nil
                 gStateObjects[key]?.unusedPaths.removeAll()
             }
-            gStateObjects = [:]
+            gStateObjects.removeAll()
+//            gStateObjects = [:]
         }
 
         func cleanContentViews() {
-            gContentViews = [:]
+            gContentViews.removeAll()
+//            gContentViews = [:]
         }
 
         func cleanVideoObserversAndTasks() {

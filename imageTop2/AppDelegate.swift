@@ -49,7 +49,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var settingsWindow: NSWindow!
     var externalDisplayCount: Int = 0
     var ignoreMonitor = false // To ignore key after Show menu
-    var firstSetTimer: [Int : Bool] = [:]
+    var firstSetTimer = ThreadSafeDict<Int, Bool>()
+//    var firstSetTimer: [Int : Bool] = [:]
     var networkManager = NetworkManager(appDelegate: nil)
     var dnc: DistributedNotificationCenter!
     var screenLockedObserver: NSObjectProtocol?

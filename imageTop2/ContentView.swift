@@ -4,8 +4,10 @@ import AppKit
 //import GameplayKit
 import HotKey
 
-var gContentViews: [Int:ContentView] = [:]
-var gStateObjects: [Int:StateObjects] = [:]
+//var gContentViews: [Int:ContentView] = [:]
+var gContentViews = ThreadSafeDict<Int, ContentView>()
+var gStateObjects = ThreadSafeDict<Int, StateObjects>()
+//var gStateObjects: [Int:StateObjects] = [:]
 var gHotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 var gImageAndVideoNames: [String] = []
 var gDirectoryWatcher: DirectoryWatcher?
@@ -149,31 +151,23 @@ struct ContentView: View {
         ZStack {
             videoPlayerBuilder(videoPath: gStateObjects[index]!.firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
             .opacity(showVideo && !showSecondVideo ? 1 : 0)
+            .zIndex(showVideo && !showSecondVideo ? 1 : 0)
             .animation(.easeIn(duration: showVideo && !showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && !showSecondVideo)
             videoPlayerBuilder(videoPath: gStateObjects[index]!.secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
             .opacity(showVideo && showSecondVideo ? 1 : 0)
+            .zIndex(showVideo && showSecondVideo ? 1 : 0)
             .animation(.easeIn(duration: showVideo && showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && showSecondVideo)
         }
         .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
     }
 
     func videoPlayerBuilder(videoPath: String, photographer: String, condition: Bool) -> some View {
-        //    func videoPlayerBuilder(videoPath: String, photographer: String, condition: Bool, showView: Binding<Bool>) -> some View {
-        //        showView.wrappedValue = true
-        //        if !condition { // Try to prevent cases where the new video plays but not shown...
-        //            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-        //                showView.wrappedValue = false
-        //            }
-        //        }
-        //        if showView.wrappedValue {
         if videoPath != "",
            let url = videoPath.starts(with: "https:") ? URL(string: videoPath) : URL(fileURLWithPath: videoPath) {
             return AnyView(
                 VideoPlayerView(url: url, index: index) {
                     changeScreenImageVideoOrColor()
                 }
-//                    .opacity(condition ? 1 : 0)
-//                    .animation(.easeIn(duration: condition ? videoFadeTime : videoFadeTime), value: condition)
                     .edgesIgnoringSafeArea(.all)
                     .overlay(
                         VStack {
@@ -193,7 +187,6 @@ struct ContentView: View {
                     )
             )
         }
-        //        }
         return AnyView(EmptyView())
     }
 
