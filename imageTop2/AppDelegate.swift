@@ -41,6 +41,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
+    @AppStorage("showCpu") var showCpu = false {
+        didSet {
+            // Update the title of the menu item when autoStart changes
+            showWatchItem.title = (showCpu ? "Hide" : "Show") + " Cpu"
+        }
+    }
+
     var statusBarItem: NSStatusItem!
     var autoStartItem: NSMenuItem! // This is the menu item we want to update
     var showWatchItem: NSMenuItem! // This is the menu item we want to update

@@ -14,9 +14,11 @@ struct SettingsView: View {
     @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
     @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = false
     @AppStorage("showWatch") var showWatch = true 
+    @AppStorage("showCpu") var showCpu = false
 
     @State var usePhotosFromPexelsIsOn: Bool = false
     @State var showWatchIsOn: Bool = false
+    @State var showCpuIsOn: Bool = false
     @State var useVideosFromPexelsIsOn: Bool = true
     @State var selectedFolderPath = ""
     @State var disabled = false
@@ -197,7 +199,7 @@ struct SettingsView: View {
                         .padding(.leading)
                         HStack {
                             VStack(alignment: .leading) {
-                                Toggle("Show Cpu", isOn: $showWatchIsOn)
+                                Toggle("Show Cpu", isOn: $showCpuIsOn)
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading) // Add this line
@@ -241,6 +243,15 @@ struct SettingsView: View {
             iPrint("showWatch: \(showWatch)")
             showWatchIsOn = newValue
         }
+        .onChange(of: showCpuIsOn) { newValue in
+            iPrint("cpu isOn: \(showCpuIsOn)")
+            showCpu = showCpuIsOn
+            appDelegate.showCpu = showCpu
+        }
+        .onChange(of: showCpu) { newValue in
+            iPrint("showCpu: \(showCpu)")
+            showCpuIsOn = newValue
+        }
         .onChange(of: keyString) { _ in
             iPrint("keyString: \(keyString)")
             appDelegate.updateShowItem()
@@ -277,6 +288,7 @@ struct SettingsView: View {
             usePhotosFromPexelsIsOn = usePhotosFromPexels
             useVideosFromPexelsIsOn = useVideosFromPexels
             showWatchIsOn = showWatch
+            showCpuIsOn = showCpu
             keyStringSymbol = Keyboard.keySymbol(from: keyString)
             filteredModKeyNames1 = filterModKeys(otherModeValue: keyString2)
             filteredModKeyNames2 = filterModKeys(otherModeValue: keyString1)
