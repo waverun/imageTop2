@@ -37,14 +37,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @AppStorage("showWatch") var showWatch = true {
         didSet {
             // Update the title of the menu item when autoStart changes
-            showWatchItem.title = (showWatch ? "Hide" : "Show") + " Watch"
+            showWatchItem.title = getWatchCpuMenuValue(showValue: "Watch") // (showWatch ? "Hide" : "Show") + " Watch"
         }
     }
 
     @AppStorage("showCpu") var showCpu = false {
         didSet {
             // Update the title of the menu item when autoStart changes
-            showWatchItem.title = (showCpu ? "Hide" : "Show") + " Cpu"
+            showWatchItem.title = getWatchCpuMenuValue(showValue: "Cpu") // (showCpu ? "Hide" : "Show") + " Cpu"
+        }
+    }
+
+    func getWatchCpuMenuValue(showValue: String) -> String {
+        switch true {
+            case showWatch: return "Hide Watch"
+            case showCpu: return "Hide Cpu"
+            default: return "Show " + showValue
         }
     }
 

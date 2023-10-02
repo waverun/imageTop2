@@ -238,6 +238,11 @@ struct SettingsView: View {
             iPrint("isOn: \(showWatchIsOn)")
             showWatch = showWatchIsOn
             appDelegate.showWatch = showWatch
+            if showWatch {
+                showCpuIsOn = false
+//                showCpu = false
+//                appDelegate.showCpu = false
+            }
         }
         .onChange(of: showWatch) { newValue in
             iPrint("showWatch: \(showWatch)")
@@ -247,6 +252,10 @@ struct SettingsView: View {
             iPrint("cpu isOn: \(showCpuIsOn)")
             showCpu = showCpuIsOn
             appDelegate.showCpu = showCpu
+            if showCpu {
+                showWatchIsOn = false
+//                showWatch = false
+            }
         }
         .onChange(of: showCpu) { newValue in
             iPrint("showCpu: \(showCpu)")
