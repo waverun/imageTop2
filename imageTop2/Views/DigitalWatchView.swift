@@ -1,35 +1,28 @@
 //import SwiftUI
 //
 //struct DigitalWatchView: View {
-//    @State  var isAppeared = false
+//    let backgroundColor = Color.black.opacity(0.6)
 //    let timeFont = Font.system(size: 80, weight: .bold, design: .rounded)
+//    let cpuUsage = getCpuUsage()
+//
 //    @State  var watchPosition = CGPoint(x: 0, y: 0)
 //    @State  var timeString = ""
 //
 //    let x: CGFloat?
 //    let y: CGFloat?
 //
-//    var body: some View {
+//    @ViewBuilder var body: some View {
 //        Text(timeString)
 //            .font(timeFont)
 //            .foregroundColor(.white)
 //            .frame(width: 250, height: 100)
-//            .background(Color.black.opacity(0.6))
+//            .background(backgroundColor)
 //            .cornerRadius(10)
 //            .position(watchPosition)
-//            .opacity(isAppeared ? 1 : 0) // Apply opacity to the entire view
 //            .onAppear {
 //                updateTime()
 //                iPrint("watchPosition: \(x!), \(y!)")
 //                watchPosition = CGPoint(x: x ?? 100, y: y ?? 100)
-//                withAnimation(.easeIn(duration: 4.0)) {
-//                    isAppeared = true
-//                }
-//            }
-//            .onDisappear {
-//                withAnimation(.easeOut(duration: 4.0)) {
-//                    isAppeared = false
-//                }
 //            }
 //            .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
 //                updateTime()
@@ -40,17 +33,22 @@
 //        let formatter = DateFormatter()
 //        formatter.dateFormat = "HH:mm"
 //        timeString = formatter.string(from: Date())
+//        print("CPU Usage: \(cpuUsage)%")
+//        timeString = cpuUsage
 //    }
 //}
-
 
 import SwiftUI
 
 struct DigitalWatchView: View {
     let backgroundColor = Color.black.opacity(0.6)
     let timeFont = Font.system(size: 80, weight: .bold, design: .rounded)
-    @State  var watchPosition = CGPoint(x: 0, y: 0)
-    @State  var timeString = ""
+
+    @Binding var timerIsActive: Bool  // External condition binding
+
+    @State private var watchPosition = CGPoint(x: 0, y: 0)
+    @State private var timeString = ""
+    @State private var timer: Timer? = nil
 
     let x: CGFloat?
     let y: CGFloat?
@@ -65,17 +63,34 @@ struct DigitalWatchView: View {
             .position(watchPosition)
             .onAppear {
                 updateTime()
-                iPrint("watchPosition: \(x!), \(y!)")
+                handleTimerChange(isActive: timerIsActive)
+                iPrint("watchPosition: \(x ?? 100), \(y ?? 100)")
                 watchPosition = CGPoint(x: x ?? 100, y: y ?? 100)
             }
-            .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                updateTime()
+            .onChange(of: timerIsActive) { newValue in
+                handleTimerChange(isActive: newValue)
             }
     }
 
-     func updateTime() {
+    func handleTimerChange(isActive: Bool) {
+        if isActive {
+            if timer == nil {
+                timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                    updateTime()
+                }
+            }
+        } else {
+            timer?.invalidate()
+            timer = nil
+        }
+    }
+
+    func updateTime() {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         timeString = formatter.string(from: Date())
+        // Note: getCpuUsage() and iPrint() weren't defined in the provided code, so they are commented out
+         print("CPU Usage: \(getCpuUsage())%")
+        // iPrint("Time updated")
     }
 }

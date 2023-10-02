@@ -24,9 +24,11 @@ struct ContentView: View {
     var index: Int
     var videoFadeTime = 4.0
     var imageFadeTime = 1.0
+//    let cpuUsage = getCpuUsage()
 
     @EnvironmentObject var appDelegate: AppDelegate
 
+    @State var watchTimerIsActive = true
     @State var loadingImage = true
     @State var showView = true
     @State var firstImage: NSImage? = nil
@@ -111,7 +113,7 @@ struct ContentView: View {
                 }
                 imageView
                 if index == 0 && appDelegate.showWatch {
-                    DigitalWatchView(x: x, y: y)
+                    DigitalWatchView(timerIsActive: $watchTimerIsActive, x: x, y: y)
                 }
             }
         }
@@ -484,6 +486,7 @@ struct ContentView: View {
             iPrint("showApp: calling due to c")
             changeScreenImageVideoOrColor()
         }
+        watchTimerIsActive = true
     }
 
     func hotkeyPressed() {
@@ -567,6 +570,7 @@ struct ContentView: View {
     }
 
     func changeScreenImageVideoOrColor() {
+//        print("CPU Usage: \(cpuUsage)%")
         iPrint("changeScreenImageOrColor \(index) imageOrVideoMode: \(imageOrVideoMode) gNetworkIsReachable: \(gNetworkIsReachable)")
         setImageOrVideoMode() // Done since there was an error where after sleep and network unreachable, the colors where changed but videos were not played.
         _ = imageOrVideoMode && networkIsReachableOrNotShowingVideos ? loadRandomImageOrVideo() : changeBackgroundColor()
@@ -782,6 +786,7 @@ struct ContentView: View {
 
     func hideApp() {
         iPrint("hideApp \(index)")
+        watchTimerIsActive = false
         stopChangeTimer()
         stopMonitoringUserInput()
         if index == 0 {

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		500CE8BE2A88BF89001E0984 /* VideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 500CE8BD2A88BF89001E0984 /* VideoPlayerCoordinator.swift */; };
+		505348B92ACAC8290067A2E1 /* getCpuUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505348B82ACAC8290067A2E1 /* getCpuUsage.swift */; };
 		50627A862A167148009BA1FC /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50627A852A167148009BA1FC /* DirectoryWatcher.swift */; };
 		50736EFB2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */; };
 		50736EFE2A8D2E9C00FB53FD /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50736EFD2A8D2E9C00FB53FD /* String.swift */; };
@@ -51,6 +52,7 @@
 
 /* Begin PBXFileReference section */
 		500CE8BD2A88BF89001E0984 /* VideoPlayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerCoordinator.swift; sourceTree = "<group>"; };
+		505348B82ACAC8290067A2E1 /* getCpuUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getCpuUsage.swift; sourceTree = "<group>"; };
 		50627A852A167148009BA1FC /* DirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
 		50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = culculateDigitalWatchPosition.swift; sourceTree = "<group>"; };
 		50736EFD2A8D2E9C00FB53FD /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
@@ -203,6 +205,7 @@
 				50DC5B562A5C2ABD003119E8 /* indexedPrint.swift */,
 				50C0E1662A641B6C00470F40 /* reportMemory.swift */,
 				50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */,
+				505348B82ACAC8290067A2E1 /* getCpuUsage.swift */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -312,6 +315,7 @@
 				50B9EA932A3648F6002BCB4B /* PexelsResource-photo-src.swift in Sources */,
 				50736EFB2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift in Sources */,
 				50627A862A167148009BA1FC /* DirectoryWatcher.swift in Sources */,
+				505348B92ACAC8290067A2E1 /* getCpuUsage.swift in Sources */,
 				50DB1FF02AC6DC6100C3C48C /* ThreadSafeDict.swift in Sources */,
 				5079FD8C2A10DB4E0066EC08 /* LoadableImageView.swift in Sources */,
 				5079FD7B2A10D2390066EC08 /* ContentView.swift in Sources */,
