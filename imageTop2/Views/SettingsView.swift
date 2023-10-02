@@ -195,6 +195,14 @@ struct SettingsView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading) // Add this line
                         .padding(.leading)
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Toggle("Show Cpu", isOn: $showWatchIsOn)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading) // Add this line
+                        .padding(.leading)
+                        Spacer()
                     }
                 }
             }
@@ -263,7 +271,7 @@ struct SettingsView: View {
 //            iPrint("appDelegate.$downloading: \(appDelegate.downloading)")
             numberOfPexelsVideos = newValue
         }
-        .frame(width: 350, height: 325)
+        .frame(width: 350, height: 360)
         .onAppear {
             selectedFolderPath = storedFolderPath
             usePhotosFromPexelsIsOn = usePhotosFromPexels
