@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		500CE8BE2A88BF89001E0984 /* VideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 500CE8BD2A88BF89001E0984 /* VideoPlayerCoordinator.swift */; };
+		501FFEEF2AD20FFC002B05DE /* CPUUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501FFEEE2AD20FFC002B05DE /* CPUUsageMonitor.swift */; };
+		501FFEF12AD212F2002B05DE /* hostCPULoadInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501FFEF02AD212F2002B05DE /* hostCPULoadInfo.swift */; };
 		505348B92ACAC8290067A2E1 /* getCpuUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505348B82ACAC8290067A2E1 /* getCpuUsage.swift */; };
 		50627A862A167148009BA1FC /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50627A852A167148009BA1FC /* DirectoryWatcher.swift */; };
 		50736EFB2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */; };
@@ -52,6 +54,8 @@
 
 /* Begin PBXFileReference section */
 		500CE8BD2A88BF89001E0984 /* VideoPlayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerCoordinator.swift; sourceTree = "<group>"; };
+		501FFEEE2AD20FFC002B05DE /* CPUUsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUUsageMonitor.swift; sourceTree = "<group>"; };
+		501FFEF02AD212F2002B05DE /* hostCPULoadInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hostCPULoadInfo.swift; sourceTree = "<group>"; };
 		505348B82ACAC8290067A2E1 /* getCpuUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getCpuUsage.swift; sourceTree = "<group>"; };
 		50627A852A167148009BA1FC /* DirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
 		50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = culculateDigitalWatchPosition.swift; sourceTree = "<group>"; };
@@ -161,6 +165,7 @@
 				50BEA38D2A51D50000F0FE19 /* NetworkManager.swift */,
 				500CE8BD2A88BF89001E0984 /* VideoPlayerCoordinator.swift */,
 				50DB1FEF2AC6DC6100C3C48C /* ThreadSafeDict.swift */,
+				501FFEEE2AD20FFC002B05DE /* CPUUsageMonitor.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -206,6 +211,7 @@
 				50C0E1662A641B6C00470F40 /* reportMemory.swift */,
 				50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */,
 				505348B82ACAC8290067A2E1 /* getCpuUsage.swift */,
+				501FFEF02AD212F2002B05DE /* hostCPULoadInfo.swift */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -309,7 +315,9 @@
 				5079FD932A10DBC30066EC08 /* SettingsView.swift in Sources */,
 				5079FD802A10D5180066EC08 /* AppDelegate.swift in Sources */,
 				50A06A102A3F2B7E00319BEA /* clearPexelVideos.swift in Sources */,
+				501FFEF12AD212F2002B05DE /* hostCPULoadInfo.swift in Sources */,
 				50B646642A111162002CA82E /* WindowManager.swift in Sources */,
+				501FFEEF2AD20FFC002B05DE /* CPUUsageMonitor.swift in Sources */,
 				5079FD832A10D5B50066EC08 /* Keyboard.swift in Sources */,
 				50B9EA992A365361002BCB4B /* downloadPhoto.swift in Sources */,
 				50B9EA932A3648F6002BCB4B /* PexelsResource-photo-src.swift in Sources */,

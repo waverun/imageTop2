@@ -45,6 +45,7 @@ struct DigitalWatchView: View {
 
     let backgroundColor = Color.black.opacity(0.6)
     let timeFont = Font.system(size: 80, weight: .bold, design: .rounded)
+//    let monitor = CPUUsageMonitor()
 
     @Binding var timerIsActive: Bool  // External condition binding
 
@@ -70,7 +71,7 @@ struct DigitalWatchView: View {
                 watchPosition = CGPoint(x: x ?? 100, y: y ?? 100)
             }
             .onChange(of: timerIsActive) { newValue in
-                handleTimerChange(isActive: newValue)
+                handleTimerChange(isActive: timerIsActive)
             }
     }
 
@@ -93,9 +94,20 @@ struct DigitalWatchView: View {
         switch true {
             case appDelegate.showWatch:
                 timeString = formatter.string(from: Date())
-            case appDelegate.showCpu: timeString = getCpuUsage()
-                // Note: getCpuUsage() and iPrint() weren't defined in the provided code, so they are commented out
-                print("CPU Usage: \(getCpuUsage())%")
+            case appDelegate.showCpu: 
+//                timeString = getCpuUsage() ?? ""
+//                // Note: getCpuUsage() and iPrint() weren't defined in the provided code, so they are commented out
+//                print("CPU Usage: \(String(describing: getCpuUsage()))%")
+//                if let usage = monitor.update() {
+//                    print(String(format: "CPU Usage monitor: %.2f%%", usage))
+//                }
+//                let loadInfo = hostCPULoadInfo()
+//                print("CPU Usage loadInfo: \(String(describing: loadInfo))")
+                let cpuLoad = calculateCPULoad()
+                if let cpuLoad = cpuLoad {
+                    print("CPU Load: \(cpuLoad)%")
+                    timeString = String(format: "%.2f%", cpuLoad)
+                }
                 // iPrint("Time updated")
             default: break
         }
