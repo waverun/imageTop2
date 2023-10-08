@@ -199,7 +199,7 @@ struct SettingsView: View {
                         .padding(.leading)
                         HStack {
                             VStack(alignment: .leading) {
-                                Toggle("Show Cpu", isOn: $showCpuIsOn)
+                                Toggle("Show System CPU", isOn: $showCpuIsOn)
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading) // Add this line
@@ -237,7 +237,7 @@ struct SettingsView: View {
         .onChange(of: showWatchIsOn) { newValue in
             iPrint("isOn: \(showWatchIsOn)")
             showWatch = showWatchIsOn
-            appDelegate.showWatch = showWatch
+            appDelegate.showWatchOrCpu = showWatch
             if showWatch {
                 showCpuIsOn = false
 //                showCpu = false

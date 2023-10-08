@@ -112,7 +112,7 @@ struct ContentView: View {
                     videoPlayerView
                 }
                 imageView
-                if index == 0 && (appDelegate.showWatch || appDelegate.showCpu) {
+                if index == 0 && (appDelegate.showWatchOrCpu || appDelegate.showCpu) {
                     DigitalWatchView(timerIsActive: $watchTimerIsActive, x: x, y: y)
                 }
             }

@@ -34,7 +34,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @AppStorage("modifierKeyString1") var keyString1: String = "command"
     @AppStorage("modifierKeyString2") var keyString2: String = "control"
 
-    @AppStorage("showWatch") var showWatch = true {
+    @AppStorage("showWatch") var showWatchOrCpu = true {
         didSet {
             // Update the title of the menu item when autoStart changes
             showWatchItem.title = getWatchCpuMenuValue(showValue: "Watch") // (showWatch ? "Hide" : "Show") + " Watch"
@@ -44,15 +44,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @AppStorage("showCpu") var showCpu = false {
         didSet {
             // Update the title of the menu item when autoStart changes
-            showWatchItem.title = getWatchCpuMenuValue(showValue: "Cpu") // (showCpu ? "Hide" : "Show") + " Cpu"
+            showWatchItem.title = getWatchCpuMenuValue(showValue: "CPU") // (showCpu ? "Hide" : "Show") + " Cpu"
         }
     }
 
     func getWatchCpuMenuValue(showValue: String) -> String {
         switch true {
-            case showWatch: return "Hide Watch"
-            case showCpu: return "Hide Cpu"
-            default: return "Show " + showValue
+            case showWatchOrCpu: return "Hide Watch"
+            case showCpu: return "Hide CPU"
+            default: return "Show with " + showValue
         }
     }
 
@@ -277,7 +277,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
         menu.addItem(NSMenuItem.separator())
 
-        showWatchItem = menu.addItem(withTitle: (showWatch ? "Hide" : "Show") + " Watch", action: #selector(showWatchToggle), keyEquivalent: "")
+        showWatchItem = menu.addItem(withTitle: (showWatchOrCpu ? "Hide" : "Show") + " with Watch", action: #selector(showWatchOrCpuToggle), keyEquivalent: "")
         menu.addItem(withTitle: "Start at login", action: #selector(openLoginItemsPreferences), keyEquivalent: "")
         menu.addItem(withTitle: "Quit", action: #selector(quitApp), keyEquivalent: "q")
 
@@ -373,8 +373,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
-    @objc func showWatchToggle() {
-        showWatch.toggle()
+    @objc func showWatchOrCpuToggle() {
+        switch true {
+            case showWatchItem.title.contains("Watch"):
+                showWatchOrCpu.toggle()
+            default: showCpu.toggle()
+        }
+        if showWatchOrCpu {
+            showMainWindow()
+        }
     }
 
     @objc func handleAutoStart() {

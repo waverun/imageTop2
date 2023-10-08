@@ -48,7 +48,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "40"
             endingLineNumber = "40"
-            landmarkName = "showWatch"
+            landmarkName = "showWatchOrCpu"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
@@ -97,6 +97,22 @@
             startingLineNumber = "82"
             endingLineNumber = "82"
             landmarkName = "handleTimerChange(isActive:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "530AE3D1-0548-4654-892E-350D82FAD434"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "imageTop2/AppDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "379"
+            endingLineNumber = "379"
+            landmarkName = "showWatchOrCpuToggle()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

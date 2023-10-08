@@ -92,7 +92,7 @@ struct DigitalWatchView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         switch true {
-            case appDelegate.showWatch:
+            case appDelegate.showWatchOrCpu:
                 timeString = formatter.string(from: Date())
             case appDelegate.showCpu: 
 //                timeString = getCpuUsage() ?? ""
