@@ -86,7 +86,8 @@ struct VideoPlayerView: NSViewRepresentable {
 
 // play the video
         if appDelegate.showWindow {
-            player.play()
+//            player.play()
+            play(player)
             iPrint("Video1 started playing. \(index) url: \(url) makeNSView \(Date())")
         }
 
@@ -96,6 +97,12 @@ struct VideoPlayerView: NSViewRepresentable {
         return view
     }
 
+    func play(_ player: AVPlayer) {
+        player.play()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            player.play()
+        }
+    }
 //    func makeCoordinator() -> VideoPlayerCoordinator {
 //        return VideoPlayerCoordinator(self, finishedPlaying: finishedPlaying)
 //    }
@@ -225,7 +232,8 @@ struct VideoPlayerView: NSViewRepresentable {
             // Play the video
             switch true {
                 case appDelegate.showWindow:
-                    player.play()
+//                    player.play()
+                    play(player)
                     iPrint("Video1 started playing. \(index) url: \(url) updateNSView \(Date())")
                 default: gPausableTimers[index]?.pause()
             }
