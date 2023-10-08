@@ -99,9 +99,9 @@ struct VideoPlayerView: NSViewRepresentable {
 
     func play(_ player: AVPlayer) {
         player.play()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            player.play()
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//            player.play()
+//        }
     }
 //    func makeCoordinator() -> VideoPlayerCoordinator {
 //        return VideoPlayerCoordinator(self, finishedPlaying: finishedPlaying)
@@ -175,10 +175,10 @@ struct VideoPlayerView: NSViewRepresentable {
 
 //            setEndPlayNotification(player: player) // Always set end of play notification to prevent stacks
 
-            if let videoLengthTask = gVideoLengthTasks[index],
-               videoLengthTask.isCancelled {
-                return
-            }
+//            if let videoLengthTask = gVideoLengthTasks[index],
+//               videoLengthTask.isCancelled {
+//                return
+//            }
         }
     }
 
