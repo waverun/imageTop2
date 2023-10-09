@@ -71,7 +71,7 @@ struct DigitalWatchView: View {
                 watchPosition = CGPoint(x: x ?? 100, y: y ?? 100)
             }
             .onChange(of: timerIsActive) { newValue in
-                handleTimerChange(isActive: timerIsActive)
+                handleTimerChange(isActive: newValue)
             }
     }
 

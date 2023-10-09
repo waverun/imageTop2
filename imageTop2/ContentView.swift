@@ -39,6 +39,8 @@ struct ContentView: View {
     @State var secondPhotographer = ""
     @State var showVideo = false
     @State var hideVideos = false // Used to preveint showing videos when replacing images. Sometime, on old video is sean when images are replaced
+    @State var firstVideoPath = ""
+    @State var secondVideoPath = ""
 
     @State var startShowVideo = false
     @State var startShowImage = false
@@ -151,14 +153,14 @@ struct ContentView: View {
 
     @ViewBuilder var videoPlayerView: some View {
         ZStack {
-            videoPlayerBuilder(videoPath: gStateObjects[index]!.firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
-            .opacity(showVideo && !showSecondVideo ? 1 : 0)
+            videoPlayerBuilder(videoPath: firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
+//                .transition(showVideo && !showSecondVideo ? .scale : .slide)
             .zIndex(showVideo && !showSecondVideo ? 1 : 0)
-            .animation(.easeIn(duration: showVideo && !showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && !showSecondVideo)
-            videoPlayerBuilder(videoPath: gStateObjects[index]!.secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
-            .opacity(showVideo && showSecondVideo ? 1 : 0)
+//            .animation(.easeIn(duration: showVideo && !showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && !showSecondVideo)
+            videoPlayerBuilder(videoPath: secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
+//            .transition(showVideo && showSecondVideo ? .scale : .slide)
             .zIndex(showVideo && showSecondVideo ? 1 : 0)
-            .animation(.easeIn(duration: showVideo && showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && showSecondVideo)
+//            .animation(.easeIn(duration: showVideo && showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && showSecondVideo)
         }
         .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
     }
@@ -182,7 +184,7 @@ struct ContentView: View {
                                     .padding(.bottom, 50)
                                     .padding(.leading, 50)
                                     .opacity(condition ? 1 : 0)
-                                    .animation(.easeIn(duration: condition ? videoFadeTime : videoFadeTime), value: condition)
+//                                    .animation(.easeIn(duration: condition ? videoFadeTime : videoFadeTime), value: condition)
                                 Spacer()
                             }
                         }
@@ -381,7 +383,9 @@ struct ContentView: View {
                     firstImage = nil
                     secondImage = nil
                     gStateObjects[index]!.firstVideoPath = ""
+                    firstVideoPath = ""
                     gStateObjects[index]!.secondVideoPath = ""
+                    secondVideoPath = ""
                     imageOrVideoMode = false
                 }
                 if imageOrBackgroundChangeTimer == nil {
@@ -659,11 +663,13 @@ struct ContentView: View {
         if showSecondVideo {
 //            DispatchQueue.main.async {
                 gStateObjects[index]!.firstVideoPath = path
+                firstVideoPath = path
                 firstPhotographer = photographer
 //            }
         } else {
 //            DispatchQueue.main.async {
                 gStateObjects[index]!.secondVideoPath = path
+                secondVideoPath = path
                 secondPhotographer = photographer
 //            }
         }
