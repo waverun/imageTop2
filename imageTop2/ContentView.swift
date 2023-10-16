@@ -143,7 +143,6 @@ struct ContentView: View {
                 .opacity(showFadeColor ? 0 : 1)
                 .animation(.linear(duration: 1), value: showFadeColor)
                 .edgesIgnoringSafeArea(.all)
-
             fadeColor
                 .opacity(showFadeColor ? 1 : 0)
                 .animation(.linear(duration: 1), value: showFadeColor)
@@ -154,13 +153,15 @@ struct ContentView: View {
     @ViewBuilder var videoPlayerView: some View {
         ZStack {
             videoPlayerBuilder(videoPath: firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
+                .opacity(showVideo && !showSecondVideo ? 1 : 0)
 //                .transition(showVideo && !showSecondVideo ? .scale : .slide)
-            .zIndex(showVideo && !showSecondVideo ? 1 : 0)
-//            .animation(.easeIn(duration: showVideo && !showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && !showSecondVideo)
+//            .zIndex(showVideo && !showSecondVideo ? 1 : 0)
+            .animation(.easeIn(duration: showVideo && !showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && !showSecondVideo)
             videoPlayerBuilder(videoPath: secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
+                .opacity(showVideo && showSecondVideo ? 1 : 0)
 //            .transition(showVideo && showSecondVideo ? .scale : .slide)
-            .zIndex(showVideo && showSecondVideo ? 1 : 0)
-//            .animation(.easeIn(duration: showVideo && showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && showSecondVideo)
+//            .zIndex(showVideo && showSecondVideo ? 1 : 0)
+            .animation(.easeIn(duration: showVideo && showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && showSecondVideo)
         }
         .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
     }
@@ -183,7 +184,7 @@ struct ContentView: View {
                                     .shadow(color: .black, radius: 3, x: 0, y: 0)
                                     .padding(.bottom, 50)
                                     .padding(.leading, 50)
-                                    .opacity(condition ? 1 : 0)
+//                                    .opacity(condition ? 1 : 0)
 //                                    .animation(.easeIn(duration: condition ? videoFadeTime : videoFadeTime), value: condition)
                                 Spacer()
                             }
@@ -207,6 +208,7 @@ struct ContentView: View {
             firstImageView
             secondImageView
         }
+        .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
     }
 
     func imageViewBuilder(image: NSImage?, photographer: String, condition: Bool) -> some View {
@@ -663,14 +665,18 @@ struct ContentView: View {
         if showSecondVideo {
 //            DispatchQueue.main.async {
                 gStateObjects[index]!.firstVideoPath = path
+            withAnimation(.easeIn(duration: 1)) {
                 firstVideoPath = path
                 firstPhotographer = photographer
+            }
 //            }
         } else {
 //            DispatchQueue.main.async {
                 gStateObjects[index]!.secondVideoPath = path
+            withAnimation(.easeIn(duration: 1)) {
                 secondVideoPath = path
                 secondPhotographer = photographer
+            }
 //            }
         }
         startShowVideo = false
