@@ -12,6 +12,7 @@ var gHotkey: HotKey? = HotKey(key: .escape, modifiers: [.control, .command])
 var gImageAndVideoNames: [String] = []
 var gDirectoryWatcher: DirectoryWatcher?
 var loadImagesWorkItem: DispatchWorkItem?
+var startChangeTime: Date?
 
 struct StateObjects {
     var firstVideoPath: String! = ""
@@ -255,8 +256,6 @@ struct ContentView: View {
 
         if !usePhotosFromPexels, !useVideosFromPexels {
             gImageAndVideoNames = loadImageAndVideoNames()
-            gNeedToLoadImageOrVideo[index] = true
-            changeScreenImageVideoOrColor()
         }
 
         if index == 0 {
@@ -264,9 +263,17 @@ struct ContentView: View {
             handlePexelsVideos()
         }
 
+        if replaceImageAfter > 3 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                changeScreenImageVideoOrColor()
+                startChangeTimer()
+//                startChangeTime = Date()
+            }
+        }
 #if DEBUG
         iPrint("Memory: \(index) onAppear: \(reportMemory())")
 #endif
+
     }
 
     func handleReplaceImageAfterChange(_ newValue: Double) {
@@ -558,22 +565,36 @@ struct ContentView: View {
             stopChangeTimer()
         }
 
-        if appDelegate.firstSetTimer.count > index,
-            appDelegate.firstSetTimer[index] == nil {
-                appDelegate.firstSetTimer[index] = false
-                iPrint("firstsettime changeScreenImageOrColor \(index)")
-                changeScreenImageVideoOrColor()
-        }
+//        if appDelegate.firstSetTimer.count > index,
+//              appDelegate.firstSetTimer[index] == nil {
+//                appDelegate.firstSetTimer[index] = false
+//                iPrint("firstsettime changeScreenImageOrColor \(index)")
+//                changeScreenImageVideoOrColor()
+//        }
 
         iPrint("startScreenChangeTimer: \(index) \(Date())")
 
-        imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: max(replaceImageAfter, 1) + addTime , repeats: addTime == 0) { _ in
-            iPrint("imageOrBackgroundChangeTimer: \(index) \(Date())")
-            changeScreenImageVideoOrColor()
-            if addTime > 0 { //Start the timer with regular time after fading from image to movie
-                startChangeTimer()
+        func startTimer() {
+            imageOrBackgroundChangeTimer = Timer.scheduledTimer(withTimeInterval: max(replaceImageAfter, 1) + addTime , repeats: addTime == 0) { _ in
+                iPrint("imageOrBackgroundChangeTimer: \(index) \(Date())")
+                changeScreenImageVideoOrColor()
+                if addTime > 0 { //Start the timer with regular time after fading from image to movie
+                    startChangeTimer()
+                }
             }
         }
+
+        if let startChange = startChangeTime {
+            let currentTime = Date()
+            let timeSinceStartChange = currentTime.timeIntervalSince(startChange)
+            let delayTime = max(replaceImageAfter - timeSinceStartChange, 0)
+            startChangeTime = nil
+            DispatchQueue.main.asyncAfter(deadline: .now() + delayTime) {
+                startTimer()
+            }
+            return
+        }
+        startTimer()
     }
 
     func changeScreenImageVideoOrColor() {
