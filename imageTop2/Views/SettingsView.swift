@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @EnvironmentObject var appDelegate: AppDelegate
+//    @Environment(\.presentationMode) var presentationMode
 
     @AppStorage("replaceImageAfter") var replaceImageAfter: TimeInterval = 10
     @AppStorage("startAfter") var startAfter: TimeInterval = 600
@@ -282,6 +283,9 @@ struct SettingsView: View {
             filteredModKeyNames1 = filterModKeys(otherModeValue: newValue)
             appDelegate.updateShowItem()
         }
+//        .onReceive(NSEvent.keyEventPublisher(for: .escape), perform: { _ in
+//            self.presentationMode.wrappedValue.dismiss()
+//        })
         .onReceive(appDelegate.$downloading) { newValue in
             iPrint("appDelegate.$downloading: \(appDelegate.downloading)")
             disabled = newValue

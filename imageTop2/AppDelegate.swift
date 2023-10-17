@@ -115,7 +115,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     }
 
     func windowWillClose(_ notification: Notification) {
-        showMainWindow()
+        if !gClosingDueToEscapeKey {
+            showMainWindow()
+            return
+        }
+        gClosingDueToEscapeKey = false
     }
 
     func windowDidExitFullScreen(_ notification: Notification) {
@@ -288,7 +292,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         statusBarItem.menu = menu
 
         // Initialize settings window
-        settingsWindow = NSWindow(
+        settingsWindow = CustomWindow (
             contentRect: NSRect(x: 0, y: 0, width: 300, height: 200),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
@@ -320,40 +324,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 #endif
     }
 
-//    func addShowItem(menu: NSMenu) {
-
-//        let mod1 = Keyboard.stringToModifier(keyString1)
-//        let mod2 = Keyboard.stringToModifier(keyString2)
-//
-//        switch true {
-//            case (mod1 != nil && mod2 != nil):
-//                showItem = menu.addItem(withTitle: "Show", action: #selector(showMainWindow), keyEquivalent: keyString)
-//                showItem.keyEquivalentModifierMask = [mod1!, mod2!]
-//            default:
-//                showItem = menu.addItem(withTitle: "Show", action: #selector(showMainWindow), keyEquivalent: "")
-//                // Optionally handle the case where one or both modifiers were not valid
-//                print("Invalid modifier strings provided.")
-//        }
-//    }
-
-//    func updateShowItem() {
-//        let mod1 = Keyboard.stringToModifier(keyString1)
-//        let mod2 = Keyboard.stringToModifier(keyString2)
-//
-//        switch true {
-//            case (mod1 != nil && mod2 != nil):
-//                showItem.keyEquivalent = keyString
-//                showItem.keyEquivalentModifierMask = [mod1!, mod2!]
-//            default:
-//                showItem.keyEquivalent = ""
-//                showItem.keyEquivalentModifierMask = []
-//                // Optionally handle the case where one or both modifiers were not valid
-//                print("Invalid modifier strings provided.")
-//        }
-//    }
+    func window(_ window: NSWindow, keyDown event: NSEvent) {
+        switch event.keyCode {
+            case 53:  // Escape key
+                window.close()
+            default:
+                break
+        }
+    }
 
     func updateShowItem() {
-//        let keyString = Keyboard.keySymbol(from: keyString, forMenu: true)
         let keyString = Keyboard.keyEquivalentString(from: keyString, forMenu: true)
         let mod1 = keyString1 != "None" ? Keyboard.stringToModifier(keyString1) : nil
         let mod2 = keyString2 != "None" ? Keyboard.stringToModifier(keyString2) : nil
@@ -362,16 +342,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
         switch (mod1, mod2) {
             case let (mod1?, mod2?):
-//                showItem.keyEquivalent = keyString
                 showItem.keyEquivalentModifierMask = [mod1, mod2]
             case let (mod1?, nil):
-//                showItem.keyEquivalent = keyString
                 showItem.keyEquivalentModifierMask = [mod1]
             case let (nil, mod2?):
-//                showItem.keyEquivalent = keyString
                 showItem.keyEquivalentModifierMask = [mod2]
             case (nil, nil):
-//                showItem.keyEquivalent = keyString
                 showItem.keyEquivalentModifierMask = []
         }
     }

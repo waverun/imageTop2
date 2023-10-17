@@ -12,6 +12,7 @@
 		501FFEF12AD212F2002B05DE /* hostCPULoadInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501FFEF02AD212F2002B05DE /* hostCPULoadInfo.swift */; };
 		505348B92ACAC8290067A2E1 /* getCpuUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505348B82ACAC8290067A2E1 /* getCpuUsage.swift */; };
 		50627A862A167148009BA1FC /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50627A852A167148009BA1FC /* DirectoryWatcher.swift */; };
+		5071C3A82ADF25EE0065805E /* CustomWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5071C3A72ADF25EE0065805E /* CustomWindow.swift */; };
 		50736EFB2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */; };
 		50736EFE2A8D2E9C00FB53FD /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50736EFD2A8D2E9C00FB53FD /* String.swift */; };
 		5079FD6E2A10C8890066EC08 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5079FD6D2A10C8890066EC08 /* ViewController.swift */; };
@@ -58,6 +59,7 @@
 		501FFEF02AD212F2002B05DE /* hostCPULoadInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hostCPULoadInfo.swift; sourceTree = "<group>"; };
 		505348B82ACAC8290067A2E1 /* getCpuUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getCpuUsage.swift; sourceTree = "<group>"; };
 		50627A852A167148009BA1FC /* DirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
+		5071C3A72ADF25EE0065805E /* CustomWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomWindow.swift; sourceTree = "<group>"; };
 		50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = culculateDigitalWatchPosition.swift; sourceTree = "<group>"; };
 		50736EFD2A8D2E9C00FB53FD /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		5079FD682A10C8890066EC08 /* imageTop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imageTop.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -116,7 +118,8 @@
 			children = (
 				50736EFD2A8D2E9C00FB53FD /* String.swift */,
 			);
-			path = Extensions;
+			name = Extensions;
+			path = Classes/Extensions;
 			sourceTree = "<group>";
 		};
 		5079FD5F2A10C8890066EC08 = {
@@ -142,6 +145,7 @@
 				5079FD6F2A10C88B0066EC08 /* Assets.xcassets */,
 				5079FD812A10D59F0066EC08 /* Classes */,
 				5079FD7A2A10D2390066EC08 /* ContentView.swift */,
+				50736EFC2A8D2E8700FB53FD /* Extensions */,
 				50EC4A9A2A1404A600C4D327 /* Functions */,
 				5079FD742A10C88B0066EC08 /* imageTop2.entitlements */,
 				5079FD942A10DE360066EC08 /* ImageTopApp.swift */,
@@ -156,7 +160,6 @@
 		5079FD812A10D59F0066EC08 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				50736EFC2A8D2E8700FB53FD /* Extensions */,
 				5079FD822A10D5B50066EC08 /* Keyboard.swift */,
 				50B646632A111162002CA82E /* WindowManager.swift */,
 				50627A852A167148009BA1FC /* DirectoryWatcher.swift */,
@@ -166,6 +169,7 @@
 				500CE8BD2A88BF89001E0984 /* VideoPlayerCoordinator.swift */,
 				50DB1FEF2AC6DC6100C3C48C /* ThreadSafeDict.swift */,
 				501FFEEE2AD20FFC002B05DE /* CPUUsageMonitor.swift */,
+				5071C3A72ADF25EE0065805E /* CustomWindow.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -303,6 +307,7 @@
 				50BEA3872A4EC07C00F0FE19 /* PausableTimer.swift in Sources */,
 				50B9EAA12A386A1E002BCB4B /* WriteFile.swift in Sources */,
 				50A06A122A3F2BFE00319BEA /* deleteFile.swift in Sources */,
+				5071C3A82ADF25EE0065805E /* CustomWindow.swift in Sources */,
 				50BEA3B42A5436AB00F0FE19 /* isVideoFile.swift in Sources */,
 				50B9EA9F2A3793A1002BCB4B /* isFreeSpaceMoreThan.swift in Sources */,
 				5079FD8E2A10DB680066EC08 /* FocusableTextField.swift in Sources */,
