@@ -255,6 +255,8 @@ struct ContentView: View {
 
         if !usePhotosFromPexels, !useVideosFromPexels {
             gImageAndVideoNames = loadImageAndVideoNames()
+            gNeedToLoadImageOrVideo[index] = true
+            changeScreenImageVideoOrColor()
         }
 
         if index == 0 {
@@ -265,7 +267,6 @@ struct ContentView: View {
 #if DEBUG
         iPrint("Memory: \(index) onAppear: \(reportMemory())")
 #endif
-
     }
 
     func handleReplaceImageAfterChange(_ newValue: Double) {
