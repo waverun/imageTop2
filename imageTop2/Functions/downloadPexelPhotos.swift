@@ -66,13 +66,13 @@ func downloadPexelPhotos(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @e
                 group.notify(queue: .main) {
                     // All downloads completed
                     appDelegate.numberOfPexelsPhotos = pexelsResponse.photos.count
+                    appDelegate.setDownloading(false)
                     onDone()
                 }
             } catch {
                 iPrint("Error decoding JSON: \(error)")
             }
         }
-        appDelegate.setDownloading(false)
     }
 
     task.resume()

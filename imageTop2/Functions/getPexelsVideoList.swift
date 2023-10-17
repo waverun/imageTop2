@@ -55,7 +55,7 @@ func getPexelsVideoList(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @es
         screenWidth = Int(Double(screenWidth) * 0.9)
     }
 
-    appDelegate.setDownloading(false)
+    appDelegate.setDownloading(true)
 
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
         if let error = error {
@@ -89,12 +89,14 @@ func getPexelsVideoList(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @es
                 DispatchQueue.main.async {
                     appDelegate.numberOfPexelsVideos = videoLinks.count
                 }
+                appDelegate.setDownloading(false)
                 onDone(videoLinks)
             } catch {
                 iPrint("Error decoding JSON: \(error)")
+                appDelegate.setDownloading(false)
             }
         }
-        appDelegate.setDownloading(false)
+//        appDelegate.setDownloading(false)
     }
 
     task.resume()
