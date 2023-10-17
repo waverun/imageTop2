@@ -192,7 +192,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                         }
                         inactivityTimer.invalidate()
                         inactivityTimer = nil
-                default : startInactivityTimer(passTime: remainingTime)
+                default : 
+                    DispatchQueue.global(qos: .background).async { [weak self] in
+                        self?.startInactivityTimer(passTime: remainingTime)
+                    }
             }
         }
     }
