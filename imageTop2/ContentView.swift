@@ -56,6 +56,7 @@ struct ContentView: View {
     @AppStorage("modifierKeyString1") var keyString1: String = "command"
     @AppStorage("modifierKeyString2") var keyString2: String = "control"
     @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
+    @AppStorage("useLocalImagesAndVideos") var useLocalImagesAndVideos: Bool = false
     @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = true
 
     @State var imageOrBackgroundChangeTimer: Timer? = nil
@@ -127,6 +128,7 @@ struct ContentView: View {
         .onChange(of: keyString1, perform: handleHotKeyChange)
         .onChange(of: keyString2, perform: handleHotKeyChange)
         .onChange(of: selectedFolderPath, perform: handleSelectedFolderPathChange)
+        .onChange(of: useLocalImagesAndVideos, perform: handleUseLocalImagesAndVideosChange)
         .onChange(of: usePhotosFromPexels, perform: usePhotosFromPexelsChanged)
         .onChange(of: useVideosFromPexels, perform: useVideosFromPexelsChanged)
         .onChange(of: gImageAndVideoNames, perform: imageAndVideoNamesChanged)
@@ -284,7 +286,11 @@ struct ContentView: View {
         updateHotKey()
     }
 
-    func handleSelectedFolderPathChange(_ newValue: String) {
+    func handleUseLocalImagesAndVideosChange(_ newValue: Bool) {
+        handleSelectedFolderPathChange()
+    }
+
+    func handleSelectedFolderPathChange(_ newValue: String = "") {
         startAccessingFolder(loadImages: true)
         startWatchingFolder(imageFolder: selectedFolderPath)
     }
@@ -873,24 +879,26 @@ struct ContentView: View {
         var imageOrVideoNames: [String] = []
         gImageAndVideoNames.removeAll()
         do {
-            let contents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            imageOrVideoNames = contents.compactMap { url -> String? in
-                guard let typeIdentifier = try? url.resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier,
-                      let uti = UTType(typeIdentifier) else {
+            if fromPexelsPhotos != nil || useLocalImagesAndVideos {
+                let contents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+                imageOrVideoNames = contents.compactMap { url -> String? in
+                    guard let typeIdentifier = try? url.resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier,
+                          let uti = UTType(typeIdentifier) else {
+                        return nil
+                    }
+
+                    if uti.conforms(to: .image) || uti.conforms(to: .movie) {
+                        return url.lastPathComponent
+                    }
                     return nil
                 }
 
-                if uti.conforms(to: .image) || uti.conforms(to: .movie) {
-                    return url.lastPathComponent
+                let folderString = folderURL.path
+                imageOrVideoNames = imageOrVideoNames.map { imageOrVideo in
+                    folderString + "/" + imageOrVideo
                 }
-                return nil
             }
-
-            let folderString = folderURL.path
-            imageOrVideoNames = imageOrVideoNames.map { imageOrVideo in
-                folderString + "/" + imageOrVideo
-            }
-
+            
             let numberOfLocalImagesAndVideos = imageOrVideoNames.count
             if fromPexelsPhotos == nil {
                 DispatchQueue.main.async {

@@ -12,11 +12,13 @@ struct SettingsView: View {
     @AppStorage("modifierKeyString1") var keyString1: String = "command"
     @AppStorage("modifierKeyString2") var keyString2: String = "control"
     @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
+    @AppStorage("useLocalImagesAndVideos") var useLocalImagesAndVideos: Bool = false
     @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = false
     @AppStorage("showWatch") var showWatch = true 
     @AppStorage("showCpu") var showCpu = false
 
     @State var usePhotosFromPexelsIsOn: Bool = false
+    @State var useLocalImageAndVideosIsOn: Bool = false
     @State var showWatchIsOn: Bool = false
     @State var showCpuIsOn: Bool = false
     @State var useVideosFromPexelsIsOn: Bool = true
@@ -148,8 +150,9 @@ struct SettingsView: View {
                             Spacer()
                         }.padding(.leading)
                         HStack {
-                            Text("Images and Videos Folder (\(numberOfLocalImagesAndVideos))")
-                                .frame(width: geometry.size.width * 0.60, alignment: .leading)
+                            Toggle("Images and Videos Folder (\(numberOfLocalImagesAndVideos))", isOn: $useLocalImageAndVideosIsOn)
+//                            Text("Images and Videos Folder (\(numberOfLocalImagesAndVideos))")
+//                                .frame(width: geometry.size.width * 0.60, alignment: .leading)
                             Button("Select...") {
                                 openFolderPicker()
                             }
@@ -217,6 +220,10 @@ struct SettingsView: View {
         .onChange(of: usePhotosFromPexelsIsOn) { newValue in
            iPrint("isOn: \(usePhotosFromPexelsIsOn)")
             usePhotosFromPexels = usePhotosFromPexelsIsOn
+        }
+        .onChange(of: useLocalImageAndVideosIsOn) { newValue in
+           iPrint("isOn: \(useLocalImageAndVideosIsOn)")
+            useLocalImagesAndVideos = useLocalImageAndVideosIsOn
         }
         .onChange(of: useVideosFromPexelsIsOn) { newValue in
            iPrint("isOn: \(useVideosFromPexelsIsOn)")
@@ -295,6 +302,7 @@ struct SettingsView: View {
         .onAppear {
             selectedFolderPath = storedFolderPath
             usePhotosFromPexelsIsOn = usePhotosFromPexels
+            useLocalImageAndVideosIsOn = useLocalImagesAndVideos
             useVideosFromPexelsIsOn = useVideosFromPexels
             showWatchIsOn = showWatch
             showCpuIsOn = showCpu
