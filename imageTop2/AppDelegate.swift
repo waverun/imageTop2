@@ -190,16 +190,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             let currentSeconds = self.getLastEventTime()
             let remainingTime = max(self.startAfter, 5) - currentSeconds
             switch true {
-                case remainingTime <= 0:
+                case remainingTime < 1:
                         if autoStart {
                             WindowManager.shared.enterFullScreen()
                         }
                         inactivityTimer.invalidate()
                         inactivityTimer = nil
                 default : 
-                    DispatchQueue.global(qos: .background).async { [weak self] in
-                        self?.startInactivityTimer(passTime: remainingTime)
-                    }
+//                    DispatchQueue.global(qos: .background).async { [weak self] in
+                        startInactivityTimer(passTime: remainingTime)
+//                    }
             }
         }
     }

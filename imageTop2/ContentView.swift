@@ -898,7 +898,7 @@ struct ContentView: View {
                     folderString + "/" + imageOrVideo
                 }
             }
-            
+
             let numberOfLocalImagesAndVideos = imageOrVideoNames.count
             if fromPexelsPhotos == nil {
                 DispatchQueue.main.async {
