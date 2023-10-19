@@ -114,13 +114,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
     }
 
-    func windowWillClose(_ notification: Notification) {
-        if !gClosingDueToEscapeKey {
-            showMainWindow()
-            return
-        }
-        gClosingDueToEscapeKey = false
-    }
+//    func windowWillClose(_ notification: Notification) {
+//        if !gClosingDueToEscapeKey {
+//            showMainWindow()
+//            return
+//        }
+//        gClosingDueToEscapeKey = false
+//    }
 
     func windowDidExitFullScreen(_ notification: Notification) {
         NSCursor.unhide()
@@ -321,7 +321,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         statusBarItem.menu = menu
 
         // Initialize settings window
-        settingsWindow = CustomWindow (
+        settingsWindow = NSWindow (
             contentRect: NSRect(x: 0, y: 0, width: 300, height: 200),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
