@@ -143,7 +143,7 @@ struct SettingsView: View {
                                 String(startAfter)
                             }, set: { newValue in
                                 if let value = TimeInterval(newValue) {
-                                    startAfter = value
+                                    startAfter = max(5, value)
                                 }
                             }), formatter: NumberFormatter())
                             .multilineTextAlignment(.trailing)
@@ -283,6 +283,11 @@ struct SettingsView: View {
             filteredModKeyNames1 = filterModKeys(otherModeValue: newValue)
             appDelegate.updateShowItem()
         }
+//        .onChange(of: startAfter) { newValue in
+//            if newValue < 5 {
+//                startAfter = 5
+//            }
+//        }
 //        .onReceive(NSEvent.keyEventPublisher(for: .escape), perform: { _ in
 //            self.presentationMode.wrappedValue.dismiss()
 //        })
@@ -302,7 +307,7 @@ struct SettingsView: View {
 //            iPrint("appDelegate.$downloading: \(appDelegate.downloading)")
             numberOfPexelsVideos = newValue
         }
-        .frame(width: 350, height: 360)
+        .frame(width: 350, height: 370)
         .onAppear {
             selectedFolderPath = storedFolderPath
             usePhotosFromPexelsIsOn = usePhotosFromPexels
@@ -313,6 +318,11 @@ struct SettingsView: View {
             keyStringSymbol = Keyboard.keySymbol(from: keyString)
             filteredModKeyNames1 = filterModKeys(otherModeValue: keyString2)
             filteredModKeyNames2 = filterModKeys(otherModeValue: keyString1)
+        }
+        .onDisappear {
+            if startAfter < 5 {
+                startAfter = 5
+            }
         }
     }
 

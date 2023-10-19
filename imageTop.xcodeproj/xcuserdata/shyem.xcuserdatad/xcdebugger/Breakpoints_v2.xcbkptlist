@@ -110,8 +110,8 @@
             filePath = "imageTop2/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "358"
-            endingLineNumber = "358"
+            startingLineNumber = "387"
+            endingLineNumber = "387"
             landmarkName = "showWatchOrCpuToggle()"
             landmarkType = "7">
          </BreakpointContent>
@@ -366,13 +366,13 @@
             filePath = "imageTop2/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "328"
-            endingLineNumber = "328"
+            startingLineNumber = "357"
+            endingLineNumber = "357"
             landmarkName = "window(_:keyDown:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "78165136-F390-4035-8E1F-61D991B18EC8 - f1888c806975003d"
+                  uuid = "78165136-F390-4035-8E1F-61D991B18EC8 - f1888c8069750c78"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -382,12 +382,12 @@
                   urlString = "file:///Users/shyem/Desktop/Projects/imageTop2/imageTop2/AppDelegate.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "328"
-                  endingLineNumber = "328"
-                  offsetFromSymbolStart = "126">
+                  startingLineNumber = "357"
+                  endingLineNumber = "357"
+                  offsetFromSymbolStart = "112">
                </Location>
                <Location
-                  uuid = "78165136-F390-4035-8E1F-61D991B18EC8 - f1888c806975003d"
+                  uuid = "78165136-F390-4035-8E1F-61D991B18EC8 - f1888c8069750c78"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -397,8 +397,8 @@
                   urlString = "file:///Users/shyem/Desktop/Projects/imageTop2/imageTop2/AppDelegate.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "328"
-                  endingLineNumber = "328"
+                  startingLineNumber = "357"
+                  endingLineNumber = "357"
                   offsetFromSymbolStart = "84">
                </Location>
             </Locations>
@@ -416,6 +416,181 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "10"
             endingLineNumber = "10"
+            landmarkName = "keyDown(with:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B3850066-5242-4A2D-ACC8-CF49B7695F27"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "imageTop2/AppDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "217"
+            endingLineNumber = "217"
+            landmarkName = "startInactivityTimer(passTime:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C001E84B-8C26-420C-96DD-0D3905055C3B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "imageTop2/AppDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "209"
+            endingLineNumber = "209"
+            landmarkName = "startInactivityTimer(passTime:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "133FE8C9-3C74-4419-898C-978D2DAEA184"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "imageTop2/AppDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "187"
+            endingLineNumber = "187"
+            landmarkName = "startInactivityTimer(passTime:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "919A6BA1-99B3-44DC-B7F7-C97CB061D3C7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "imageTop2/AppDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "194"
+            endingLineNumber = "194"
+            landmarkName = "startInactivityTimer(passTime:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "83F97647-EB95-4125-8AF9-12FC60E3E23D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "imageTop2/AppDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
+            landmarkName = "startInactivityTimer(passTime:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2DDFDC52-5ADF-44B5-95B1-1D8FE20FBCF6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "imageTop2/AppDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
+            landmarkName = "startInactivityTimer(passTime:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2DDFDC52-5ADF-44B5-95B1-1D8FE20FBCF6 - e2dd8914eb3bfb6c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "imageTop.AppDelegate.startInactivityTimer(passTime: Swift.Double) -&gt; ()"
+                  moduleName = "imageTop"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shyem/Desktop/Projects/imageTop2/imageTop2/AppDelegate.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "203"
+                  endingLineNumber = "203"
+                  offsetFromSymbolStart = "2032">
+               </Location>
+               <Location
+                  uuid = "2DDFDC52-5ADF-44B5-95B1-1D8FE20FBCF6 - 29249feb6b04ce69"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable (__C.NSTimer) -&gt; () in imageTop.AppDelegate.startInactivityTimer(passTime: Swift.Double) -&gt; ()"
+                  moduleName = "imageTop"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shyem/Desktop/Projects/imageTop2/imageTop2/AppDelegate.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "203"
+                  endingLineNumber = "203"
+                  offsetFromSymbolStart = "125">
+               </Location>
+               <Location
+                  uuid = "2DDFDC52-5ADF-44B5-95B1-1D8FE20FBCF6 - e2dd8914eb3bfb6c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "imageTop.AppDelegate.startInactivityTimer(passTime: Swift.Double) -&gt; ()"
+                  moduleName = "imageTop"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shyem/Desktop/Projects/imageTop2/imageTop2/AppDelegate.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "203"
+                  endingLineNumber = "203"
+                  offsetFromSymbolStart = "1540">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "43CAA0BF-C503-4432-8964-132ECB16F6C8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "imageTop2/AppDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
+            landmarkName = "startInactivityTimer(passTime:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F8418DED-2A24-43D5-846E-7ACE271EADDE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "imageTop2/Classes/CustomWindow.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "7"
+            endingLineNumber = "7"
             landmarkName = "keyDown(with:)"
             landmarkType = "7">
          </BreakpointContent>

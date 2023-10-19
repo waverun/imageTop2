@@ -128,23 +128,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         if let window = notification.object as? NSWindow {
             window.orderOut(nil)
             iPrint("window.orderOut \(String(describing: index))")
-            if !ScreenLockStatus.shared.isLocked {
-                startInactivityTimer()
-            }
-            if let index = WindowManager.shared.getIndex(for: window),
-               gPlayers.count > index,
-               let player = gPlayers[index] {
-                player.pause()
-                if gPausableTimers.count > index {
-                    if let timer = gPausableTimers[index] {
-                        timer.pause()
-                    }
+            //            if !ScreenLockStatus.shared.isLocked {
+            //                startInactivityTimer()
+            //            }
+            if let index = WindowManager.shared.getIndex(for: window) {
+                if !ScreenLockStatus.shared.isLocked && index == 0 {
+                    startInactivityTimer()
                 }
-                iPrint("video1 pause \(index)")
-                if index == WindowManager.shared.windows.count - 1 {
-                    //                    for window in NSApp.windows {
-                    for window in WindowManager.shared.windows {
-                        window.orderOut(nil)
+                if gPlayers.count > index,
+                   let player = gPlayers[index] {
+                    player.pause()
+                    if gPausableTimers.count > index {
+                        if let timer = gPausableTimers[index] {
+                            timer.pause()
+                        }
+                    }
+                    iPrint("video1 pause \(index)")
+                    if index == WindowManager.shared.windows.count - 1 {
+                        //                    for window in NSApp.windows {
+                        for window in WindowManager.shared.windows {
+                            window.orderOut(nil)
+                        }
                     }
                 }
             }
@@ -176,32 +180,57 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         return min(keyUpLastTime, mouseMoveLastTime, mouseDownLastTime, scrollLastTime)
     }
 
+    var stop = false
+
     func startInactivityTimer(passTime: Double = 0) {
-        if let inactivityTimer = inactivityTimer {
-            inactivityTimer.invalidate()
-        }
+//        DispatchQueue.global(qos: .background).async { [weak self] in
+//            guard let self = self else { return }
+            if inactivityTimer != nil {
+                inactivityTimer.invalidate()
+//                return
+            }
 
-        if !autoStart {
-            return
-        }
 
-        inactivityTimer = Timer.scheduledTimer(withTimeInterval: startAfter - passTime, repeats: false) { [weak self] timer in
-            guard let self = self else { return }
-            let currentSeconds = self.getLastEventTime()
-            let remainingTime = max(self.startAfter, 5) - currentSeconds
-            switch true {
-                case remainingTime < 1:
+            print("startInactivityTimer withTimeInterval: currentSecods: \(max(max(self.startAfter, 5) - passTime, 1))")
+
+            if !autoStart {
+                return
+            }
+
+        if stop {
+            print("stop: \(stop)")
+        } else {
+            print("stop: \(stop)")
+        }
+        stop.toggle()
+
+        inactivityTimer = Timer.scheduledTimer(withTimeInterval: max(max(self.startAfter, 5) - passTime, 1), repeats: false) { [weak self] timer in
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                guard let self = self else { return }
+                let currentSeconds = self.getLastEventTime()
+                print("startInactivityTimer currentSeconds: \(currentSeconds)")
+                let remainingTime = max(self.startAfter, 5) - currentSeconds
+                switch true {
+                    case remainingTime < 0.5:
                         if autoStart {
-                            WindowManager.shared.enterFullScreen()
+                            DispatchQueue.main.async {
+                                WindowManager.shared.enterFullScreen()
+                            }
                         }
                         inactivityTimer.invalidate()
                         inactivityTimer = nil
-                default : 
-//                    DispatchQueue.global(qos: .background).async { [weak self] in
-                        startInactivityTimer(passTime: remainingTime)
-//                    }
+                    default :
+                        //                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                        //                    DispatchQueue.global(qos: .background).async { [weak self] in
+                        inactivityTimer.invalidate()
+                        inactivityTimer = nil
+                        startInactivityTimer(passTime: currentSeconds)
+                        //                    }
+                        //                    }
+                }
             }
         }
+//        }
     }
 
     func applicationDidResignActive(_ aNotification: Notification) {
