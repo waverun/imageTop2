@@ -118,7 +118,7 @@ class WindowManager: ObservableObject {
             if window.styleMask.contains(.fullScreen) {
                 if exitFullStcreen {
                     iPrint("exitFullScreend - toggle \(index)")
-//                    window.orderOut(nil) //??
+                    //                    window.orderOut(nil) //??
                     window.toggleFullScreen(nil)
                 }
             } else {

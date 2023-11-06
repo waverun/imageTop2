@@ -73,6 +73,7 @@ struct DigitalWatchView: View {
             .onChange(of: timerIsActive) { newValue in
                 handleTimerChange(isActive: newValue)
             }
+            .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
     }
 
     func handleTimerChange(isActive: Bool) {

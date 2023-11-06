@@ -5,7 +5,8 @@ import Quartz
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
-    @AppStorage("startAfter")  var startAfter: TimeInterval = 600
+
+    var startAfterLocal: TimeInterval = 600
 
     @Published var isMainWindowVisible: Bool = true
     @Published var showWindow: Bool = true
@@ -14,6 +15,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var keyAndMouseEventMonitor: Any?
     @Published var pexelsPhotos: [String] = []
     @Published var pexelsVideos: [String] = []
+
+    @AppStorage("startAfter")  var startAfter: TimeInterval = 600
+
     @Published var networkIsReachable = false
     @Published var isFullScreen = false
     @Published var setImageOrVideoModeToggle = false
@@ -60,6 +64,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var autoStartItem: NSMenuItem! // This is the menu item we want to update
     var showWatchItem: NSMenuItem! // This is the menu item we want to update
     var showItem: NSMenuItem! // This is the menu item we want to update
+    var inactivityTimer: Timer!
 
     var settingsWindow: NSWindow!
     var externalDisplayCount: Int = 0
@@ -153,14 +158,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                 }
             }
         }
-
         isMainWindowVisible = false
     }
 
     func windowDidEnterFullScreen(_ notification: Notification) {
         isFullScreen = true
         iPrint("windowDidEnterFullScreen didntEnterFullScreenYet: \(WindowManager.shared.didntEnterFullScreenYet)")
-        inactivityTimer?.invalidate()
+//        inactivityTimer?.invalidate()
         NSCursor.hide()
         WindowManager.shared.didntEnterFullScreenYet -= 1
         if WindowManager.shared.didntEnterFullScreenYet == 0 {
@@ -168,8 +172,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             showWindow = true
         }
     }
-
-    var inactivityTimer: Timer!
 
     func getLastEventTime() -> CFTimeInterval {
         let keyUpLastTime = CGEventSource.secondsSinceLastEventType(CGEventSourceStateID.hidSystemState, eventType: .keyUp)
@@ -180,57 +182,60 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         return min(keyUpLastTime, mouseMoveLastTime, mouseDownLastTime, scrollLastTime)
     }
 
-    var stop = false
+//    func startInactivityTimer() {
+//        if inactivityTimer != nil {
+//            inactivityTimer.invalidate()
+//        }
+//
+//        if !autoStart {
+//            return
+//        }
+//
+//        inactivityTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+//            guard let self = self else { return }
+//            let currentSeconds = self.getLastEventTime()
+//            print("startInactivityTimer currentSeconds: \(currentSeconds)")
+//            if currentSeconds + 0.5 > self.startAfter {
+//                WindowManager.shared.enterFullScreen()
+//            }
+//        }
+//    }
 
     func startInactivityTimer(passTime: Double = 0) {
-//        DispatchQueue.global(qos: .background).async { [weak self] in
-//            guard let self = self else { return }
-            if inactivityTimer != nil {
-                inactivityTimer.invalidate()
-//                return
-            }
-
-
-            print("startInactivityTimer withTimeInterval: currentSecods: \(max(max(self.startAfter, 5) - passTime, 1))")
-
-            if !autoStart {
-                return
-            }
-
-        if stop {
-            print("stop: \(stop)")
-        } else {
-            print("stop: \(stop)")
+        if inactivityTimer != nil {
+            inactivityTimer.invalidate()
         }
-        stop.toggle()
 
-        inactivityTimer = Timer.scheduledTimer(withTimeInterval: max(max(self.startAfter, 5) - passTime, 1), repeats: false) { [weak self] timer in
-            DispatchQueue.global(qos: .background).async { [weak self] in
-                guard let self = self else { return }
-                let currentSeconds = self.getLastEventTime()
-                print("startInactivityTimer currentSeconds: \(currentSeconds)")
-                let remainingTime = max(self.startAfter, 5) - currentSeconds
-                switch true {
-                    case remainingTime < 0.5:
-                        if autoStart {
-                            DispatchQueue.main.async {
-                                WindowManager.shared.enterFullScreen()
-                            }
+        print("startInactivityTimer withTimeInterval: currentSecods: \(max(max(self.startAfterLocal, 5) - passTime, 1))")
+
+        if !autoStart {
+            return
+        }
+
+        inactivityTimer = Timer.scheduledTimer(withTimeInterval: max(max(self.startAfterLocal, 5) - passTime, 1), repeats: false) { [weak self] timer in
+
+            //        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + max(max(self.startAfterLocal, 5) - passTime, 1)) { [weak self] in
+            guard let self = self else { return }
+            let currentSeconds = self.getLastEventTime()
+            print("startInactivityTimer currentSeconds: \(currentSeconds)")
+            let remainingTime = max(self.startAfterLocal, 5) - currentSeconds
+            switch true {
+                case remainingTime < 0.5:
+                    if autoStart {
+                        DispatchQueue.main.async {
+                            WindowManager.shared.enterFullScreen()
                         }
-                        inactivityTimer.invalidate()
-                        inactivityTimer = nil
-                    default :
-                        //                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                        //                    DispatchQueue.global(qos: .background).async { [weak self] in
-                        inactivityTimer.invalidate()
-                        inactivityTimer = nil
-                        startInactivityTimer(passTime: currentSeconds)
-                        //                    }
-                        //                    }
-                }
+                    }
+                    inactivityTimer.invalidate()
+                    inactivityTimer = nil
+                default :
+                    inactivityTimer.invalidate()
+                    inactivityTimer = nil
+                    DispatchQueue.main.async() { [weak self] in
+                        self?.startInactivityTimer(passTime: currentSeconds)
+                    }
             }
         }
-//        }
     }
 
     func applicationDidResignActive(_ aNotification: Notification) {
@@ -261,8 +266,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             iPrint("Screen Locked")
             ScreenLockStatus.shared.isLocked = true
             showWindow = false
-            inactivityTimer?.invalidate()
-            inactivityTimer = nil
+//            inactivityTimer?.invalidate()
+//            inactivityTimer = nil
         }
 
         screenUnlockedObserver = dnc.addObserver(forName: .init("com.apple.screenIsUnlocked"), object: nil, queue: .main) { [weak self] _ in
@@ -284,6 +289,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         iPrint("Memory: Start applicationDidFinishLaunching: \(reportMemory())")
 #endif
 
+        startAfterLocal = startAfter
+        
         WindowManager.shared.appDelegate = self
         
         for window in NSApplication.shared.windows {
@@ -396,9 +403,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         autoStart.toggle()
         switch true {
             case autoStart: startInactivityTimer()
-            default:
-                inactivityTimer?.invalidate()
-                inactivityTimer = nil
+            default: break
+//                inactivityTimer?.invalidate()
+//                inactivityTimer = nil
         }
     }
 

@@ -283,11 +283,9 @@ struct SettingsView: View {
             filteredModKeyNames1 = filterModKeys(otherModeValue: newValue)
             appDelegate.updateShowItem()
         }
-//        .onChange(of: startAfter) { newValue in
-//            if newValue < 5 {
-//                startAfter = 5
-//            }
-//        }
+        .onChange(of: startAfter) { newValue in
+            appDelegate.startAfterLocal = newValue
+        }
 //        .onReceive(NSEvent.keyEventPublisher(for: .escape), perform: { _ in
 //            self.presentationMode.wrappedValue.dismiss()
 //        })
