@@ -1,7 +1,11 @@
 import Foundation
 
 let apiKey = "haMLbq5Kxq01WHqDfOZhVrcYqTbBD1nakMA9CVPgd5qqKNKU6bV1Ljl2"
-let pexelsCategories = ["beautiful", "abstract", "dark", "nature", "landscape", "space", "beach", "sky", "food", "technology", "business", "office", "flowers", "jungle", "summer", "car", "forest", "sunset"]
+let pexelsCategories = [
+    "beautiful", "abstract", "dark", "nature", "landscape", "space", "beach", "sky", "food", "technology", "business", "office", "flowers", "jungle", "summer", "car", "forest", "sunset",
+    "aurora", "nebula", "galaxy", "night-sky", "stars", "milky-way", "ocean", "waterfall", "mountains", "desert", "rain", "thunderstorm", "fog", "snow", "ice", "sunrise", "city-lights", "aerial", "drone", "timelapse", "minimal", "bokeh", "neon", "silhouette", "reflections", "waves", "forest-path", "clouds", "campfire",
+    "leaves", "orange", "ship", "switzerland", "pets"
+]
 
 func downloadPexelPhotos(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @escaping () -> Void) {
     func getPageNumber(itemsPerPage: Int) -> Int? {
