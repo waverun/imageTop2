@@ -1,7 +1,17 @@
 import Foundation
 
 enum DirectoryWatcherError: Error {
-    case unableToOpenDirectory(String)
+    case unableToOpenDirectory(path: String, errnoCode: Int32)
+}
+
+extension DirectoryWatcherError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .unableToOpenDirectory(let path, let errnoCode):
+            let systemMessage = String(cString: strerror(errnoCode))
+            return "Unable to open directory '\(path)'. errno \(errnoCode): \(systemMessage)"
+        }
+    }
 }
 
 class DirectoryWatcher {
@@ -10,14 +20,14 @@ class DirectoryWatcher {
     init(directoryPath: String, onChange: @escaping () -> Void) throws {
         let fileDescriptor = open(directoryPath, O_EVTONLY)
         if fileDescriptor < 0 {
-            throw DirectoryWatcherError.unableToOpenDirectory(directoryPath)
+            let errorCode = errno
+            throw DirectoryWatcherError.unableToOpenDirectory(path: directoryPath, errnoCode: errorCode)
         }
 
         let queue = DispatchQueue.global()
         source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: .write, queue: queue)
 
         source?.setEventHandler {
-            iPrint("Directory contents changed.")
             onChange()
         }
 
