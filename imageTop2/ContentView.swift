@@ -291,8 +291,12 @@ struct ContentView: View {
     }
 
     func handleSelectedFolderPathChange(_ newValue: String = "") {
-        startAccessingFolder(loadImages: true)
-        startWatchingFolder(imageFolder: selectedFolderPath)
+        if startAccessingFolder(loadImages: true) {
+            startWatchingFolder(imageFolder: selectedFolderPath)
+        } else {
+            gDirectoryWatcher?.release()
+            gDirectoryWatcher = nil
+        }
     }
 
     func usePhotosFromPexelsChanged(_ usePhotosFromPexels: Bool) {
@@ -441,27 +445,41 @@ struct ContentView: View {
         }
     }
 
-    func startAccessingFolder(loadImages: Bool? = nil) {
-        if let bookmarkData = imageTopFolderBookmarkData {
-            do {
-                var isStale = false
-                let url = try URL(resolvingBookmarkData: bookmarkData, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale)
-                if isStale {
-                    iPrint("Bookmark data is stale")
-                } else {
-                    if url.startAccessingSecurityScopedResource() {
-                        iPrint("Successfully accessed security-scoped resource")
-                        if let loadImages = loadImages,
-                           loadImages {
-                            gImageAndVideoNames = loadImageAndVideoNames()
-                        }
-                    } else {
-                        iPrint("Error accessing security-scoped resource")
-                    }
-                }
-            } catch {
-                iPrint("Error resolving security-scoped bookmark: \(error)")
+    @discardableResult
+    func startAccessingFolder(loadImages: Bool? = nil) -> Bool {
+        guard let bookmarkData = imageTopFolderBookmarkData else {
+            iPrint("No folder bookmark found. Please reselect the folder.")
+            return false
+        }
+
+        do {
+            var isStale = false
+            let url = try URL(
+                resolvingBookmarkData: bookmarkData,
+                options: .withSecurityScope,
+                relativeTo: nil,
+                bookmarkDataIsStale: &isStale
+            )
+
+            guard !isStale else {
+                iPrint("Folder bookmark is stale. Please reselect the folder.")
+                return false
             }
+
+            guard url.startAccessingSecurityScopedResource() else {
+                iPrint("Failed to access the selected folder due to sandbox permissions.")
+                return false
+            }
+
+            if let loadImages = loadImages,
+               loadImages {
+                gImageAndVideoNames = loadImageAndVideoNames()
+            }
+
+            return true
+        } catch {
+            iPrint("Failed to resolve selected folder bookmark: \(error.localizedDescription)")
+            return false
         }
     }
 
@@ -839,14 +857,28 @@ struct ContentView: View {
         if index > 0 {
             return
         }
+
+        let trimmedFolderPath = imageFolder.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedFolderPath.isEmpty else {
+            return
+        }
+
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: trimmedFolderPath, isDirectory: &isDirectory),
+              isDirectory.boolValue else {
+            iPrint("Cannot watch folder because it does not exist or is not a directory: \(trimmedFolderPath)")
+            return
+        }
+
         gDirectoryWatcher?.release()
         gDirectoryWatcher = nil
+
         do {
-            try gDirectoryWatcher = DirectoryWatcher(directoryPath: imageFolder) {
+            try gDirectoryWatcher = DirectoryWatcher(directoryPath: trimmedFolderPath) {
                 scheduleImageLoad()
             }
-        } catch let error {
-            iPrint("failed to watch directory: \(imageFolder) - \(error.localizedDescription)")
+        } catch {
+            iPrint("Failed to watch directory: \(error.localizedDescription)")
         }
     }
 

@@ -41,37 +41,73 @@ func downloadPexelPhotos(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @e
 
     appDelegate.setDownloading(true)
 
+    func logPexelsPhotosFailure(message: String, data: Data?, response: URLResponse?, error: Error?) {
+        let statusCode = (response as? HTTPURLResponse)?.statusCode
+        var logMessage = "\(message)"
+
+        if let statusCode = statusCode {
+            logMessage += " | HTTP \(statusCode)"
+        }
+
+        if let error = error {
+            logMessage += " | error: \(error.localizedDescription)"
+        }
+
+        if let data = data,
+           let body = String(data: data, encoding: .utf8),
+           !body.isEmpty {
+            let preview = String(body.prefix(500))
+            logMessage += " | body: \(preview)"
+        }
+
+        iPrint(logMessage)
+    }
+
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
         if let error = error {
-            iPrint("Error: \(error)")
-        } else if let data = data {
-            let decoder = JSONDecoder()
-            do {
-                let pexelsResponse = try decoder.decode(PexelsResponse.self, from: data)
-                iPrint("pexelsResponse photos: \(pexelsResponse.photos.count)")
+            logPexelsPhotosFailure(message: "Pexels photos request failed", data: data, response: response, error: error)
+            appDelegate.setDownloading(false)
+            return
+        }
 
-                // Create a dispatch group
-                let group = DispatchGroup()
-                writeFile(directoryURL: pexelsFolder, fileName: ".imageTop", contents: String(pexelsResponse.totalResults))
-                for photo in pexelsResponse.photos {
-                    // Enter group before each download
-                    group.enter()
-                    downloadPhoto(from: photo.src.landscape, photographer: photo.photographer, to: pexelsFolder) {
-                        // Leave group after each download
-                        group.leave()
-                    }
-                }
+        guard let data = data else {
+            logPexelsPhotosFailure(message: "Pexels photos request returned empty body", data: nil, response: response, error: nil)
+            appDelegate.setDownloading(false)
+            return
+        }
 
-                // Wait for all downloads to complete
-                group.notify(queue: .main) {
-                    // All downloads completed
-                    appDelegate.numberOfPexelsPhotos = pexelsResponse.photos.count
-                    appDelegate.setDownloading(false)
-                    onDone()
+        if let statusCode = (response as? HTTPURLResponse)?.statusCode,
+           !(200...299).contains(statusCode) {
+            logPexelsPhotosFailure(message: "Pexels photos request returned non-success status", data: data, response: response, error: nil)
+            appDelegate.setDownloading(false)
+            return
+        }
+
+        do {
+            let pexelsResponse = try JSONDecoder().decode(PexelsResponse.self, from: data)
+
+            // Create a dispatch group
+            let group = DispatchGroup()
+            writeFile(directoryURL: pexelsFolder, fileName: ".imageTop", contents: String(pexelsResponse.totalResults))
+            for photo in pexelsResponse.photos {
+                // Enter group before each download
+                group.enter()
+                downloadPhoto(from: photo.src.landscape, photographer: photo.photographer, to: pexelsFolder) {
+                    // Leave group after each download
+                    group.leave()
                 }
-            } catch {
-                iPrint("Error decoding JSON: \(error)")
             }
+
+            // Wait for all downloads to complete
+            group.notify(queue: .main) {
+                // All downloads completed
+                appDelegate.numberOfPexelsPhotos = pexelsResponse.photos.count
+                appDelegate.setDownloading(false)
+                onDone()
+            }
+        } catch {
+            logPexelsPhotosFailure(message: "Failed to decode Pexels photos JSON", data: data, response: response, error: error)
+            appDelegate.setDownloading(false)
         }
     }
 

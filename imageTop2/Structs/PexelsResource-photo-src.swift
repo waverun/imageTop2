@@ -3,7 +3,7 @@ struct PexelsResponse: Codable {
     let perPage: Int
     let photos: [Photo]
     let totalResults: Int
-    let nextPage: String
+    let nextPage: String?
 
      enum CodingKeys: String, CodingKey {
         case page, photos, nextPage = "next_page", perPage = "per_page", totalResults = "total_results"
