@@ -1109,12 +1109,26 @@ struct ContentView: View {
     }
 
     func setImageOrVideoMode(_ value: Bool = true) {
-        imageOrVideoMode = gImageAndVideoNames.count > 2
+        let availableCandidates = gImageAndVideoNames.count
+        imageOrVideoMode = availableCandidates > 1
+
         if !imageOrVideoMode {
             firstImage = nil
             secondImage = nil
+            firstImagePath = ""
+            secondImagePath = ""
+            firstPhotographer = ""
+            secondPhotographer = ""
+
             gStateObjects[index]!.firstVideoPath = ""
             gStateObjects[index]!.secondVideoPath = ""
+            firstVideoPath = ""
+            secondVideoPath = ""
+
+            showVideo = false
+            hideVideos = true
+        } else {
+            hideVideos = false
         }
     }
 }
