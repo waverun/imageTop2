@@ -430,7 +430,7 @@ struct ContentView: View {
 
             if event.type == .keyDown, event.keyCode == 53 {
                 iPrint("Escape was pressed while monitoring input")
-                handleEscapeForCurrentPexelsItem()
+                handleEscapeForCurrentItem()
                 return event
             }
 
@@ -497,6 +497,7 @@ struct ContentView: View {
         }
 
         appDelegate.numberOfPexelsVideos = appDelegate.pexelsVideos.count
+
         return true
     }
 
@@ -529,17 +530,61 @@ struct ContentView: View {
         return true
     }
 
-    func handleEscapeForCurrentPexelsItem() {
+    func removeLocalMediaEntry(for currentPath: String) -> Bool {
+        guard !currentPath.starts(with: "https:"),
+              !currentPath.contains("/pexels/") else {
+            return false
+        }
+
+        let beforeCount = gImageAndVideoNames.count
+        gImageAndVideoNames.removeAll { $0 == currentPath }
+        let removedCount = beforeCount - gImageAndVideoNames.count
+        guard removedCount > 0 else {
+            return false
+        }
+
+        removeCurrentPathFromUnusedPaths(currentPath)
+
+        if showVideo {
+            if showSecondVideo {
+                secondVideoPath = ""
+                secondPhotographer = ""
+            } else {
+                firstVideoPath = ""
+                firstPhotographer = ""
+            }
+        } else {
+            if showSecondImage {
+                secondImagePath = ""
+                secondImage = nil
+                secondPhotographer = ""
+            } else {
+                firstImagePath = ""
+                firstImage = nil
+                firstPhotographer = ""
+            }
+        }
+
+        appDelegate.numberOfLocalImagesAndVideos = max(0, appDelegate.numberOfLocalImagesAndVideos - removedCount)
+
+        return true
+    }
+
+    func handleEscapeForCurrentItem() {
         guard let currentPath = currentDisplayedMediaPath() else {
             return
         }
 
         let removedFromPexels = removePexelsVideoEntry(for: currentPath) || removePexelsPhotoEntry(for: currentPath)
-        guard removedFromPexels else {
+        let removedLocal = removeLocalMediaEntry(for: currentPath)
+        guard removedFromPexels || removedLocal else {
             return
         }
 
-        gImageAndVideoNames = loadImageAndVideoNames()
+        if removedFromPexels {
+            gImageAndVideoNames = loadImageAndVideoNames()
+        }
+
         gNeedToLoadImageOrVideo[index] = false
         changeScreenImageVideoOrColor()
     }
