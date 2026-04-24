@@ -51,6 +51,7 @@ struct DigitalWatchView: View {
 
     @State private var watchPosition = CGPoint(x: 0, y: 0)
     @State private var timeString = ""
+    @State private var currentCpuLoad: Double? = nil
     @State private var timer: Timer? = nil
 
     let x: CGFloat?
@@ -60,7 +61,7 @@ struct DigitalWatchView: View {
         Text(timeString)
             .font(timeFont)
             .foregroundColor(.white)
-            .frame(width: 250, height: 100)
+            .frame(width: appDelegate.showCpu ? ((currentCpuLoad ?? 0) < 100 ? 330 : 360) : 250, height: 100)
             .background(backgroundColor)
             .cornerRadius(10)
             .position(watchPosition)
@@ -94,6 +95,7 @@ struct DigitalWatchView: View {
         formatter.dateFormat = "HH:mm"
         switch true {
             case appDelegate.showWatchOrCpu:
+                currentCpuLoad = nil
                 timeString = formatter.string(from: Date())
             case appDelegate.showCpu: 
 //                timeString = getCpuUsage() ?? ""
@@ -106,8 +108,9 @@ struct DigitalWatchView: View {
 //                print("CPU Usage loadInfo: \(String(describing: loadInfo))")
                 let cpuLoad = calculateCPULoad()
                 if let cpuLoad = cpuLoad {
+                    currentCpuLoad = cpuLoad
                     print("CPU Load: \(cpuLoad)%")
-                    timeString = String(format: "%.2f%", cpuLoad)
+                    timeString = String(format: "%.2f%%", cpuLoad)
                 }
                 // iPrint("Time updated")
             default: break
