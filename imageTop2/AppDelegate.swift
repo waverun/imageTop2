@@ -26,6 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var numberOfPexelsPhotos = 0
     @Published var numberOfPexelsVideos = 0
     @Published var isVideoBlurred = false
+    @Published var settingsErrorMessage: String? = nil
 
     @Published var autoStart: Bool = true {
         didSet {
@@ -104,6 +105,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     func setDownloading(_ value: Bool) {
         DispatchQueue.main.async { [weak self] in
             self?.downloading = value
+        }
+    }
+
+    func showSettingsError(_ message: String) {
+        DispatchQueue.main.async { [weak self] in
+            self?.settingsErrorMessage = message
+        }
+    }
+
+    func clearSettingsError() {
+        DispatchQueue.main.async { [weak self] in
+            self?.settingsErrorMessage = nil
         }
     }
 

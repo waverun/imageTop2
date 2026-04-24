@@ -31,6 +31,8 @@ struct SettingsView: View {
     @State var filteredModKeyNames1: [String] = Keyboard.modKeyNames
     @State var filteredModKeyNames2: [String] = Keyboard.modKeyNames
     @State var keyStringSymbol = ""
+    @State var showErrorAlert = false
+    @State var settingsErrorText = ""
 
     let allKeyNames = Keyboard.keyNames
     let modKeyNames = Keyboard.modKeyNames
@@ -169,6 +171,13 @@ struct SettingsView: View {
                                 Spacer()
                                     .buttonStyle(PlainButtonStyle())
                                 Toggle("Videos from Pexels (\(numberOfPexelsVideos))", isOn: $useVideosFromPexelsIsOn)
+                                if let settingsErrorMessage = appDelegate.settingsErrorMessage,
+                                   !settingsErrorMessage.isEmpty {
+                                    Text(settingsErrorMessage)
+                                        .font(.caption)
+                                        .foregroundColor(.red)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
                                 Spacer()
                             }
                             Spacer()
@@ -218,8 +227,18 @@ struct SettingsView: View {
 //            EmptyView()
 //        }.keyboardShortcut(.cancelAction)
         .buttonStyle(PlainButtonStyle())
+        .alert("Loading Error", isPresented: $showErrorAlert) {
+            Button("OK") {
+                appDelegate.clearSettingsError()
+            }
+        } message: {
+            Text(settingsErrorText)
+        }
         .onChange(of: usePhotosFromPexelsIsOn) { newValue in
            iPrint("isOn: \(usePhotosFromPexelsIsOn)")
+            if newValue {
+                appDelegate.clearSettingsError()
+            }
             usePhotosFromPexels = usePhotosFromPexelsIsOn
         }
         .onChange(of: useLocalImageAndVideosIsOn) { newValue in
@@ -228,16 +247,25 @@ struct SettingsView: View {
         }
         .onChange(of: useVideosFromPexelsIsOn) { newValue in
            iPrint("isOn: \(useVideosFromPexelsIsOn)")
+            if newValue {
+                appDelegate.clearSettingsError()
+            }
             useVideosFromPexels = useVideosFromPexelsIsOn
         }
         .onChange(of: appDelegate.pexelsPhotos) { pexelsPhotos in
-            if pexelsPhotos.count < 2 {
+            if pexelsPhotos.count < 2,
+               usePhotosFromPexelsIsOn,
+               !appDelegate.downloading,
+               appDelegate.settingsErrorMessage != nil {
                 usePhotosFromPexelsIsOn = false
                 usePhotosFromPexels = false
             }
         }
         .onChange(of: appDelegate.pexelsVideos) { pexelsVideos in
-            if pexelsVideos.count < 2 {
+            if pexelsVideos.count < 2,
+               useVideosFromPexelsIsOn,
+               !appDelegate.downloading,
+               appDelegate.settingsErrorMessage != nil {
                 useVideosFromPexelsIsOn = false
                 useVideosFromPexels = false
             }
@@ -305,7 +333,15 @@ struct SettingsView: View {
 //            iPrint("appDelegate.$downloading: \(appDelegate.downloading)")
             numberOfPexelsVideos = newValue
         }
-        .frame(width: 350, height: 370)
+        .onReceive(appDelegate.$settingsErrorMessage) { message in
+            guard let message,
+                  !message.isEmpty else {
+                return
+            }
+            settingsErrorText = message
+            showErrorAlert = true
+        }
+        .frame(width: 350, height: 390)
         .onAppear {
             selectedFolderPath = storedFolderPath
             usePhotosFromPexelsIsOn = usePhotosFromPexels
@@ -316,6 +352,11 @@ struct SettingsView: View {
             keyStringSymbol = Keyboard.keySymbol(from: keyString)
             filteredModKeyNames1 = filterModKeys(otherModeValue: keyString2)
             filteredModKeyNames2 = filterModKeys(otherModeValue: keyString1)
+            if let message = appDelegate.settingsErrorMessage,
+               !message.isEmpty {
+                settingsErrorText = message
+                showErrorAlert = true
+            }
         }
         .onDisappear {
             if startAfter < 5 {

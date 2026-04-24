@@ -823,14 +823,22 @@ struct ContentView: View {
             DispatchQueue.global().async {
                 pexelDownloadSemaphore.wait()
                 if appDelegate.pexelsPhotos.count < 2 {
-                    downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl, appDelegate: appDelegate) {
+                    downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl, appDelegate: appDelegate) { _ in
                         appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
+                        if appDelegate.pexelsPhotos.count < 2 {
+                            if appDelegate.settingsErrorMessage == nil {
+                                appDelegate.showSettingsError("Pexels photos failed: no usable photos were downloaded.")
+                            }
+                        } else {
+                            appDelegate.clearSettingsError()
+                        }
                         pexelDownloadSemaphore.signal()
                         if !useVideosFromPexels {
                             appDelegate.loadImagesAndVideos.toggle()
                         }
                     }
                 } else {
+                    appDelegate.clearSettingsError()
                     pexelDownloadSemaphore.signal()
                 }
             }
