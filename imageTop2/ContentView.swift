@@ -428,6 +428,12 @@ struct ContentView: View {
         appDelegate.keyAndMouseEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
             iPrint("in startMonitoringUserInput showWindow: \(appDelegate.showWindow)")
 
+            if event.type == .keyDown, event.keyCode == 53 {
+                iPrint("Escape was pressed while monitoring input")
+                handleEscapeForCurrentPexelsItem()
+                return event
+            }
+
             if !appDelegate.ignoreMonitor {
                 appDelegate.showWindow = false
                 NSApp.deactivate()
@@ -443,6 +449,99 @@ struct ContentView: View {
             NSEvent.removeMonitor(monitor)
             appDelegate.keyAndMouseEventMonitor = nil
         }
+    }
+
+    func currentDisplayedMediaPath() -> String? {
+        if showVideo {
+            let path = showSecondVideo ? secondVideoPath : firstVideoPath
+            return path.isEmpty ? nil : path
+        }
+
+        let path = showSecondImage ? secondImagePath : firstImagePath
+        return path.isEmpty ? nil : path
+    }
+
+    func removeCurrentPathFromUnusedPaths(_ currentPath: String) {
+        gStateObjects[index]?.unusedPaths.remove(currentPath)
+        let prefixedEntries = gStateObjects[index]?.unusedPaths.filter { $0.hasPrefix(currentPath + ",") } ?? []
+        for entry in prefixedEntries {
+            gStateObjects[index]?.unusedPaths.remove(entry)
+        }
+    }
+
+    func removePexelsVideoEntry(for currentPath: String) -> Bool {
+        guard currentPath.starts(with: "https:") else {
+            return false
+        }
+
+        let beforeCount = appDelegate.pexelsVideos.count
+        appDelegate.pexelsVideos.removeAll { $0 == currentPath || $0.hasPrefix(currentPath + ",") }
+        if beforeCount == appDelegate.pexelsVideos.count {
+            return false
+        }
+
+        gImageAndVideoNames.removeAll { $0 == currentPath || $0.hasPrefix(currentPath + ",") }
+        removeCurrentPathFromUnusedPaths(currentPath)
+
+        if let pexelsDirectoryUrl = pexelsDirectoryUrl {
+            let videoList = appDelegate.pexelsVideos.joined(separator: "\n")
+            writeFile(directoryURL: pexelsDirectoryUrl, fileName: "videoList.txt", contents: videoList)
+        }
+
+        if showSecondVideo {
+            secondVideoPath = ""
+            secondPhotographer = ""
+        } else {
+            firstVideoPath = ""
+            firstPhotographer = ""
+        }
+
+        appDelegate.numberOfPexelsVideos = appDelegate.pexelsVideos.count
+        return true
+    }
+
+    func removePexelsPhotoEntry(for currentPath: String) -> Bool {
+        guard currentPath.contains("/pexels/") else {
+            return false
+        }
+
+        let beforeCount = appDelegate.pexelsPhotos.count
+        appDelegate.pexelsPhotos.removeAll { $0 == currentPath }
+        if beforeCount == appDelegate.pexelsPhotos.count {
+            return false
+        }
+
+        deleteFile(at: URL(fileURLWithPath: currentPath))
+        gImageAndVideoNames.removeAll { $0 == currentPath }
+        removeCurrentPathFromUnusedPaths(currentPath)
+
+        if showSecondImage {
+            secondImagePath = ""
+            secondImage = nil
+            secondPhotographer = ""
+        } else {
+            firstImagePath = ""
+            firstImage = nil
+            firstPhotographer = ""
+        }
+
+        appDelegate.numberOfPexelsPhotos = appDelegate.pexelsPhotos.count
+        return true
+    }
+
+    func handleEscapeForCurrentPexelsItem() {
+        guard let currentPath = currentDisplayedMediaPath() else {
+            return
+        }
+
+        let removedFromPexels = removePexelsVideoEntry(for: currentPath) || removePexelsPhotoEntry(for: currentPath)
+        guard removedFromPexels else {
+            return
+        }
+
+        gImageAndVideoNames = loadImageAndVideoNames()
+        gNeedToLoadImageOrVideo[index] = false
+        changeScreenImageVideoOrColor()
     }
 
     @discardableResult
