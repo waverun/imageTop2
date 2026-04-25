@@ -332,7 +332,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
         updateShowItem()
 
-        menu.addItem(withTitle: "Skip Current (Esc)", action: #selector(skipCurrentItem), keyEquivalent: "\u{1b}")
+        menu.addItem(withTitle: "Skip Current (Esc / Right Click)", action: #selector(skipCurrentItem), keyEquivalent: "\u{1b}")
         menu.addItem(withTitle: "Settings", action: #selector(openSettings), keyEquivalent: "")
         autoStartItem = menu.addItem(withTitle: (autoStart ? "Disable" : "Enable") + " Auto (Inactivity) Start", action: #selector(handleAutoStart), keyEquivalent: "")
 
