@@ -430,7 +430,7 @@ struct ContentView: View {
             return
         }
 
-        appDelegate.keyAndMouseEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved, .rightMouseDown]) { event in
+        appDelegate.keyAndMouseEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved, .leftMouseDown, .rightMouseDown]) { event in
             iPrint("in startMonitoringUserInput showWindow: \(appDelegate.showWindow)")
 
             if event.type == .keyDown, event.keyCode == 53 {
