@@ -138,6 +138,11 @@ struct ContentView: View {
         .onReceive(appDelegate.$loadImagesAndVideos, perform: handleLoadImagesAndVideosChange)
         .onReceive(appDelegate.$networkIsReachable, perform: handleNetworkReachabilityChange)
         .onReceive(appDelegate.$setImageOrVideoModeToggle, perform: setImageOrVideoMode)
+        .onReceive(NotificationCenter.default.publisher(for: .skipCurrentItemRequested)) { _ in
+            if index == 0 {
+                handleEscapeForCurrentItem()
+            }
+        }
     }
 
     @ViewBuilder var backgroundView: some View {

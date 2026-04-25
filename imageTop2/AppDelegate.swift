@@ -3,6 +3,10 @@ import SwiftUI
 import ServiceManagement
 import Quartz
 
+extension Notification.Name {
+    static let skipCurrentItemRequested = Notification.Name("SkipCurrentItemRequested")
+}
+
 @main
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDelegate {
 
@@ -328,6 +332,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
         updateShowItem()
 
+        menu.addItem(withTitle: "Skip Current (Esc)", action: #selector(skipCurrentItem), keyEquivalent: "\u{1b}")
         menu.addItem(withTitle: "Settings", action: #selector(openSettings), keyEquivalent: "")
         autoStartItem = menu.addItem(withTitle: (autoStart ? "Disable" : "Enable") + " Auto (Inactivity) Start", action: #selector(handleAutoStart), keyEquivalent: "")
 
@@ -525,5 +530,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         settingsWindow.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
         settingsWindow.makeFirstResponder(nil)
+    }
+
+    @objc func skipCurrentItem() {
+        NotificationCenter.default.post(name: .skipCurrentItemRequested, object: nil)
     }
 }
