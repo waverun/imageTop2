@@ -430,11 +430,17 @@ struct ContentView: View {
             return
         }
 
-        appDelegate.keyAndMouseEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved]) { event in
+        appDelegate.keyAndMouseEventMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .mouseMoved, .rightMouseDown]) { event in
             iPrint("in startMonitoringUserInput showWindow: \(appDelegate.showWindow)")
 
             if event.type == .keyDown, event.keyCode == 53 {
                 iPrint("Escape was pressed while monitoring input")
+                handleEscapeForCurrentItem()
+                return event
+            }
+
+            if event.type == .rightMouseDown {
+                iPrint("Right click was pressed while monitoring input")
                 handleEscapeForCurrentItem()
                 return event
             }
