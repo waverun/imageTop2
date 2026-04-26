@@ -24,7 +24,7 @@ struct StateObjects {
 struct ContentView: View {
     var index: Int
     var videoFadeTime = 4.0
-    var imageFadeTime = 1.0
+    var imageFadeTime = 2.0
 //    let cpuUsage = getCpuUsage()
 
     @EnvironmentObject var appDelegate: AppDelegate
@@ -238,13 +238,13 @@ struct ContentView: View {
                                     .padding(.bottom, 50)
                                     .padding(.leading, 50)
                                     .opacity(condition ? 1 : 0)
-                                    .animation(.linear(duration: startShowVideo ? videoFadeTime : imageFadeTime), value: condition)
+                                    .animation(.easeInOut(duration: imageFadeTime), value: condition)
                                 Spacer()
                             }
                         }
                     )
                     .opacity(condition ? 1 : 0)
-                    .animation(.linear(duration: startShowVideo ? videoFadeTime : imageFadeTime), value: condition)
+                    .animation(.easeInOut(duration: condition ? imageFadeTime / 8 : imageFadeTime), value: condition)
             )
         } else {
             return AnyView(Color.clear)
