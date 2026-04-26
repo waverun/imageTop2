@@ -48,6 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             if showWatchOrCpu {
                 showCpu = false
                 showWeatherByIP = false
+                showSunEventByIP = false
             }
             // Update the title of the menu item when autoStart changes
             showWatchItem.title = getWatchCpuMenuValue(showValue: "Watch") // (showWatch ? "Hide" : "Show") + " Watch"
@@ -59,6 +60,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             if showCpu {
                 showWatchOrCpu = false
                 showWeatherByIP = false
+                showSunEventByIP = false
             }
             // Update the title of the menu item when autoStart changes
             showWatchItem.title = getWatchCpuMenuValue(showValue: "CPU") // (showCpu ? "Hide" : "Show") + " Cpu"
@@ -70,8 +72,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             if showWeatherByIP {
                 showWatchOrCpu = false
                 showCpu = false
+                showSunEventByIP = false
             }
             showWatchItem.title = getWatchCpuMenuValue(showValue: "Temperature")
+        }
+    }
+
+    @AppStorage("showSunEventByIP") var showSunEventByIP = false {
+        didSet {
+            if showSunEventByIP {
+                showWatchOrCpu = false
+                showCpu = false
+                showWeatherByIP = false
+            }
+            showWatchItem.title = getWatchCpuMenuValue(showValue: "Sunrise/Sunset")
         }
     }
 
@@ -80,6 +94,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             case showWatchOrCpu: return "Hide Watch"
             case showCpu: return "Hide CPU"
             case showWeatherByIP: return "Hide Temperature"
+            case showSunEventByIP: return "Hide Sunrise/Sunset"
             default: return "Show with " + showValue
         }
     }
@@ -431,9 +446,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                 showWatchOrCpu.toggle()
             case showWatchItem.title.contains("Temperature"):
                 showWeatherByIP.toggle()
+            case showWatchItem.title.contains("Sunrise/Sunset"):
+                showSunEventByIP.toggle()
             default: showCpu.toggle()
         }
-        if showWatchOrCpu {
+        if showWatchOrCpu || showCpu || showWeatherByIP || showSunEventByIP {
             showMainWindow()
         }
     }

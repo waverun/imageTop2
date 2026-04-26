@@ -18,12 +18,14 @@ struct SettingsView: View {
     @AppStorage("showWatch") var showWatch = true 
     @AppStorage("showCpu") var showCpu = false
     @AppStorage("showWeatherByIP") var showWeatherByIP = false
+    @AppStorage("showSunEventByIP") var showSunEventByIP = false
 
     @State var usePhotosFromPexelsIsOn: Bool = false
     @State var useLocalImageAndVideosIsOn: Bool = false
     @State var showWatchIsOn: Bool = false
     @State var showCpuIsOn: Bool = false
     @State var showWeatherByIPIsOn: Bool = false
+    @State var showSunEventByIPIsOn: Bool = false
     @State var useVideosFromPexelsIsOn: Bool = true
     @State var selectedFolderPath = ""
     @State var disabled = false
@@ -214,6 +216,13 @@ struct SettingsView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
                         HStack {
+                            Spacer()
+                            Toggle("Show Sunrise/Sunset", isOn: $showSunEventByIPIsOn)
+                                .toggleStyle(.checkbox)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                        HStack {
                             VStack(alignment: .leading) {
                                 Toggle("Show System CPU", isOn: $showCpuIsOn)
                             }
@@ -280,6 +289,7 @@ struct SettingsView: View {
             if showWatch {
                 showCpuIsOn = false
                 showWeatherByIPIsOn = false
+                showSunEventByIPIsOn = false
 //                showCpu = false
 //                appDelegate.showCpu = false
             }
@@ -295,6 +305,7 @@ struct SettingsView: View {
             if showCpu {
                 showWatchIsOn = false
                 showWeatherByIPIsOn = false
+                showSunEventByIPIsOn = false
 //                showWatch = false
             }
         }
@@ -309,11 +320,26 @@ struct SettingsView: View {
             if showWeatherByIP {
                 showWatchIsOn = false
                 showCpuIsOn = false
+                showSunEventByIPIsOn = false
             }
         }
         .onChange(of: showWeatherByIP) { _ in
             iPrint("showWeatherByIP: \(showWeatherByIP)")
             showWeatherByIPIsOn = showWeatherByIP
+        }
+        .onChange(of: showSunEventByIPIsOn) { _ in
+            iPrint("sun event isOn: \(showSunEventByIPIsOn)")
+            showSunEventByIP = showSunEventByIPIsOn
+            appDelegate.showSunEventByIP = showSunEventByIP
+            if showSunEventByIP {
+                showWatchIsOn = false
+                showCpuIsOn = false
+                showWeatherByIPIsOn = false
+            }
+        }
+        .onChange(of: showSunEventByIP) { _ in
+            iPrint("showSunEventByIP: \(showSunEventByIP)")
+            showSunEventByIPIsOn = showSunEventByIP
         }
         .onChange(of: keyString) { _ in
             iPrint("keyString: \(keyString)")
@@ -368,6 +394,7 @@ struct SettingsView: View {
             showWatchIsOn = showWatch
             showCpuIsOn = showCpu
             showWeatherByIPIsOn = showWeatherByIP
+            showSunEventByIPIsOn = showSunEventByIP
             keyStringSymbol = Keyboard.keySymbol(from: keyString)
             filteredModKeyNames1 = filterModKeys(otherModeValue: keyString2)
             filteredModKeyNames2 = filterModKeys(otherModeValue: keyString1)

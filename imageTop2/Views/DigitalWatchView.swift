@@ -56,13 +56,16 @@ struct DigitalWatchView: View {
     @State private var weatherTemperatureText = "--"
     @State private var weatherLastFetchDate: Date? = nil
     @State private var weatherFetchInProgress = false
+    @State private var sunEventDisplayText = "--"
+    @State private var sunEventLastFetchDate: Date? = nil
+    @State private var sunEventFetchInProgress = false
 
     let x: CGFloat?
     let y: CGFloat?
 
     @ViewBuilder var body: some View {
         Text(timeString)
-            .font(timeFont)
+            .font(appDelegate.showSunEventByIP ? .system(size: 32, weight: .bold, design: .rounded) : timeFont)
             .foregroundColor(.white)
             .frame(width: watchWidth, height: 100)
             .background(backgroundColor)
@@ -83,6 +86,9 @@ struct DigitalWatchView: View {
     var watchWidth: CGFloat {
         if appDelegate.showWeatherByIP {
             return 300
+        }
+        if appDelegate.showSunEventByIP {
+            return 380
         }
         if appDelegate.showCpu {
             return (currentCpuLoad ?? 0) < 100 ? 330 : 360
@@ -129,7 +135,43 @@ struct DigitalWatchView: View {
                 currentCpuLoad = nil
                 timeString = weatherTemperatureText
                 refreshWeatherIfNeeded()
+            case appDelegate.showSunEventByIP:
+                currentCpuLoad = nil
+                timeString = sunEventDisplayText
+                refreshSunEventIfNeeded()
             default: break
+        }
+    }
+
+    private func refreshSunEventIfNeeded(force: Bool = false) {
+        if sunEventFetchInProgress {
+            return
+        }
+        if !force,
+           let sunEventLastFetchDate,
+           Date().timeIntervalSince(sunEventLastFetchDate) < 600 {
+            return
+        }
+
+        sunEventFetchInProgress = true
+        fetchSunEventFromIP { result in
+            DispatchQueue.main.async {
+                defer { sunEventFetchInProgress = false }
+                switch result {
+                    case .success(let text):
+                        sunEventDisplayText = text
+                        sunEventLastFetchDate = Date()
+                        if appDelegate.showSunEventByIP {
+                            timeString = sunEventDisplayText
+                        }
+                    case .failure:
+                        sunEventDisplayText = "N/A"
+                        sunEventLastFetchDate = Date()
+                        if appDelegate.showSunEventByIP {
+                            timeString = sunEventDisplayText
+                        }
+                }
+            }
         }
     }
 
@@ -233,6 +275,117 @@ struct DigitalWatchView: View {
                     return
                 }
                 completion(.success(temperature))
+            }.resume()
+        }.resume()
+    }
+
+    private func fetchSunEventFromIP(completion: @escaping (Result<String, Error>) -> Void) {
+        struct GeoLookupError: LocalizedError {
+            let message: String
+            var errorDescription: String? { message }
+        }
+
+        func parseDouble(_ value: Any?) -> Double? {
+            if let number = value as? NSNumber {
+                return number.doubleValue
+            }
+            if let string = value as? String {
+                return Double(string)
+            }
+            return nil
+        }
+
+        func formatDuration(from now: Date, to eventDate: Date) -> String {
+            let totalSeconds = max(Int(eventDate.timeIntervalSince(now)), 0)
+            let hours = totalSeconds / 3600
+            let minutes = (totalSeconds % 3600) / 60
+            return "\(hours)h \(minutes)m"
+        }
+
+        func parseEpochArray(_ value: Any?) -> [TimeInterval] {
+            if let numbers = value as? [NSNumber] {
+                return numbers.map { $0.doubleValue }
+            }
+            if let numbers = value as? [Double] {
+                return numbers
+            }
+            if let numbers = value as? [Int] {
+                return numbers.map(Double.init)
+            }
+            if let strings = value as? [String] {
+                return strings.compactMap(Double.init)
+            }
+            return []
+        }
+
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 10
+        configuration.timeoutIntervalForResource = 10
+        let session = URLSession(configuration: configuration)
+
+        guard let geoURL = URL(string: "https://ipapi.co/json/") else {
+            completion(.failure(GeoLookupError(message: "Invalid IP geo URL")))
+            return
+        }
+
+        session.dataTask(with: geoURL) { data, _, error in
+            if let error {
+                completion(.failure(error))
+                return
+            }
+            guard let data else {
+                completion(.failure(GeoLookupError(message: "Missing IP geo response data")))
+                return
+            }
+            guard let raw = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let latitude = parseDouble(raw["latitude"]),
+                  let longitude = parseDouble(raw["longitude"]) else {
+                completion(.failure(GeoLookupError(message: "Invalid IP geo JSON")))
+                return
+            }
+
+            let weatherURLString = "https://api.open-meteo.com/v1/forecast?latitude=\(latitude)&longitude=\(longitude)&daily=sunrise,sunset&forecast_days=2&timezone=auto&timeformat=unixtime"
+            guard let weatherURL = URL(string: weatherURLString) else {
+                completion(.failure(GeoLookupError(message: "Invalid sun event URL")))
+                return
+            }
+
+            session.dataTask(with: weatherURL) { weatherData, _, weatherError in
+                if let weatherError {
+                    completion(.failure(weatherError))
+                    return
+                }
+                guard let weatherData else {
+                    completion(.failure(GeoLookupError(message: "Missing sun event response data")))
+                    return
+                }
+                guard let weatherRaw = try? JSONSerialization.jsonObject(with: weatherData) as? [String: Any],
+                      let daily = weatherRaw["daily"] as? [String: Any] else {
+                    completion(.failure(GeoLookupError(message: "Missing sunrise/sunset in weather response")))
+                    return
+                }
+
+                let sunriseEpochs = parseEpochArray(daily["sunrise"])
+                let sunsetEpochs = parseEpochArray(daily["sunset"])
+                var events: [(label: String, date: Date)] = []
+                for sunriseEpoch in sunriseEpochs {
+                    events.append(("Sunrise", Date(timeIntervalSince1970: sunriseEpoch)))
+                }
+                for sunsetEpoch in sunsetEpochs {
+                    events.append(("Sunset", Date(timeIntervalSince1970: sunsetEpoch)))
+                }
+                let now = Date()
+                let nextEvent = events
+                    .filter { $0.date > now }
+                    .min { $0.date < $1.date }
+
+                guard let nextEvent else {
+                    completion(.failure(GeoLookupError(message: "No upcoming sunrise/sunset event found")))
+                    return
+                }
+
+                let durationText = formatDuration(from: now, to: nextEvent.date)
+                completion(.success("\(nextEvent.label) in \(durationText)"))
             }.resume()
         }.resume()
     }
