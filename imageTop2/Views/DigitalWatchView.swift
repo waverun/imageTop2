@@ -88,7 +88,7 @@ struct DigitalWatchView: View {
             return 300
         }
         if appDelegate.showSunEventByIP {
-            return 380
+            return 305
         }
         if appDelegate.showCpu {
             return (currentCpuLoad ?? 0) < 100 ? 330 : 360
@@ -299,7 +299,8 @@ struct DigitalWatchView: View {
             let totalSeconds = max(Int(eventDate.timeIntervalSince(now)), 0)
             let hours = totalSeconds / 3600
             let minutes = (totalSeconds % 3600) / 60
-            return "\(hours)h \(minutes)m"
+//            return "\(hours)h \(minutes)m"
+            return "24h 00m"
         }
 
         func parseEpochArray(_ value: Any?) -> [TimeInterval] {
