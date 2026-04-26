@@ -172,7 +172,7 @@ struct SettingsView: View {
                         HStack {
                             VStack(alignment: .leading) {
                                 Toggle("Photos from Pexels (\(numberOfPexelsPhotos))", isOn: $usePhotosFromPexelsIsOn)
-                                Spacer()
+//                                Spacer()
                                     .buttonStyle(PlainButtonStyle())
                                 Toggle("Videos from Pexels (\(numberOfPexelsVideos))", isOn: $useVideosFromPexelsIsOn)
                                 if let settingsErrorMessage = appDelegate.settingsErrorMessage,
@@ -182,54 +182,62 @@ struct SettingsView: View {
                                         .foregroundColor(.red)
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
-                                Spacer()
+//                                Spacer()
                             }
+
                             Spacer()
-                            ZStack {
-                                Button(action: {
-                                    if let url = URL(string: "https://www.pexels.com") {
-                                        NSWorkspace.shared.open(url)
+
+                            VStack {
+                                ZStack {
+                                    Button(action: {
+                                        if let url = URL(string: "https://www.pexels.com") {
+                                            NSWorkspace.shared.open(url)
+                                        }
+                                    }) {
+                                        Image("pexels")
+                                            .resizable()
+                                            .frame(width: 32, height: 32)
+                                            .offset(y: -3)  // This line moves the button up by 10 points
                                     }
-                                }) {
-                                    Image("pexels")
-                                        .resizable()
-                                        .frame(width: 32, height: 32)
-                                        .offset(y: -3)  // This line moves the button up by 10 points
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                .padding(.trailing, 50) // Add a gap on the right side of the button
-                                if disabled {
-                                    ProgressView()
-                                        .progressViewStyle(CircularProgressViewStyle())
-                                        .scaleEffect(0.75)  // This line reduces the size of the spinner to half
-                                        .offset(x: -25, y: -4) // This line moves the spinner 15 points to the left
+                                    .buttonStyle(PlainButtonStyle())
+                                    .padding(.trailing, 50) // Add a gap on the right side of the button
+                                    if disabled {
+                                        ProgressView()
+                                            .progressViewStyle(CircularProgressViewStyle())
+                                            .scaleEffect(0.75)  // This line reduces the size of the spinner to half
+                                            .offset(x: -25, y: -4) // This line moves the spinner 15 points to the left
+                                    }
                                 }
                             }
                         }
                         .padding(.leading)
-                        HStack {
-                            Toggle("Show Watch", isOn: $showWatchIsOn)
-                            Spacer()
-                            Toggle("Show Temperature", isOn: $showWeatherByIPIsOn)
-                                .toggleStyle(.checkbox)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal)
-                        HStack {
-                            Spacer()
-                            Toggle("Show Sunrise/Sunset", isOn: $showSunEventByIPIsOn)
-                                .toggleStyle(.checkbox)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal)
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Toggle("Show System CPU", isOn: $showCpuIsOn)
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading) // Add this line
-                        .padding(.leading)
+
                         Spacer()
+
+                        HStack {
+                            VStack {
+                                Toggle("Show Watch", isOn: $showWatchIsOn)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Toggle("Show System CPU", isOn: $showCpuIsOn)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+
+                            Spacer()
+
+                            VStack {
+                                Toggle("Show Temperature", isOn: $showWeatherByIPIsOn)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Toggle("Show Sunrise/Sunset", isOn: $showSunEventByIPIsOn)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading) // Add this line
+                            .padding(.leading)
+//                            Spacer()
+                        }
+                        .padding(.vertical)
+//                        Spacer()
                     }
                 }
             }
