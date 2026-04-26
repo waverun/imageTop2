@@ -53,6 +53,9 @@ struct DigitalWatchView: View {
     @State private var timeString = ""
     @State private var currentCpuLoad: Double? = nil
     @State private var timer: Timer? = nil
+    @State private var weatherTemperatureText = "--"
+    @State private var weatherLastFetchDate: Date? = nil
+    @State private var weatherFetchInProgress = false
 
     let x: CGFloat?
     let y: CGFloat?
@@ -61,7 +64,7 @@ struct DigitalWatchView: View {
         Text(timeString)
             .font(timeFont)
             .foregroundColor(.white)
-            .frame(width: appDelegate.showCpu ? ((currentCpuLoad ?? 0) < 100 ? 330 : 360) : 250, height: 100)
+            .frame(width: watchWidth, height: 100)
             .background(backgroundColor)
             .cornerRadius(10)
             .position(watchPosition)
@@ -75,6 +78,16 @@ struct DigitalWatchView: View {
                 handleTimerChange(isActive: newValue)
             }
             .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
+    }
+
+    var watchWidth: CGFloat {
+        if appDelegate.showWeatherByIP {
+            return 300
+        }
+        if appDelegate.showCpu {
+            return (currentCpuLoad ?? 0) < 100 ? 330 : 360
+        }
+        return 250
     }
 
     func handleTimerChange(isActive: Bool) {
@@ -112,8 +125,115 @@ struct DigitalWatchView: View {
                     print("CPU Load: \(cpuLoad)%")
                     timeString = String(format: "%.2f%%", cpuLoad)
                 }
-                // iPrint("Time updated")
+            case appDelegate.showWeatherByIP:
+                currentCpuLoad = nil
+                timeString = weatherTemperatureText
+                refreshWeatherIfNeeded()
             default: break
         }
+    }
+
+    private func refreshWeatherIfNeeded(force: Bool = false) {
+        if weatherFetchInProgress {
+            return
+        }
+        if !force,
+           let weatherLastFetchDate,
+           Date().timeIntervalSince(weatherLastFetchDate) < 600 {
+            return
+        }
+
+        weatherFetchInProgress = true
+        fetchWeatherFromIP { result in
+            DispatchQueue.main.async {
+                defer { weatherFetchInProgress = false }
+                switch result {
+                    case .success(let temperature):
+                        weatherTemperatureText = String(format: "%.1f°C", temperature)
+                        weatherLastFetchDate = Date()
+                        if appDelegate.showWeatherByIP {
+                            timeString = weatherTemperatureText
+                        }
+                    case .failure:
+                        weatherTemperatureText = "N/A"
+                        weatherLastFetchDate = Date()
+                        if appDelegate.showWeatherByIP {
+                            timeString = weatherTemperatureText
+                        }
+                }
+            }
+        }
+    }
+
+    private func fetchWeatherFromIP(completion: @escaping (Result<Double, Error>) -> Void) {
+        struct GeoLookupError: LocalizedError {
+            let message: String
+            var errorDescription: String? { message }
+        }
+
+        func parseDouble(_ value: Any?) -> Double? {
+            if let number = value as? NSNumber {
+                return number.doubleValue
+            }
+            if let string = value as? String {
+                return Double(string)
+            }
+            return nil
+        }
+
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 10
+        configuration.timeoutIntervalForResource = 10
+        let session = URLSession(configuration: configuration)
+
+        guard let geoURL = URL(string: "https://ipapi.co/json/") else {
+            completion(.failure(GeoLookupError(message: "Invalid IP geo URL")))
+            return
+        }
+
+        session.dataTask(with: geoURL) { data, _, error in
+            if let error {
+                completion(.failure(error))
+                return
+            }
+            guard let data else {
+                completion(.failure(GeoLookupError(message: "Missing IP geo response data")))
+                return
+            }
+            guard let raw = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                completion(.failure(GeoLookupError(message: "Invalid IP geo JSON")))
+                return
+            }
+
+            guard let latitude = parseDouble(raw["latitude"]),
+                  let longitude = parseDouble(raw["longitude"]) else {
+                completion(.failure(GeoLookupError(message: "Missing latitude/longitude in IP geo response")))
+                return
+            }
+
+            let weatherURLString = "https://api.open-meteo.com/v1/forecast?latitude=\(latitude)&longitude=\(longitude)&current=temperature_2m"
+            guard let weatherURL = URL(string: weatherURLString) else {
+                completion(.failure(GeoLookupError(message: "Invalid weather URL")))
+                return
+            }
+
+            session.dataTask(with: weatherURL) { weatherData, _, weatherError in
+                if let weatherError {
+                    completion(.failure(weatherError))
+                    return
+                }
+                guard let weatherData else {
+                    completion(.failure(GeoLookupError(message: "Missing weather response data")))
+                    return
+                }
+                guard let weatherRaw = try? JSONSerialization.jsonObject(with: weatherData) as? [String: Any],
+                      let current = weatherRaw["current"] as? [String: Any],
+                      let temperature = parseDouble(current["temperature_2m"]) else {
+                    completion(.failure(GeoLookupError(message: "Missing temperature in weather response")))
+                    return
+                }
+                completion(.success(temperature))
+            }.resume()
+        }.resume()
     }
 }

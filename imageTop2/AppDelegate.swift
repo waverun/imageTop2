@@ -45,6 +45,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     @AppStorage("showWatch") var showWatchOrCpu = true {
         didSet {
+            if showWatchOrCpu {
+                showCpu = false
+                showWeatherByIP = false
+            }
             // Update the title of the menu item when autoStart changes
             showWatchItem.title = getWatchCpuMenuValue(showValue: "Watch") // (showWatch ? "Hide" : "Show") + " Watch"
         }
@@ -52,8 +56,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     @AppStorage("showCpu") var showCpu = false {
         didSet {
+            if showCpu {
+                showWatchOrCpu = false
+                showWeatherByIP = false
+            }
             // Update the title of the menu item when autoStart changes
             showWatchItem.title = getWatchCpuMenuValue(showValue: "CPU") // (showCpu ? "Hide" : "Show") + " Cpu"
+        }
+    }
+
+    @AppStorage("showWeatherByIP") var showWeatherByIP = false {
+        didSet {
+            if showWeatherByIP {
+                showWatchOrCpu = false
+                showCpu = false
+            }
+            showWatchItem.title = getWatchCpuMenuValue(showValue: "Temperature")
         }
     }
 
@@ -61,6 +79,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         switch true {
             case showWatchOrCpu: return "Hide Watch"
             case showCpu: return "Hide CPU"
+            case showWeatherByIP: return "Hide Temperature"
             default: return "Show with " + showValue
         }
     }
@@ -410,6 +429,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         switch true {
             case showWatchItem.title.contains("Watch"):
                 showWatchOrCpu.toggle()
+            case showWatchItem.title.contains("Temperature"):
+                showWeatherByIP.toggle()
             default: showCpu.toggle()
         }
         if showWatchOrCpu {
