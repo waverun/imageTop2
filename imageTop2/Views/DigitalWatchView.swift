@@ -59,6 +59,8 @@ struct DigitalWatchView: View {
     @State private var sunEventDisplayText = "--"
     @State private var sunEventLastFetchDate: Date? = nil
     @State private var sunEventFetchInProgress = false
+    @State private var sunNextEventDate: Date? = nil
+    @State private var sunNextEventLabel: String = ""
 
     let x: CGFloat?
     let y: CGFloat?
@@ -137,10 +139,27 @@ struct DigitalWatchView: View {
                 refreshWeatherIfNeeded()
             case appDelegate.showSunEventByIP:
                 currentCpuLoad = nil
-                timeString = sunEventDisplayText
+                updateSunEventCountdown()
                 refreshSunEventIfNeeded()
             default: break
         }
+    }
+
+    private func formatDuration(from now: Date, to eventDate: Date) -> String {
+        let totalSeconds = max(Int(eventDate.timeIntervalSince(now)), 0)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        return "\(hours)h \(minutes)m"
+    }
+
+    private func updateSunEventCountdown() {
+        guard let sunNextEventDate,
+              !sunNextEventLabel.isEmpty else {
+            timeString = sunEventDisplayText
+            return
+        }
+        let durationText = formatDuration(from: Date(), to: sunNextEventDate)
+        timeString = "\(sunNextEventLabel) in \(durationText)"
     }
 
     private func refreshSunEventIfNeeded(force: Bool = false) {
@@ -149,7 +168,7 @@ struct DigitalWatchView: View {
         }
         if !force,
            let sunEventLastFetchDate,
-           Date().timeIntervalSince(sunEventLastFetchDate) < 600 {
+           Date().timeIntervalSince(sunEventLastFetchDate) < 3600 {
             return
         }
 
@@ -158,14 +177,19 @@ struct DigitalWatchView: View {
             DispatchQueue.main.async {
                 defer { sunEventFetchInProgress = false }
                 switch result {
-                    case .success(let text):
-                        sunEventDisplayText = text
+                    case .success(let nextEvent):
+                        sunNextEventLabel = nextEvent.label
+                        sunNextEventDate = nextEvent.date
+                        let durationText = formatDuration(from: Date(), to: nextEvent.date)
+                        sunEventDisplayText = "\(nextEvent.label) in \(durationText)"
                         sunEventLastFetchDate = Date()
                         if appDelegate.showSunEventByIP {
                             timeString = sunEventDisplayText
                         }
                     case .failure:
                         sunEventDisplayText = "N/A"
+                        sunNextEventLabel = ""
+                        sunNextEventDate = nil
                         sunEventLastFetchDate = Date()
                         if appDelegate.showSunEventByIP {
                             timeString = sunEventDisplayText
@@ -279,7 +303,7 @@ struct DigitalWatchView: View {
         }.resume()
     }
 
-    private func fetchSunEventFromIP(completion: @escaping (Result<String, Error>) -> Void) {
+    private func fetchSunEventFromIP(completion: @escaping (Result<(label: String, date: Date), Error>) -> Void) {
         struct GeoLookupError: LocalizedError {
             let message: String
             var errorDescription: String? { message }
@@ -293,14 +317,6 @@ struct DigitalWatchView: View {
                 return Double(string)
             }
             return nil
-        }
-
-        func formatDuration(from now: Date, to eventDate: Date) -> String {
-            let totalSeconds = max(Int(eventDate.timeIntervalSince(now)), 0)
-            let hours = totalSeconds / 3600
-            let minutes = (totalSeconds % 3600) / 60
-//            return "\(hours)h \(minutes)m"
-            return "24h 00m"
         }
 
         func parseEpochArray(_ value: Any?) -> [TimeInterval] {
@@ -385,8 +401,7 @@ struct DigitalWatchView: View {
                     return
                 }
 
-                let durationText = formatDuration(from: now, to: nextEvent.date)
-                completion(.success("\(nextEvent.label) in \(durationText)"))
+                completion(.success((label: nextEvent.label, date: nextEvent.date)))
             }.resume()
         }.resume()
     }
