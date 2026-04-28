@@ -244,7 +244,7 @@ struct ContentView: View {
                         }
                     )
                     .opacity(condition ? 1 : 0)
-                    .animation(.easeInOut(duration: condition ? imageFadeTime / 8 : imageFadeTime), value: condition)
+                    .animation(.easeInOut(duration: condition ? imageFadeTime / 8 : showVideo ? imageFadeTime * 2 : imageFadeTime), value: condition)
             )
         } else {
             return AnyView(Color.clear)
