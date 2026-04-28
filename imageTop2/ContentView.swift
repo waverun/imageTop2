@@ -434,9 +434,8 @@ struct ContentView: View {
             iPrint("in startMonitoringUserInput showWindow: \(appDelegate.showWindow)")
 
             if event.type == .keyDown,
-               event.keyCode == 53,
-               event.modifierFlags.contains(.shift) {
-                iPrint("Shift+Escape was pressed while monitoring input")
+               (event.keyCode == 51 || event.keyCode == 117) {
+                iPrint("Delete was pressed while monitoring input")
                 handleEscapeForCurrentItem()
                 return event
             }
