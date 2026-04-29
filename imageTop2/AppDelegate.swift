@@ -370,7 +370,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         menu.addItem(withTitle: "Settings", action: #selector(openSettings), keyEquivalent: "")
         let skipItem = menu.addItem(withTitle: "Skip Current (Del / Right Click)", action: #selector(skipCurrentItem), keyEquivalent: "\u{8}")
         skipItem.keyEquivalentModifierMask = []
-        autoStartItem = menu.addItem(withTitle: (autoStart ? "Disable" : "Enable") + " Auto (Inactivity) Start", action: #selector(handleAutoStart), keyEquivalent: "")
+        autoStartItem = menu.addItem(withTitle: (autoStart ? "Disable" : "Enable") + " Auto Start (Inactivity)", action: #selector(handleAutoStart), keyEquivalent: "")
 
         menu.addItem(NSMenuItem.separator())
 
