@@ -164,12 +164,12 @@ struct ContentView: View {
                 .opacity(showVideo && !showSecondVideo ? 1 : 0)
 //                .transition(showVideo && !showSecondVideo ? .scale : .slide)
 //            .zIndex(showVideo && !showSecondVideo ? 1 : 0)
-                .animation(.easeIn(duration: showVideo && !showSecondVideo ? videoFadeTime * 1.25 : videoFadeTime * 0.5), value: showVideo && !showSecondVideo)
+                .animation(.easeIn(duration: showVideo && !showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && !showSecondVideo)
             videoPlayerBuilder(videoPath: secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
                 .opacity(showVideo && showSecondVideo ? 1 : 0)
 //            .transition(showVideo && showSecondVideo ? .scale : .slide)
 //            .zIndex(showVideo && showSecondVideo ? 1 : 0)
-                .animation(.easeIn(duration: showVideo && showSecondVideo ? videoFadeTime * 1.25 : videoFadeTime * 0.5), value: showVideo && showSecondVideo)
+                .animation(.easeIn(duration: showVideo && showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && showSecondVideo)
         }
         .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
     }

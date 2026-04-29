@@ -145,7 +145,7 @@ struct VideoPlayerView: NSViewRepresentable {
                 let duration = try await getVideoLength(videoURL: url)
                 iPrint("startGetVideoLength: \(index) await after url: \(url)")
                 iPrint("Timer: \(index) Video duration: \(CMTimeGetSeconds(duration)) seconds")
-                let iDuration = Int(CMTimeGetSeconds(duration))
+                let iDuration = CMTimeGetSeconds(duration)
                 iPrint("iDuration \(index) \(iDuration) url: \(url)")
                 if iDuration > 4 {
                     if let timer = gPausableTimers[index] {
@@ -154,7 +154,7 @@ struct VideoPlayerView: NSViewRepresentable {
                     }
                     gPausableTimers[index] = PausableTimer(index: index)
                     iPrint("startGetVideoLength: \(index) before start: gPausableTimers.count \(gPausableTimers.count)")
-                    gPausableTimers[index]?.start(interval: TimeInterval(iDuration - 2)) { _ in
+                    gPausableTimers[index]?.start(interval: TimeInterval(max(0, iDuration - 4))) { _ in
                         iPrint("in PausableTimer: \(index)")
                         if let endPlayNotification = gEndPlayNotifications[index] {
                             NotificationCenter.default.removeObserver(endPlayNotification)
