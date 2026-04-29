@@ -61,6 +61,7 @@ struct DigitalWatchView: View {
     @State private var sunEventFetchInProgress = false
     @State private var sunNextEventDate: Date? = nil
     @State private var sunNextEventLabel: String = ""
+    @State private var initialWatchBlur = true
 
     let x: CGFloat?
     let y: CGFloat?
@@ -78,11 +79,17 @@ struct DigitalWatchView: View {
                 handleTimerChange(isActive: timerIsActive)
                 iPrint("watchPosition: \(x ?? 100), \(y ?? 100)")
                 watchPosition = CGPoint(x: x ?? 100, y: y ?? 100)
+                initialWatchBlur = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    withAnimation(.easeOut(duration: 0.25)) {
+                        initialWatchBlur = false
+                    }
+                }
             }
             .onChange(of: timerIsActive) { newValue in
                 handleTimerChange(isActive: newValue)
             }
-            .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
+            .blur(radius: appDelegate.isVideoBlurred ? 20 : (initialWatchBlur ? 14 : 0))
     }
 
     var watchWidth: CGFloat {
