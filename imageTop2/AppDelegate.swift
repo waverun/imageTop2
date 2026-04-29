@@ -375,6 +375,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
         showWatchItem = menu.addItem(withTitle: (showWatchOrCpu ? "Hide" : "Show") + " with Watch", action: #selector(showWatchOrCpuToggle), keyEquivalent: "")
         menu.addItem(withTitle: "Start at login", action: #selector(openLoginItemsPreferences), keyEquivalent: "")
+        menu.addItem(withTitle: "Rate on App Store", action: #selector(rateOnAppStore), keyEquivalent: "")
         menu.addItem(withTitle: "Quit", action: #selector(quitApp), keyEquivalent: "q")
 
         // Assign the menu to the status bar item
@@ -563,6 +564,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
 
     @objc func quitApp() {
         NSApp.terminate(nil)
+    }
+
+    @objc func rateOnAppStore() {
+        // Replace this with your real App Store ID once available.
+        let appStoreID = "6448953611"
+        let reviewURLString = "macappstore://apps.apple.com/app/id\(appStoreID)?action=write-review"
+        if let reviewURL = URL(string: reviewURLString) {
+            NSWorkspace.shared.open(reviewURL)
+        }
     }
 
     @objc func openSettings(sender: AnyObject) {
