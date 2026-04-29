@@ -270,12 +270,10 @@ struct ContentView: View {
             handlePexelsVideos()
         }
 
-        if replaceImageAfter > 3 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                changeScreenImageVideoOrColor()
-                startChangeTimer()
-//                startChangeTime = Date()
-            }
+        // Start media presentation as early as possible.
+        DispatchQueue.main.async {
+            changeScreenImageVideoOrColor()
+            startChangeTimer()
         }
 #if DEBUG
         iPrint("Memory: \(index) onAppear: \(reportMemory())")
@@ -377,6 +375,10 @@ struct ContentView: View {
             appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
         }
         gImageAndVideoNames = loadImageAndVideoNames()
+        // If we were showing colors while waiting for downloads, switch immediately.
+        if imageOrVideoMode {
+            changeScreenImageVideoOrColor()
+        }
     }
 
     func handleNetworkReachabilityChange(_ value: Bool) {
