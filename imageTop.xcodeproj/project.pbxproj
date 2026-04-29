@@ -10,6 +10,8 @@
 		500BED242B28F12A0067977D /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 500BED232B28F12A0067977D /* index.html */; };
 		500BED262B2998260067977D /* troubleshouting.html in Resources */ = {isa = PBXBuildFile; fileRef = 500BED252B2998260067977D /* troubleshouting.html */; };
 		500CE8BE2A88BF89001E0984 /* VideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 500CE8BD2A88BF89001E0984 /* VideoPlayerCoordinator.swift */; };
+		501E58F82FA2B8F20001A2A2 /* DeveloperFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501E58F72FA2B8F20001A2A2 /* DeveloperFeedbackView.swift */; };
+		501E58FA2FA2B90B0001A2A2 /* DeveloperFeedbackMailer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501E58F92FA2B90B0001A2A2 /* DeveloperFeedbackMailer.swift */; };
 		501FFEEF2AD20FFC002B05DE /* CPUUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501FFEEE2AD20FFC002B05DE /* CPUUsageMonitor.swift */; };
 		501FFEF12AD212F2002B05DE /* hostCPULoadInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501FFEF02AD212F2002B05DE /* hostCPULoadInfo.swift */; };
 		505348B92ACAC8290067A2E1 /* getCpuUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505348B82ACAC8290067A2E1 /* getCpuUsage.swift */; };
@@ -59,6 +61,8 @@
 		500BED232B28F12A0067977D /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
 		500BED252B2998260067977D /* troubleshouting.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = troubleshouting.html; sourceTree = "<group>"; };
 		500CE8BD2A88BF89001E0984 /* VideoPlayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerCoordinator.swift; sourceTree = "<group>"; };
+		501E58F72FA2B8F20001A2A2 /* DeveloperFeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperFeedbackView.swift; sourceTree = "<group>"; };
+		501E58F92FA2B90B0001A2A2 /* DeveloperFeedbackMailer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperFeedbackMailer.swift; sourceTree = "<group>"; };
 		501FFEEE2AD20FFC002B05DE /* CPUUsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUUsageMonitor.swift; sourceTree = "<group>"; };
 		501FFEF02AD212F2002B05DE /* hostCPULoadInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hostCPULoadInfo.swift; sourceTree = "<group>"; };
 		505348B82ACAC8290067A2E1 /* getCpuUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getCpuUsage.swift; sourceTree = "<group>"; };
@@ -197,6 +201,7 @@
 				5079FD902A10DBC30066EC08 /* DigitalWatchView.swift */,
 				5079FD912A10DBC30066EC08 /* SettingsView.swift */,
 				50A06A072A39C02100319BEA /* VideoPlayerView.swift */,
+				501E58F72FA2B8F20001A2A2 /* DeveloperFeedbackView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -222,6 +227,7 @@
 				50736EFA2A8BC3FF00FB53FD /* culculateDigitalWatchPosition.swift */,
 				505348B82ACAC8290067A2E1 /* getCpuUsage.swift */,
 				501FFEF02AD212F2002B05DE /* hostCPULoadInfo.swift */,
+				501E58F92FA2B90B0001A2A2 /* DeveloperFeedbackMailer.swift */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -314,6 +320,7 @@
 				50B9EA952A364929002BCB4B /* downloadPexelPhotos.swift in Sources */,
 				50BEA3872A4EC07C00F0FE19 /* PausableTimer.swift in Sources */,
 				50B9EAA12A386A1E002BCB4B /* WriteFile.swift in Sources */,
+				501E58FA2FA2B90B0001A2A2 /* DeveloperFeedbackMailer.swift in Sources */,
 				50A06A122A3F2BFE00319BEA /* deleteFile.swift in Sources */,
 				5071C3A82ADF25EE0065805E /* CustomWindow.swift in Sources */,
 				50BEA3B42A5436AB00F0FE19 /* isVideoFile.swift in Sources */,
@@ -330,6 +337,7 @@
 				50A06A102A3F2B7E00319BEA /* clearPexelVideos.swift in Sources */,
 				501FFEF12AD212F2002B05DE /* hostCPULoadInfo.swift in Sources */,
 				50B646642A111162002CA82E /* WindowManager.swift in Sources */,
+				501E58F82FA2B8F20001A2A2 /* DeveloperFeedbackView.swift in Sources */,
 				501FFEEF2AD20FFC002B05DE /* CPUUsageMonitor.swift in Sources */,
 				5079FD832A10D5B50066EC08 /* Keyboard.swift in Sources */,
 				50B9EA992A365361002BCB4B /* downloadPhoto.swift in Sources */,

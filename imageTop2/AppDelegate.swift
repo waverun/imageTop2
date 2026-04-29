@@ -106,6 +106,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var inactivityTimer: Timer!
 
     var settingsWindow: NSWindow!
+    var feedbackWindow: NSWindow!
     var externalDisplayCount: Int = 0
     var ignoreMonitor = false // To ignore key after Show menu
 //    var firstSetTimer = ThreadSafeDict<Int, Bool>()
@@ -376,6 +377,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         showWatchItem = menu.addItem(withTitle: (showWatchOrCpu ? "Hide" : "Show") + " with Watch", action: #selector(showWatchOrCpuToggle), keyEquivalent: "")
         menu.addItem(withTitle: "Start at login", action: #selector(openLoginItemsPreferences), keyEquivalent: "")
         menu.addItem(withTitle: "Rate on App Store", action: #selector(rateOnAppStore), keyEquivalent: "")
+        menu.addItem(withTitle: "Send Feedback", action: #selector(openFeedback), keyEquivalent: "")
         menu.addItem(withTitle: "Quit", action: #selector(quitApp), keyEquivalent: "q")
 
         // Assign the menu to the status bar item
@@ -394,6 +396,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         settingsWindow.center()
         settingsWindow.isReleasedWhenClosed = false // Add this line
         settingsWindow.delegate = self
+
+        feedbackWindow = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 420, height: 260),
+            styleMask: [.titled, .closable, .miniaturizable],
+            backing: .buffered,
+            defer: false
+        )
+        feedbackWindow.contentView = NSHostingView(rootView: DeveloperFeedbackView().environmentObject(self))
+        feedbackWindow.title = "Send Feedback"
+        feedbackWindow.level = .floating
+        feedbackWindow.center()
+        feedbackWindow.isReleasedWhenClosed = false
+        feedbackWindow.delegate = self
 
         // setup the screen change notification
         externalDisplayCount = NSScreen.screens.count
@@ -579,6 +594,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         settingsWindow.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
         settingsWindow.makeFirstResponder(nil)
+    }
+
+    @objc func openFeedback() {
+        feedbackWindow.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        feedbackWindow.makeFirstResponder(nil)
     }
 
     @objc func skipCurrentItem() {
