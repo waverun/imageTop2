@@ -1074,7 +1074,9 @@ struct ContentView: View {
         let folderURL = fromPexelsPhotos == nil ? URL(fileURLWithPath: imageFolder) : fromPexelsPhotos!
         let fileManager = FileManager.default
         var imageOrVideoNames: [String] = []
-        gImageAndVideoNames.removeAll()
+        if fromPexelsPhotos == nil {
+            gImageAndVideoNames.removeAll()
+        }
         do {
             if fromPexelsPhotos != nil || useLocalImagesAndVideos {
                 let contents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
