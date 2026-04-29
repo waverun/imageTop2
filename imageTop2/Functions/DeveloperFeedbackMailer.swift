@@ -26,7 +26,7 @@ final class DeveloperFeedbackMailer {
     init(
         functionURLString: String,
         toEmail: String,
-        fromName: String = "CipeLume Feedback",
+        fromName: String = "topImage Feedback",
         timeout: TimeInterval = 30
     ) {
         self.functionURLString = functionURLString
