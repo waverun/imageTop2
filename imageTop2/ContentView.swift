@@ -820,7 +820,6 @@ struct ContentView: View {
 #if DEBUG
         iPrint("Memory: \(index) Start loadRandomImageOrVideo: \(reportMemory())")
 #endif
-        DispatchQueue.global(qos: .userInitiated).async {
         if !appDelegate.isFullScreen {
             gNeedToLoadImageOrVideo[index] = true
             if gPlayers.count > index {
@@ -831,25 +830,25 @@ struct ContentView: View {
                 return
             }
         }
+
         gNeedToLoadImageOrVideo[index] = false
         if showVideo && gImageAndVideoNames.count < 2 { // may happen after bad loading of videos
             startChangeTimer()
             return
         }
+
         iPrint("video loadRandomImageOrVideo \(index) appDelegate.showWindow: \(appDelegate.showWindow)")
         let newRandomImageOrVideoPath = generateRandomPath()
-//        DispatchQueue.global(qos: .userInitiated).async {
-            switch true {
-                case isVideo(newRandomImageOrVideoPath):
-                    hideVideos = false
-                    handleVideo(newRandomImageOrVideoPath)
-                default:
-                    if showVideo == false {
-                        hideVideos = true
-                    }
-                    startShowVideo = false
-                    handleImage(newRandomImageOrVideoPath)
-            }
+        switch true {
+            case isVideo(newRandomImageOrVideoPath):
+                hideVideos = false
+                handleVideo(newRandomImageOrVideoPath)
+            default:
+                if showVideo == false {
+                    hideVideos = true
+                }
+                startShowVideo = false
+                handleImage(newRandomImageOrVideoPath)
         }
     }
 

@@ -21,27 +21,47 @@ class VideoFailedToPlay {
     var finishedPlaying: () -> Void
 
     init(playerItem: AVPlayerItem, index: Int, finishedPlaying: @escaping () -> Void) {
-        // Add an observer for the AVPlayerItemFailedToPlayToEndTimeNotification notification
+        // Add observers for playback failure and playback stall.
         self.playerItem = playerItem
         self.index = index
         self.finishedPlaying = finishedPlaying
 
         NotificationCenter.default.addObserver(self, selector: #selector(videoFailedToPlay), name: .AVPlayerItemFailedToPlayToEndTime, object: playerItem)
+        NotificationCenter.default.addObserver(self, selector: #selector(videoPlaybackStalled), name: .AVPlayerItemPlaybackStalled, object: playerItem)
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     @objc func videoFailedToPlay(notification: Notification) {
-        // Check the error
-//        if let error = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? Error {
-            var url = ""
-            if let urlAsset = playerItem.asset as? AVURLAsset {
-                url = urlAsset.url.absoluteString
-            }
-            iPrint("videoFailedToPlay: currentTime: \(playerItem.currentTime().seconds) url: \(url)")
-            finishedPlaying()
-            // Handle the error or display a notification to the user
-//            displayNotification(with: "Video Playback Error", informativeText: error.localizedDescription)
+        var url = ""
+        if let urlAsset = playerItem.asset as? AVURLAsset {
+            url = urlAsset.url.absoluteString
         }
-//    }
+        iPrint("videoFailedToPlay: currentTime: \(playerItem.currentTime().seconds) url: \(url)")
+        finishedPlaying()
+    }
+
+    @objc func videoPlaybackStalled(notification: Notification) {
+        let stalledTime = playerItem.currentTime().seconds
+        var url = ""
+        if let urlAsset = playerItem.asset as? AVURLAsset {
+            url = urlAsset.url.absoluteString
+        }
+        iPrint("videoPlaybackStalled: currentTime: \(stalledTime) url: \(url)")
+
+        playerItem.seek(to: playerItem.currentTime()) { _ in }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+            guard let self else { return }
+            let currentTime = self.playerItem.currentTime().seconds
+            if abs(currentTime - stalledTime) < 0.05 {
+                iPrint("videoPlaybackStalled: no progress after retry, skip. currentTime: \(currentTime) url: \(url)")
+                self.finishedPlaying()
+            }
+        }
+    }
 }
 
 struct VideoPlayerView: NSViewRepresentable {
@@ -99,9 +119,12 @@ struct VideoPlayerView: NSViewRepresentable {
 
     func play(_ player: AVPlayer) {
         player.play()
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-//            player.play()
-//        }
+        // Retry play once to handle occasional remote stream startup stalls.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            if player.timeControlStatus != .playing {
+                player.play()
+            }
+        }
     }
 //    func makeCoordinator() -> VideoPlayerCoordinator {
 //        return VideoPlayerCoordinator(self, finishedPlaying: finishedPlaying)
