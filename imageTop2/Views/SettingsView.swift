@@ -40,6 +40,8 @@ struct SettingsView: View {
     @State var settingsErrorText = ""
     @State var randomPexelsPhotoPreview: NSImage? = nil
     @State var randomPexelsVideoPreview: NSImage? = nil
+    @State var showLargePhotoPreview = false
+    @State var showLargeVideoPreview = false
 
     let allKeyNames = Keyboard.keyNames
     let modKeyNames = Keyboard.modKeyNames
@@ -184,6 +186,16 @@ struct SettingsView: View {
                                             .frame(width: 28, height: 18)
                                             .clipped()
                                             .cornerRadius(3)
+                                            .onHover { isHovering in
+                                                showLargePhotoPreview = isHovering
+                                            }
+                                            .popover(isPresented: $showLargePhotoPreview, arrowEdge: .top) {
+                                                Image(nsImage: randomPexelsPhotoPreview)
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 220, height: 140)
+                                                    .padding(6)
+                                            }
                                     }
                                 }
                                 HStack(spacing: 8) {
@@ -195,6 +207,16 @@ struct SettingsView: View {
                                             .frame(width: 28, height: 18)
                                             .clipped()
                                             .cornerRadius(3)
+                                            .onHover { isHovering in
+                                                showLargeVideoPreview = isHovering
+                                            }
+                                            .popover(isPresented: $showLargeVideoPreview, arrowEdge: .top) {
+                                                Image(nsImage: randomPexelsVideoPreview)
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 220, height: 140)
+                                                    .padding(6)
+                                            }
                                     }
                                 }
                                 if let settingsErrorMessage = appDelegate.settingsErrorMessage,
