@@ -15,6 +15,7 @@ struct SettingsView: View {
     @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
     @AppStorage("useLocalImagesAndVideos") var useLocalImagesAndVideos: Bool = false
     @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = false
+    @AppStorage("repeatPexelsContent") var repeatPexelsContent: Bool = true
     @AppStorage("showWatch") var showWatch = true 
     @AppStorage("showCpu") var showCpu = false
     @AppStorage("showWeatherByIP") var showWeatherByIP = false
@@ -187,25 +188,36 @@ struct SettingsView: View {
 
                             Spacer()
 
-                            VStack {
-                                ZStack {
-                                    Button(action: {
-                                        if let url = URL(string: "https://www.pexels.com") {
-                                            NSWorkspace.shared.open(url)
+                            HStack(spacing: 14) {
+                                Button(action: {
+                                    repeatPexelsContent.toggle()
+                                }) {
+                                    Image(systemName: repeatPexelsContent ? "arrow.triangle.2.circlepath.circle" : "repeat.circle")
+                                        .font(.system(size: 18, weight: .semibold))
+                                }
+                                .buttonStyle(.plain)
+                                .help(repeatPexelsContent ? "Mode: repeat existing Pexels items" : "Mode: refresh Pexels items when exhausted")
+
+                                VStack {
+                                    ZStack {
+                                        Button(action: {
+                                            if let url = URL(string: "https://www.pexels.com") {
+                                                NSWorkspace.shared.open(url)
+                                            }
+                                        }) {
+                                            Image("pexels")
+                                                .resizable()
+                                                .frame(width: 32, height: 32)
+                                                .offset(y: -3)
                                         }
-                                    }) {
-                                        Image("pexels")
-                                            .resizable()
-                                            .frame(width: 32, height: 32)
-                                            .offset(y: -3)  // This line moves the button up by 10 points
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    .padding(.trailing, 50) // Add a gap on the right side of the button
-                                    if disabled {
-                                        ProgressView()
-                                            .progressViewStyle(CircularProgressViewStyle())
-                                            .scaleEffect(0.75)  // This line reduces the size of the spinner to half
-                                            .offset(x: -25, y: -4) // This line moves the spinner 15 points to the left
+                                        .buttonStyle(PlainButtonStyle())
+                                        .padding(.trailing, 50)
+                                        if disabled {
+                                            ProgressView()
+                                                .progressViewStyle(CircularProgressViewStyle())
+                                                .scaleEffect(0.75)
+                                                .offset(x: -25, y: -4)
+                                        }
                                     }
                                 }
                             }

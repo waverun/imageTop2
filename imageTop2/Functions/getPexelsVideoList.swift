@@ -2,7 +2,7 @@ import Foundation
 import AppKit
 
 private let pexelsVideoMaxFullPagesByCategory = ThreadSafeDict<String, Int>()
-private let pexelsVideoPerPage = 80
+private let pexelsVideoPerPage = 3
 private let pexelsVideoRequestTimeout: TimeInterval = 10
 private let pexelsVideoMaxAttempts = 3
 

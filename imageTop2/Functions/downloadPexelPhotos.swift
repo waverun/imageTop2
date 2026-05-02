@@ -10,7 +10,7 @@ let pexelsCategories = [
 private let pexelsPhotoMaxFullPagesByCategory = ThreadSafeDict<String, Int>()
 private let pexelsPhotoPerPage = 80
 private let pexelsPhotoRequestTimeout: TimeInterval = 10
-private let pexelsPhotoMaxAttempts = 3
+private let pexelsPhotoMaxAttempts = 80
 
 private struct PexelsPhotosRequestError: Error {
     let userMessage: String

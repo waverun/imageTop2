@@ -58,8 +58,15 @@ struct ContentView: View {
     @AppStorage("usePhotosFromPexels") var usePhotosFromPexels: Bool = false
     @AppStorage("useLocalImagesAndVideos") var useLocalImagesAndVideos: Bool = false
     @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = true
+    @AppStorage("repeatPexelsContent") var repeatPexelsContent: Bool = true
 
     @State var imageOrBackgroundChangeTimer: Timer? = nil
+    @State var pexelsRefreshInProgress = false
+    @State var pexelsPrefetchInProgress = false
+    @State var pexelsBufferReady = false
+    @State var pexelsSwapPending = false
+    @State var bufferedPexelsPhotos: [String] = []
+    @State var bufferedPexelsVideos: [String] = []
     @State var backgroundColor: Color = Color.clear
     @State var imageOrVideoMode = false
     @State var fadeColor: Color = Color.clear
@@ -86,6 +93,22 @@ struct ContentView: View {
         }
 
         return pexelsUrl
+    }
+
+    var pexelsBufferDirectoryUrl: URL? {
+        let appSupportUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+        let bufferUrl = appSupportUrl?.appendingPathComponent("pexels_buffer")
+
+        if let url = bufferUrl {
+            do {
+                try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                iPrint("Error creating pexels buffer directory: \(error)")
+                return nil
+            }
+        }
+
+        return bufferUrl
     }
 
     init(index: Int) {
@@ -375,6 +398,13 @@ struct ContentView: View {
             appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
         }
         gImageAndVideoNames = loadImageAndVideoNames()
+        pexelsRefreshInProgress = false
+        pexelsPrefetchInProgress = false
+        pexelsBufferReady = false
+        pexelsSwapPending = false
+        pexelsSwapPending = false
+        bufferedPexelsPhotos.removeAll()
+        bufferedPexelsVideos.removeAll()
         // If we were showing colors while waiting for downloads, switch immediately.
         if imageOrVideoMode {
             changeScreenImageVideoOrColor()
@@ -830,6 +860,10 @@ struct ContentView: View {
 
         repeat {
             if gStateObjects[index]!.unusedPaths.isEmpty {
+                if pexelsSwapPending {
+                    _ = applyBufferedPexelsContentIfReady()
+                    pexelsSwapPending = false
+                }
                 gStateObjects[index]!.unusedPaths = Set(gImageAndVideoNames)
             }
 
@@ -841,8 +875,148 @@ struct ContentView: View {
             if let pathIndex = gStateObjects[index]!.unusedPaths.firstIndex(of: randomPath!) {
                 gStateObjects[index]!.unusedPaths.remove(at: pathIndex)
             }
+            maybeRefreshPexelsOnLastItem(selectedPath: randomPath!)
         } while shouldRegeneratePath(randomPath!)
         return randomPath!
+    }
+
+    func isPexelsPath(_ path: String) -> Bool {
+        path.contains("/pexels/") || path.starts(with: "https:")
+    }
+
+    func maybeRefreshPexelsOnLastItem(selectedPath: String) {
+        guard index == 0,
+              !repeatPexelsContent,
+              isPexelsPath(selectedPath) else {
+            return
+        }
+
+        let remainingPexels = gStateObjects[index]!.unusedPaths.filter { isPexelsPath($0) }.count
+
+        if remainingPexels <= 2,
+           !pexelsPrefetchInProgress,
+           !pexelsBufferReady {
+            startPexelsPrefetchBuffer()
+        }
+
+        if remainingPexels == 0 {
+            if pexelsBufferReady {
+                pexelsSwapPending = true
+            } else if !pexelsRefreshInProgress {
+                refreshPexelsContentForNoRepeatMode()
+            }
+        }
+    }
+
+    func startPexelsPrefetchBuffer() {
+        guard let bufferUrl = pexelsBufferDirectoryUrl else {
+            return
+        }
+        pexelsPrefetchInProgress = true
+
+        clearPexelPhotos(folderPath: bufferUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+        clearPexelVideos(folderURL: bufferUrl, fileName: "videoList.txt")
+
+        let group = DispatchGroup()
+        var prefetchedPhotos: [String] = []
+        var prefetchedVideos: [String] = []
+
+        if usePhotosFromPexels {
+            group.enter()
+            downloadPexelPhotos(pexelsFolder: bufferUrl, appDelegate: appDelegate) { _ in
+                prefetchedPhotos = loadImageAndVideoNames(fromPexelsPhotos: bufferUrl)
+                group.leave()
+            }
+        }
+
+        if useVideosFromPexels {
+            group.enter()
+            getPexelsVideoList(pexelsFolder: bufferUrl, appDelegate: appDelegate) { videosList in
+                prefetchedVideos = videosList
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) {
+            self.bufferedPexelsPhotos = prefetchedPhotos
+            self.bufferedPexelsVideos = prefetchedVideos
+            self.pexelsBufferReady = (!self.usePhotosFromPexels || !prefetchedPhotos.isEmpty)
+                && (!self.useVideosFromPexels || !prefetchedVideos.isEmpty)
+            self.pexelsPrefetchInProgress = false
+        }
+    }
+
+    func applyBufferedPexelsContentIfReady() -> Bool {
+        if !Thread.isMainThread {
+            var result = false
+            DispatchQueue.main.sync {
+                result = applyBufferedPexelsContentIfReady()
+            }
+            return result
+        }
+
+        guard pexelsBufferReady,
+              let pexelsDirectoryUrl = pexelsDirectoryUrl,
+              let bufferUrl = pexelsBufferDirectoryUrl else {
+            return false
+        }
+
+        if usePhotosFromPexels {
+            clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+            for photoPath in bufferedPexelsPhotos {
+                let sourceUrl = URL(fileURLWithPath: photoPath)
+                let destinationUrl = pexelsDirectoryUrl.appendingPathComponent(sourceUrl.lastPathComponent)
+                try? FileManager.default.removeItem(at: destinationUrl)
+                try? FileManager.default.copyItem(at: sourceUrl, to: destinationUrl)
+            }
+        }
+
+        if useVideosFromPexels {
+            let videoList = bufferedPexelsVideos.joined(separator: "\n")
+            writeFile(directoryURL: pexelsDirectoryUrl, fileName: "videoList.txt", contents: videoList)
+        }
+
+        appDelegate.pexelsPhotos = usePhotosFromPexels ? loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl) : []
+        appDelegate.pexelsVideos = useVideosFromPexels ? bufferedPexelsVideos : []
+        gImageAndVideoNames = loadImageAndVideoNames()
+
+        clearPexelPhotos(folderPath: bufferUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+        clearPexelVideos(folderURL: bufferUrl, fileName: "videoList.txt")
+
+        pexelsBufferReady = false
+        bufferedPexelsPhotos.removeAll()
+        bufferedPexelsVideos.removeAll()
+        return true
+    }
+
+    func refreshPexelsContentForNoRepeatMode() {
+        guard let pexelsDirectoryUrl = pexelsDirectoryUrl else {
+            return
+        }
+        pexelsRefreshInProgress = true
+        pexelsPrefetchInProgress = false
+        pexelsBufferReady = false
+
+        if usePhotosFromPexels {
+            clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+            appDelegate.pexelsPhotos.removeAll()
+        }
+
+        if useVideosFromPexels {
+            clearPexelVideos(folderURL: pexelsDirectoryUrl, fileName: "videoList.txt")
+            appDelegate.pexelsVideos.removeAll()
+        }
+
+        if usePhotosFromPexels {
+            handlePexelsPhotos()
+        }
+        if useVideosFromPexels {
+            handlePexelsVideos()
+        }
+
+        if !usePhotosFromPexels && !useVideosFromPexels {
+            pexelsRefreshInProgress = false
+        }
     }
 
      func shouldRegeneratePath(_ path: String) -> Bool {
