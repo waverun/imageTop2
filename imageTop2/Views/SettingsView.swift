@@ -38,6 +38,8 @@ struct SettingsView: View {
     @State var keyStringSymbol = ""
     @State var showErrorAlert = false
     @State var settingsErrorText = ""
+    @State var randomPexelsPhotoPreview: NSImage? = nil
+    @State var randomPexelsVideoPreview: NSImage? = nil
 
     let allKeyNames = Keyboard.keyNames
     let modKeyNames = Keyboard.modKeyNames
@@ -172,10 +174,29 @@ struct SettingsView: View {
                             .truncationMode(.middle)
                         HStack {
                             VStack(alignment: .leading) {
-                                Toggle("Photos from Pexels (\(numberOfPexelsPhotos))", isOn: $usePhotosFromPexelsIsOn)
-//                                Spacer()
-                                    .buttonStyle(PlainButtonStyle())
-                                Toggle("Videos from Pexels (\(numberOfPexelsVideos))", isOn: $useVideosFromPexelsIsOn)
+                                HStack(spacing: 8) {
+                                    Toggle("Photos from Pexels (\(numberOfPexelsPhotos))", isOn: $usePhotosFromPexelsIsOn)
+                                        .buttonStyle(PlainButtonStyle())
+                                    if let randomPexelsPhotoPreview {
+                                        Image(nsImage: randomPexelsPhotoPreview)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 28, height: 18)
+                                            .clipped()
+                                            .cornerRadius(3)
+                                    }
+                                }
+                                HStack(spacing: 8) {
+                                    Toggle("Videos from Pexels (\(numberOfPexelsVideos))", isOn: $useVideosFromPexelsIsOn)
+                                    if let randomPexelsVideoPreview {
+                                        Image(nsImage: randomPexelsVideoPreview)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 28, height: 18)
+                                            .clipped()
+                                            .cornerRadius(3)
+                                    }
+                                }
                                 if let settingsErrorMessage = appDelegate.settingsErrorMessage,
                                    !settingsErrorMessage.isEmpty {
                                     Text(settingsErrorMessage)
@@ -292,6 +313,7 @@ struct SettingsView: View {
                 usePhotosFromPexelsIsOn = false
                 usePhotosFromPexels = false
             }
+            updateRandomPexelsPhotoPreview()
         }
         .onChange(of: appDelegate.pexelsVideos) { pexelsVideos in
             if pexelsVideos.count < 2,
@@ -301,6 +323,10 @@ struct SettingsView: View {
                 useVideosFromPexelsIsOn = false
                 useVideosFromPexels = false
             }
+            updateRandomPexelsVideoPreview()
+        }
+        .onChange(of: appDelegate.pexelsVideoPreviewImages) { _ in
+            updateRandomPexelsVideoPreview()
         }
         .onChange(of: showWatchIsOn) { newValue in
             iPrint("isOn: \(showWatchIsOn)")
@@ -418,6 +444,8 @@ struct SettingsView: View {
             keyStringSymbol = Keyboard.keySymbol(from: keyString)
             filteredModKeyNames1 = filterModKeys(otherModeValue: keyString2)
             filteredModKeyNames2 = filterModKeys(otherModeValue: keyString1)
+            updateRandomPexelsPhotoPreview()
+            updateRandomPexelsVideoPreview()
             if let message = appDelegate.settingsErrorMessage,
                !message.isEmpty {
                 settingsErrorText = message
@@ -429,6 +457,33 @@ struct SettingsView: View {
                 startAfter = 5
             }
         }
+    }
+
+    func updateRandomPexelsPhotoPreview() {
+        guard let randomPath = appDelegate.pexelsPhotos.randomElement(),
+              let image = NSImage(contentsOfFile: randomPath) else {
+            randomPexelsPhotoPreview = nil
+            return
+        }
+        randomPexelsPhotoPreview = image
+    }
+
+    func updateRandomPexelsVideoPreview() {
+        guard let randomUrlString = appDelegate.pexelsVideoPreviewImages.filter({ !$0.isEmpty }).randomElement(),
+              let url = URL(string: randomUrlString) else {
+            randomPexelsVideoPreview = nil
+            return
+        }
+
+        URLSession.shared.dataTask(with: url) { data, _, _ in
+            guard let data,
+                  let image = NSImage(data: data) else {
+                return
+            }
+            DispatchQueue.main.async {
+                randomPexelsVideoPreview = image
+            }
+        }.resume()
     }
 
     func openFolderPicker() {

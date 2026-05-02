@@ -19,6 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     @Published var keyAndMouseEventMonitor: Any?
     @Published var pexelsPhotos: [String] = []
     @Published var pexelsVideos: [String] = []
+    @Published var pexelsVideoPreviewImages: [String] = []
 
     @AppStorage("startAfter")  var startAfter: TimeInterval = 600
 

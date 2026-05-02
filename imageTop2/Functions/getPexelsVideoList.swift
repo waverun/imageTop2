@@ -89,28 +89,43 @@ private func requestPexelsVideosPage(
     }.resume()
 }
 
-func getPexelsVideoList(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @escaping (_: [String]) -> Void) {
+func getPexelsVideoList(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @escaping (_ videos: [String], _ previews: [String]) -> Void) {
     let pexelsVideoList = "videoList.txt"
+    let pexelsVideoPreviewList = "videoPreviewList.txt"
 
-    func loadVideoNames(from: URL) -> [String]? {
-        let videosFileName = pexelsVideoList
-        let videoFileURL = from.appendingPathComponent(videosFileName)
+    func loadVideoNamesAndPreviews(from: URL) -> ([String], [String])? {
+        let videosFileURL = from.appendingPathComponent(pexelsVideoList)
+        let previewsFileURL = from.appendingPathComponent(pexelsVideoPreviewList)
 
-        guard FileManager.default.fileExists(atPath: videoFileURL.path) else {
+        guard FileManager.default.fileExists(atPath: videosFileURL.path) else {
             return nil
         }
 
-        if let videoNamesList = readFileContents(atPath: videoFileURL.path) {
-            return videoNamesList
+        guard let videoNamesList = readFileContents(atPath: videosFileURL.path) else {
+            return nil
+        }
+
+        let videoLinks = videoNamesList
+            .components(separatedBy: "\n")
+            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+
+        var previewLinks: [String] = []
+        if FileManager.default.fileExists(atPath: previewsFileURL.path),
+           let previewNamesList = readFileContents(atPath: previewsFileURL.path) {
+            previewLinks = previewNamesList
                 .components(separatedBy: "\n")
                 .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
         }
 
-        return nil
+        if previewLinks.count < videoLinks.count {
+            previewLinks.append(contentsOf: Array(repeating: "", count: videoLinks.count - previewLinks.count))
+        }
+
+        return (videoLinks, previewLinks)
     }
 
-    if let videoLinks = loadVideoNames(from: pexelsFolder) {
-        onDone(videoLinks)
+    if let (videoLinks, previewLinks) = loadVideoNamesAndPreviews(from: pexelsFolder) {
+        onDone(videoLinks, previewLinks)
         return
     }
 
@@ -127,13 +142,14 @@ func getPexelsVideoList(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @es
         iPrint(error.logMessage)
         appDelegate.showSettingsError(error.userMessage)
         appDelegate.setDownloading(false)
-        onDone([])
+        onDone([], [])
     }
 
     func processResponse(_ videoData: VideoData, category: String, page: Int, allowPageOneFallback: Bool) {
         let requestSummary = "query='\(category)' page=\(page) per_page=\(pexelsVideoPerPage)"
 
         var videoLinks: [String] = []
+        var previewLinks: [String] = []
         for video in videoData.videos {
             guard video.duration >= 10, video.duration <= 60 else {
                 continue
@@ -166,6 +182,7 @@ func getPexelsVideoList(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @es
 
             let linkWithPhotographer = selectedFile.link + "," + video.user.name
             videoLinks.append(linkWithPhotographer)
+            previewLinks.append(video.image ?? "")
         }
 
         guard !videoLinks.isEmpty else {
@@ -181,13 +198,15 @@ func getPexelsVideoList(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @es
         }
 
         let videoList = videoLinks.joined(separator: "\n")
+        let previewList = previewLinks.joined(separator: "\n")
         writeFile(directoryURL: pexelsFolder, fileName: pexelsVideoList, contents: videoList)
+        writeFile(directoryURL: pexelsFolder, fileName: pexelsVideoPreviewList, contents: previewList)
         DispatchQueue.main.async {
             appDelegate.numberOfPexelsVideos = videoLinks.count
         }
         appDelegate.clearSettingsError()
         appDelegate.setDownloading(false)
-        onDone(videoLinks)
+        onDone(videoLinks, previewLinks)
     }
 
     func fetchAndProcessPage(_ page: Int, allowPageOneFallback: Bool) {

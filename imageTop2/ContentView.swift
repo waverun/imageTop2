@@ -930,7 +930,7 @@ struct ContentView: View {
 
         if useVideosFromPexels {
             group.enter()
-            getPexelsVideoList(pexelsFolder: bufferUrl, appDelegate: appDelegate) { videosList in
+            getPexelsVideoList(pexelsFolder: bufferUrl, appDelegate: appDelegate) { videosList, _ in
                 prefetchedVideos = videosList
                 group.leave()
             }
@@ -1137,9 +1137,10 @@ struct ContentView: View {
         iPrint("handlePexelsVideos: \(index)")
         if useVideosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
-            getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl, appDelegate: appDelegate) { videosList in
+            getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl, appDelegate: appDelegate) { videosList, previewList in
                 DispatchQueue.main.async {
                     appDelegate.pexelsVideos = videosList
+                    appDelegate.pexelsVideoPreviewImages = previewList
                     appDelegate.loadImagesAndVideos.toggle()
                 }
             }
