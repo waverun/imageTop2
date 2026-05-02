@@ -310,6 +310,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         return true
     }
 
+    func windowDidMiniaturize(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow,
+              window == settingsWindow else {
+            return
+        }
+
+        iPrint("settingsWindow did miniaturize -> showMainWindow")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.showMainWindow()
+        }
+    }
+
     func startDetectLockedScreen() {
         dnc = DistributedNotificationCenter.default()
 
@@ -368,7 +380,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         updateShowItem()
 
         menu.addItem(withTitle: "Settings", action: #selector(openSettings), keyEquivalent: "")
-        let skipItem = menu.addItem(withTitle: "Skip Current (Del / Right Click)", action: #selector(skipCurrentItem), keyEquivalent: "\u{8}")
+        let skipItem = menu.addItem(withTitle: "Remove Current (Del / Right Click)", action: #selector(skipCurrentItem), keyEquivalent: "\u{8}")
         skipItem.keyEquivalentModifierMask = []
         autoStartItem = menu.addItem(withTitle: (autoStart ? "Disable" : "Enable") + " Auto Start (Inactivity)", action: #selector(handleAutoStart), keyEquivalent: "")
 
