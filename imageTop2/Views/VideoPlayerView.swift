@@ -75,8 +75,11 @@ struct VideoPlayerView: NSViewRepresentable {
         iPrint("videoPlayerView \(index) \(url.path)")
         let view = NSView()
 
-        let player = AVPlayer(url: url)
-        player .isMuted = true
+        let playerItem = AVPlayerItem(url: url)
+        playerItem.preferredForwardBufferDuration = 12
+        let player = AVPlayer(playerItem: playerItem)
+        player.automaticallyWaitsToMinimizeStalling = true
+        player.isMuted = true
 
         startGetVideoLength(player: player, url: url)
 
@@ -235,7 +238,10 @@ struct VideoPlayerView: NSViewRepresentable {
             iPrint("updateNSView: \(index) currentURL: \(currentURL)")
             iPrint("updateNSView: \(index) Creating new item for url: \(url)")
 
-            let player = AVPlayer(url: url)
+            let playerItem = AVPlayerItem(url: url)
+            playerItem.preferredForwardBufferDuration = 12
+            let player = AVPlayer(playerItem: playerItem)
+            player.automaticallyWaitsToMinimizeStalling = true
             player.isMuted = true
 
             gPlayers[index] = player
