@@ -116,6 +116,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
     var dnc: DistributedNotificationCenter!
     var screenLockedObserver: NSObjectProtocol?
     var screenUnlockedObserver: NSObjectProtocol?
+    var screenSaverStartedObserver: NSObjectProtocol?
     var restartApplicationWhileScreenIsLockedOccured = false
 
     deinit {
@@ -169,6 +170,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         if let observer = screenUnlockedObserver {
             DistributedNotificationCenter.default().removeObserver(observer)
             screenUnlockedObserver = nil
+        }
+
+        if let observer = screenSaverStartedObserver {
+            DistributedNotificationCenter.default().removeObserver(observer)
+            screenSaverStartedObserver = nil
         }
     }
 
@@ -345,6 +351,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                 restartApplication()
                 iPrint("screenUnlockedObserver: \(restartApplicationWhileScreenIsLockedOccured)")
             }
+        }
+
+        screenSaverStartedObserver = dnc.addObserver(forName: .init("com.apple.screensaver.didstart"), object: nil, queue: .main) { [weak self] _ in
+            guard let self = self else { return }
+            iPrint("Screen Saver Started")
+            showWindow = false
         }
     }
 
