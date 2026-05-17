@@ -359,6 +359,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             showWindow = false
         }
     }
+    
+    private func updateInitialScreenLockState() {
+        guard let session = CGSessionCopyCurrentDictionary() as? [String: Any] else {
+            ScreenLockStatus.shared.isLocked = false
+            return
+        }
+        
+        let lockedValue = session["CGSSessionScreenIsLocked"] as? NSNumber
+        let isLockedNow = lockedValue?.boolValue ?? false
+        ScreenLockStatus.shared.isLocked = isLockedNow
+        showWindow = !isLockedNow
+        iPrint("Initial screen lock state: \(isLockedNow)")
+    }
 
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -377,6 +390,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         }
 
         startDetectLockedScreen()
+        updateInitialScreenLockState()
 
         createWindows()
 
@@ -445,7 +459,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
             object: nil
         )
 
-        showWindow = true
+        showWindow = !ScreenLockStatus.shared.isLocked
 
         networkManager = NetworkManager(appDelegate: self)
 
@@ -565,6 +579,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
                 window.makeKeyAndOrderFront(nil)
             }
             WindowManager.shared.addWindow(window)
+        }
+        if ScreenLockStatus.shared.isLocked {
+            iPrint("createWindows: screen is locked, delaying full screen start")
+            return
         }
         WindowManager.shared.enterFullScreen()
     }
