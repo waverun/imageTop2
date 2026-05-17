@@ -248,6 +248,20 @@ struct VideoPlayerView: NSViewRepresentable {
                 gPausableTimers[index] = PausableTimer(index: index)
                 iPrint("startGetVideoLength: \(index) before start: gPausableTimers.count \(gPausableTimers.count)")
                 gPausableTimers[index]?.start(interval: TimeInterval(max(0, iDuration - videoFadeLeadTime - videoDurationSafetyMargin))) { _ in
+                    let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
+                    let normalizedCurrentTime = playerCurrentTime.isFinite ? playerCurrentTime : 0
+                    let mediaTimeRemaining = iDuration - normalizedCurrentTime - videoFadeLeadTime - videoDurationSafetyMargin
+                    if mediaTimeRemaining > 0.15 {
+                        iPrint("in PausableTimer: \(index) fired early. currentTime: \(normalizedCurrentTime) duration: \(iDuration) remainingMediaTime: \(mediaTimeRemaining)")
+                        gPausableTimers[index]?.start(interval: mediaTimeRemaining) { _ in
+                            iPrint("in PausableTimer: \(index) delayed media-time switch")
+                            if let endPlayNotification = gEndPlayNotifications[index] {
+                                NotificationCenter.default.removeObserver(endPlayNotification)
+                            }
+                            startNewVideo(player)
+                        }
+                        return
+                    }
                     iPrint("in PausableTimer: \(index)")
                     if let endPlayNotification = gEndPlayNotifications[index] {
                         NotificationCenter.default.removeObserver(endPlayNotification)
