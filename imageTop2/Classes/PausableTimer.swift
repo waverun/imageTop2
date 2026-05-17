@@ -57,7 +57,7 @@ class PausableTimer {
         iPrint("timer: \(index!) resume: currentTime: \(playerCurrentTimeSec)")
 
         let remainingTimeSec = playerDurationSec - playerCurrentTimeSec
-        interval = remainingTimeSec
+        interval = max(0, remainingTimeSec - videoFadeLeadTime - videoDurationSafetyMargin)
 
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false, block: block!)
         iPrint("timer: \(index!) resume: \(interval)")

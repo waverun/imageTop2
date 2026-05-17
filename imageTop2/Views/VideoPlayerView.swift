@@ -14,11 +14,23 @@ var gEndPlayNotifications = ThreadSafeDict<Int, NSObjectProtocol>()
 //var gEndPlayNotifications: [Int: NSObjectProtocol] = [:]
 var gNeedToLoadImageOrVideo = ThreadSafeDict<Int, Bool>()
 //var gNeedToLoadImageOrVideo: [Int: Bool] = [:]
+let videoFadeLeadTime: TimeInterval = 4.0
+let videoDurationSafetyMargin: TimeInterval = 1.0
 
 class VideoFailedToPlay {
     var playerItem: AVPlayerItem
     var index: Int
     var finishedPlaying: () -> Void
+    private var issueCheckWorkItem: DispatchWorkItem?
+    private var didTriggerTransition = false
+    private let failureGraceDelay: TimeInterval = 2.0
+    private let failureCheckInterval: TimeInterval = 0.3
+    private let minimumProgressToContinue: Double = 0.01
+    
+    private func playerItemDurationSeconds() -> Double {
+        let seconds = CMTimeGetSeconds(playerItem.duration)
+        return seconds.isFinite ? seconds : -1
+    }
 
     init(playerItem: AVPlayerItem, index: Int, finishedPlaying: @escaping () -> Void) {
         // Add observers for playback failure and playback stall.
@@ -31,36 +43,71 @@ class VideoFailedToPlay {
     }
 
     deinit {
+        issueCheckWorkItem?.cancel()
         NotificationCenter.default.removeObserver(self)
     }
-
+    
     @objc func videoFailedToPlay(notification: Notification) {
         var url = ""
         if let urlAsset = playerItem.asset as? AVURLAsset {
             url = urlAsset.url.absoluteString
         }
         iPrint("videoFailedToPlay: currentTime: \(playerItem.currentTime().seconds) url: \(url)")
-        finishedPlaying()
+        handlePlaybackIssue(reason: "failedToPlay")
     }
 
     @objc func videoPlaybackStalled(notification: Notification) {
-        let stalledTime = playerItem.currentTime().seconds
         var url = ""
         if let urlAsset = playerItem.asset as? AVURLAsset {
             url = urlAsset.url.absoluteString
         }
+        let stalledTime = playerItem.currentTime().seconds
         iPrint("videoPlaybackStalled: currentTime: \(stalledTime) url: \(url)")
 
         playerItem.seek(to: playerItem.currentTime()) { _ in }
+        handlePlaybackIssue(reason: "playbackStalled")
+    }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
-            guard let self else { return }
-            let currentTime = self.playerItem.currentTime().seconds
-            if abs(currentTime - stalledTime) < 0.05 {
-                iPrint("videoPlaybackStalled: no progress after retry, skip. currentTime: \(currentTime) url: \(url)")
-                self.finishedPlaying()
-            }
+    private func handlePlaybackIssue(reason: String) {
+        if didTriggerTransition {
+            return
         }
+        issueCheckWorkItem?.cancel()
+        let issueTime = playerItem.currentTime().seconds
+        let startWallTime = Date().timeIntervalSince1970
+        scheduleIssueCheck(reason: reason, issueTime: issueTime, delay: failureCheckInterval, startWallTime: startWallTime)
+    }
+    
+    private func scheduleIssueCheck(reason: String, issueTime: Double, delay: TimeInterval, startWallTime: TimeInterval) {
+        let nextCheck = DispatchWorkItem { [weak self] in
+            self?.handlePlaybackIssueContinuation(reason: reason, issueTime: issueTime, startWallTime: startWallTime)
+        }
+        issueCheckWorkItem = nextCheck
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: nextCheck)
+    }
+    
+    private func handlePlaybackIssueContinuation(reason: String, issueTime: Double, startWallTime: TimeInterval) {
+        if didTriggerTransition {
+            return
+        }
+        let currentTime = playerItem.currentTime().seconds
+        let progressed = (currentTime - issueTime) > minimumProgressToContinue
+        if progressed {
+            let remainingGrace = max(0, failureGraceDelay - (Date().timeIntervalSince1970 - startWallTime))
+            iPrint("handlePlaybackIssue: progress after \(reason). index: \(index) progressed: \(currentTime - issueTime) remainingGrace: \(remainingGrace)")
+            if remainingGrace > 0 {
+                scheduleIssueCheck(reason: reason, issueTime: issueTime, delay: min(failureCheckInterval, remainingGrace), startWallTime: startWallTime)
+            }
+            return
+        }
+        let elapsedWallTime = Date().timeIntervalSince1970 - startWallTime
+        if elapsedWallTime < failureGraceDelay {
+            scheduleIssueCheck(reason: reason, issueTime: issueTime, delay: min(failureCheckInterval, failureGraceDelay - elapsedWallTime), startWallTime: startWallTime)
+            return
+        }
+        didTriggerTransition = true
+        iPrint("handlePlaybackIssue: transition after \(reason). index: \(index) currentTime: \(currentTime) duration: \(playerItemDurationSeconds())")
+        finishedPlaying()
     }
 }
 
@@ -70,6 +117,14 @@ struct VideoPlayerView: NSViewRepresentable {
     let url: URL
     let index: Int
     let finishedPlaying: () -> Void
+
+    func logVideoTiming(_ label: String, playerItem: AVPlayerItem?, player: AVPlayer?) {
+        let durationSeconds = CMTimeGetSeconds(playerItem?.duration ?? .zero)
+        let currentSeconds = CMTimeGetSeconds(player?.currentTime() ?? .zero)
+        let normalizedDuration = durationSeconds.isFinite ? durationSeconds : -1
+        let normalizedCurrent = currentSeconds.isFinite ? currentSeconds : -1
+        iPrint("\(label) index: \(index) currentTime: \(normalizedCurrent) duration: \(normalizedDuration) url: \(url)")
+    }
 
     func makeNSView(context: Context) -> NSView {
         iPrint("videoPlayerView \(index) \(url.path)")
@@ -113,6 +168,7 @@ struct VideoPlayerView: NSViewRepresentable {
             play(player)
             iPrint("Video1 started playing. \(index) url: \(url) makeNSView \(Date())")
         }
+        logVideoTiming("Video timing on start", playerItem: player.currentItem, player: player)
 
 #if DEBUG
         iPrint("Memory: \(index) Play makeNSView: \(reportMemory())")
@@ -149,6 +205,7 @@ struct VideoPlayerView: NSViewRepresentable {
             }
             iPrint("Video finished playing. \(index) url: \(url)")
 #endif
+            logVideoTiming("Video timing on end", playerItem: player.currentItem, player: player)
             startNewVideo(player)
             // You could do additional things here like play the next video, show a replay button, etc.
         }
@@ -182,14 +239,15 @@ struct VideoPlayerView: NSViewRepresentable {
             iPrint("Timer: \(index) Video duration: \(CMTimeGetSeconds(duration)) seconds")
             let iDuration = CMTimeGetSeconds(duration)
             iPrint("iDuration \(index) \(iDuration) url: \(url)")
-            if iDuration > 4 {
+            logVideoTiming("Video timing after duration load", playerItem: player.currentItem, player: player)
+            if iDuration.isFinite, iDuration > (videoFadeLeadTime + videoDurationSafetyMargin) {
                 if let timer = gPausableTimers[index] {
                     timer.invalidate()
                     gPausableTimers[index] = nil
                 }
                 gPausableTimers[index] = PausableTimer(index: index)
                 iPrint("startGetVideoLength: \(index) before start: gPausableTimers.count \(gPausableTimers.count)")
-                gPausableTimers[index]?.start(interval: TimeInterval(max(0, iDuration - 4))) { _ in
+                gPausableTimers[index]?.start(interval: TimeInterval(max(0, iDuration - videoFadeLeadTime - videoDurationSafetyMargin))) { _ in
                     iPrint("in PausableTimer: \(index)")
                     if let endPlayNotification = gEndPlayNotifications[index] {
                         NotificationCenter.default.removeObserver(endPlayNotification)
@@ -275,6 +333,7 @@ struct VideoPlayerView: NSViewRepresentable {
                     iPrint("Video1 started playing. \(index) url: \(url) updateNSView \(Date())")
                 default: gPausableTimers[index]?.pause()
             }
+            logVideoTiming("Video timing on update start", playerItem: player.currentItem, player: player)
 #if DEBUG
             iPrint("Memory: \(index) Play updateNSView: \(reportMemory())")
 #endif
