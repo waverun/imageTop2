@@ -292,6 +292,7 @@ struct VideoPlayerView: NSViewRepresentable {
     func startNewVideo(_ player: AVPlayer) {
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
         gPausableTimers[index]?.invalidate()
+        gPausableTimers[index] = nil
         finishedPlaying()
     }
 
