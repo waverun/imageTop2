@@ -89,47 +89,16 @@ private func requestPexelsVideosPage(
     }.resume()
 }
 
-func getPexelsVideoList(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @escaping (_ videos: [String], _ previews: [String]) -> Void) {
+func getPexelsVideoList(
+    pexelsFolder: URL,
+    appDelegate: AppDelegate,
+    selectionMode: PexelsCategorySelectionMode = .automaticNoRepeat,
+    onDone: @escaping (_ videos: [String], _ previews: [String]) -> Void
+) {
     let pexelsVideoList = "videoList.txt"
     let pexelsVideoPreviewList = "videoPreviewList.txt"
 
-    func loadVideoNamesAndPreviews(from: URL) -> ([String], [String])? {
-        let videosFileURL = from.appendingPathComponent(pexelsVideoList)
-        let previewsFileURL = from.appendingPathComponent(pexelsVideoPreviewList)
-
-        guard FileManager.default.fileExists(atPath: videosFileURL.path) else {
-            return nil
-        }
-
-        guard let videoNamesList = readFileContents(atPath: videosFileURL.path) else {
-            return nil
-        }
-
-        let videoLinks = videoNamesList
-            .components(separatedBy: "\n")
-            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-
-        var previewLinks: [String] = []
-        if FileManager.default.fileExists(atPath: previewsFileURL.path),
-           let previewNamesList = readFileContents(atPath: previewsFileURL.path) {
-            previewLinks = previewNamesList
-                .components(separatedBy: "\n")
-                .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-        }
-
-        if previewLinks.count < videoLinks.count {
-            previewLinks.append(contentsOf: Array(repeating: "", count: videoLinks.count - previewLinks.count))
-        }
-
-        return (videoLinks, previewLinks)
-    }
-
-    if let (videoLinks, previewLinks) = loadVideoNamesAndPreviews(from: pexelsFolder) {
-        onDone(videoLinks, previewLinks)
-        return
-    }
-
-    let category = pexelsCategories.randomElement() ?? "nature"
+    let category = nextPexelsCategory(mode: selectionMode)
 
     var screenWidth = WindowManager.shared.getMaxScreenWidth()
     if 0 < screenWidth {

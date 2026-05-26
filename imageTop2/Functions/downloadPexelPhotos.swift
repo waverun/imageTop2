@@ -7,6 +7,36 @@ let pexelsCategories = [
     "leaves", "orange", "ship", "switzerland", "pets"
 ]
 
+enum PexelsCategorySelectionMode {
+    case automaticNoRepeat
+    case manualRandom
+}
+
+private let pexelsUsedCategoriesDefaultsKey = "pexelsUsedCategoriesShared"
+
+func nextPexelsCategory(mode: PexelsCategorySelectionMode) -> String {
+    switch mode {
+    case .manualRandom:
+        return pexelsCategories.randomElement() ?? "nature"
+    case .automaticNoRepeat:
+        let defaults = UserDefaults.standard
+        let usedFromDefaults = Set(defaults.stringArray(forKey: pexelsUsedCategoriesDefaultsKey) ?? [])
+        let validCategories = Set(pexelsCategories)
+        var usedCategories = usedFromDefaults.intersection(validCategories)
+
+        var availableCategories = pexelsCategories.filter { !usedCategories.contains($0) }
+        if availableCategories.isEmpty {
+            usedCategories.removeAll()
+            availableCategories = pexelsCategories
+        }
+
+        let selectedCategory = availableCategories.randomElement() ?? "nature"
+        usedCategories.insert(selectedCategory)
+        defaults.set(Array(usedCategories), forKey: pexelsUsedCategoriesDefaultsKey)
+        return selectedCategory
+    }
+}
+
 private let pexelsPhotoMaxFullPagesByCategory = ThreadSafeDict<String, Int>()
 private let pexelsPhotoPerPage = 80
 private let pexelsPhotoRequestTimeout: TimeInterval = 10
@@ -95,7 +125,12 @@ private func requestPexelsPhotosPage(
     }.resume()
 }
 
-func downloadPexelPhotos(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @escaping (_ success: Bool) -> Void) {
+func downloadPexelPhotos(
+    pexelsFolder: URL,
+    appDelegate: AppDelegate,
+    selectionMode: PexelsCategorySelectionMode = .automaticNoRepeat,
+    onDone: @escaping (_ success: Bool) -> Void
+) {
     if !isFreeSpaceMoreThan(gigabytes: 1) {
         let message = "Pexels photos failed: not enough free disk space."
         iPrint(message)
@@ -104,7 +139,7 @@ func downloadPexelPhotos(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @e
         return
     }
 
-    let category = pexelsCategories.randomElement() ?? "nature"
+    let category = nextPexelsCategory(mode: selectionMode)
     appDelegate.setDownloading(true)
 
     func fail(_ error: PexelsPhotosRequestError) {
@@ -216,4 +251,3 @@ func downloadPexelPhotos(pexelsFolder: URL, appDelegate: AppDelegate, onDone: @e
         }
     }
 }
-

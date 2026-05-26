@@ -363,7 +363,7 @@ struct ContentView: View {
     func usePhotosFromPexelsChanged(_ usePhotosFromPexels: Bool) {
         switch true {
             case usePhotosFromPexels && index == 0:
-                    handlePexelsPhotos()
+                    handlePexelsPhotos(selectionMode: .manualRandom)
 
             case usePhotosFromPexels: setImageOrVideoMode()
 
@@ -380,7 +380,7 @@ struct ContentView: View {
     func useVideosFromPexelsChanged(_ useVideosFromPexels: Bool) {
         switch true {
             case useVideosFromPexels && index == 0:
-                handlePexelsVideos()
+                handlePexelsVideos(selectionMode: .manualRandom)
 
             case useVideosFromPexels: setImageOrVideoMode()
                 
@@ -1189,11 +1189,11 @@ struct ContentView: View {
         return ""
     }
 
-    func handlePexelsVideos() {
+    func handlePexelsVideos(selectionMode: PexelsCategorySelectionMode = .automaticNoRepeat) {
         iPrint("handlePexelsVideos: \(index)")
         if useVideosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
-            getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl, appDelegate: appDelegate) { videosList, previewList in
+            getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl, appDelegate: appDelegate, selectionMode: selectionMode) { videosList, previewList in
                 DispatchQueue.main.async {
                     appDelegate.pexelsVideos = videosList
                     appDelegate.pexelsVideoPreviewImages = previewList
@@ -1203,31 +1203,27 @@ struct ContentView: View {
         }
     }
 
-    func handlePexelsPhotos() {
+    func handlePexelsPhotos(selectionMode: PexelsCategorySelectionMode = .automaticNoRepeat) {
         iPrint("handlePexelsPhotos: \(index) usePhotosFromPexels: \(usePhotosFromPexels)")
         if usePhotosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
-            appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
+            clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+            appDelegate.pexelsPhotos.removeAll()
             DispatchQueue.global().async {
                 pexelDownloadSemaphore.wait()
-                if appDelegate.pexelsPhotos.count < 2 {
-                    downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl, appDelegate: appDelegate) { _ in
-                        appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
-                        if appDelegate.pexelsPhotos.count < 2 {
-                            if appDelegate.settingsErrorMessage == nil {
-                                appDelegate.showSettingsError("Pexels photos failed: no usable photos were downloaded.")
-                            }
-                        } else {
-                            appDelegate.clearSettingsError()
+                downloadPexelPhotos(pexelsFolder: pexelsDirectoryUrl, appDelegate: appDelegate, selectionMode: selectionMode) { _ in
+                    appDelegate.pexelsPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
+                    if appDelegate.pexelsPhotos.count < 2 {
+                        if appDelegate.settingsErrorMessage == nil {
+                            appDelegate.showSettingsError("Pexels photos failed: no usable photos were downloaded.")
                         }
-                        pexelDownloadSemaphore.signal()
-                        if !useVideosFromPexels {
-                            appDelegate.loadImagesAndVideos.toggle()
-                        }
+                    } else {
+                        appDelegate.clearSettingsError()
                     }
-                } else {
-                    appDelegate.clearSettingsError()
                     pexelDownloadSemaphore.signal()
+                    if !useVideosFromPexels {
+                        appDelegate.loadImagesAndVideos.toggle()
+                    }
                 }
             }
         }
