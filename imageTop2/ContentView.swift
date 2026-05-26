@@ -1,6 +1,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import AppKit
+import AVFoundation
 //import GameplayKit
 import HotKey
 
@@ -59,6 +60,7 @@ struct ContentView: View {
     @AppStorage("useLocalImagesAndVideos") var useLocalImagesAndVideos: Bool = false
     @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = true
     @AppStorage("repeatPexelsContent") var repeatPexelsContent: Bool = true
+    @AppStorage("showDebugVideoTimer") var showDebugVideoTimer: Bool = false
 
     @State var imageOrBackgroundChangeTimer: Timer? = nil
     @State var pexelsRefreshInProgress = false
@@ -76,6 +78,9 @@ struct ContentView: View {
     @State var x: CGFloat = 0
 
     @State var y: CGFloat = 0
+    @State var debugVideoElapsedSeconds: Double = 0
+    @State var debugVideoDurationSeconds: Double = 0
+    @State var debugVideoRemainingSeconds: Double = 0
 
     let pexelDownloadSemaphore = DispatchSemaphore(value: 1)
 
@@ -138,6 +143,11 @@ struct ContentView: View {
                 if !hideVideos {
                     videoPlayerView
                 }
+#if DEBUG
+                if showDebugVideoTimer {
+                    debugVideoTimerOverlay
+                }
+#endif
                 imageView
                 if index == 0 && (appDelegate.showWatchOrCpu || appDelegate.showCpu || appDelegate.showWeatherByIP || appDelegate.showSunEventByIP) {
                     DigitalWatchView(timerIsActive: $watchTimerIsActive, x: x, y: y)
@@ -166,7 +176,32 @@ struct ContentView: View {
                 handleEscapeForCurrentItem()
             }
         }
+#if DEBUG
+        .onReceive(Timer.publish(every: 0.25, on: .main, in: .common).autoconnect()) { _ in
+            updateDebugVideoElapsedTime()
+        }
+#endif
     }
+
+#if DEBUG
+    @ViewBuilder var debugVideoTimerOverlay: some View {
+        VStack {
+            HStack {
+                Text("Video: \(String(format: "%.2f", debugVideoElapsedSeconds))s | Left: \(String(format: "%.2f", debugVideoRemainingSeconds))s | Total: \(String(format: "%.2f", debugVideoDurationSeconds))s")
+                    .foregroundColor(.white)
+                    .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.black.opacity(0.55))
+                    .cornerRadius(8)
+                Spacer()
+            }
+            Spacer()
+        }
+        .padding(16)
+        .allowsHitTesting(false)
+    }
+#endif
 
     @ViewBuilder var backgroundView: some View {
         ZStack {
@@ -714,6 +749,27 @@ struct ContentView: View {
         }
         watchTimerIsActive = true
     }
+
+#if DEBUG
+    func updateDebugVideoElapsedTime() {
+        guard showDebugVideoTimer, showVideo,
+              let player = gPlayers[index] else {
+            debugVideoElapsedSeconds = 0
+            debugVideoRemainingSeconds = 0
+            debugVideoDurationSeconds = 0
+            return
+        }
+        let seconds = CMTimeGetSeconds(player.currentTime())
+        let elapsed = seconds.isFinite ? max(0, seconds) : 0
+        let durationRaw = CMTimeGetSeconds(player.currentItem?.duration ?? .zero)
+        let duration = durationRaw.isFinite && durationRaw > 0 ? durationRaw : 0
+        let remaining = max(0, duration - elapsed)
+
+        debugVideoElapsedSeconds = elapsed
+        debugVideoDurationSeconds = duration
+        debugVideoRemainingSeconds = remaining
+    }
+#endif
 
     func hotkeyPressed() {
         iPrint("hotkey pressed")

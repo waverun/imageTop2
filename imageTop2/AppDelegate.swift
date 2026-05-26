@@ -423,13 +423,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSWindowDe
         statusBarItem.menu = menu
 
         // Initialize settings window
+        #if DEBUG
+        let settingsWindowSize = NSSize(width: 350, height: 430)
+        #else
+        let settingsWindowSize = NSSize(width: 350, height: 390)
+        #endif
         settingsWindow = NSWindow (
-            contentRect: NSRect(x: 0, y: 0, width: 300, height: 200),
+            contentRect: NSRect(x: 0, y: 0, width: settingsWindowSize.width, height: settingsWindowSize.height),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
         )
         settingsWindow.contentView = NSHostingView(rootView: SettingsView().environmentObject(self))
+#if DEBUG
+//        settingsWindow.setContentSize(settingsWindowSize)
+#endif
         settingsWindow.title = "Settings"
         settingsWindow.level = .floating
         settingsWindow.center()

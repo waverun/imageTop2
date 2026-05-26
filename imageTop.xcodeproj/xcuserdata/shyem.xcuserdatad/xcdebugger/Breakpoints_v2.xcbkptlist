@@ -14,8 +14,8 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "132"
-            endingLineNumber = "132"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
             landmarkName = "resetWatchPosition()"
             landmarkType = "7">
          </BreakpointContent>
@@ -30,9 +30,9 @@
             filePath = "imageTop2/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "847"
-            endingLineNumber = "847"
-            landmarkName = "loadRandomImageOrVideo()"
+            startingLineNumber = "859"
+            endingLineNumber = "859"
+            landmarkName = "startChangeTimer(addTime:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

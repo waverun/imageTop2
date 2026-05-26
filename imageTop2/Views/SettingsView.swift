@@ -16,6 +16,7 @@ struct SettingsView: View {
     @AppStorage("useLocalImagesAndVideos") var useLocalImagesAndVideos: Bool = false
     @AppStorage("useVideosFromPexels") var useVideosFromPexels: Bool = false
     @AppStorage("repeatPexelsContent") var repeatPexelsContent: Bool = true
+    @AppStorage("showDebugVideoTimer") var showDebugVideoTimer: Bool = false
     @AppStorage("showWatch") var showWatch = true 
     @AppStorage("showCpu") var showCpu = false
     @AppStorage("showWeatherByIP") var showWeatherByIP = false
@@ -66,6 +67,12 @@ struct SettingsView: View {
             GeometryReader { geometry in
                 Form {
                     VStack {
+#if DEBUG
+                        HStack {
+                            Toggle("Debug: Show Video Seconds", isOn: $showDebugVideoTimer)
+                            Spacer()
+                        }.padding(.leading)
+#endif
                         HStack {
                             Text("Hot key")
                                 .frame(width: geometry.size.width * 0.35, alignment: .leading)
@@ -453,7 +460,10 @@ struct SettingsView: View {
             settingsErrorText = message
             showErrorAlert = true
         }
-        .frame(width: 350, height: 390)
+        .onReceive(Timer.publish(every: 8, on: .main, in: .common).autoconnect()) { _ in
+            refreshPreviewIfNeeded()
+        }
+//        .frame(width: 350, height: 390)
         .onAppear {
             selectedFolderPath = storedFolderPath
             usePhotosFromPexelsIsOn = usePhotosFromPexels
@@ -506,6 +516,15 @@ struct SettingsView: View {
                 randomPexelsVideoPreview = image
             }
         }.resume()
+    }
+    
+    func refreshPreviewIfNeeded() {
+        if usePhotosFromPexelsIsOn {
+            updateRandomPexelsPhotoPreview()
+        }
+        if useVideosFromPexelsIsOn {
+            updateRandomPexelsVideoPreview()
+        }
     }
 
     func openFolderPicker() {
