@@ -460,9 +460,6 @@ struct SettingsView: View {
             settingsErrorText = message
             showErrorAlert = true
         }
-        .onReceive(Timer.publish(every: 8, on: .main, in: .common).autoconnect()) { _ in
-            refreshPreviewIfNeeded()
-        }
 //        .frame(width: 350, height: 390)
         .onAppear {
             selectedFolderPath = storedFolderPath
@@ -518,15 +515,6 @@ struct SettingsView: View {
         }.resume()
     }
     
-    func refreshPreviewIfNeeded() {
-        if usePhotosFromPexelsIsOn {
-            updateRandomPexelsPhotoPreview()
-        }
-        if useVideosFromPexelsIsOn {
-            updateRandomPexelsVideoPreview()
-        }
-    }
-
     func openFolderPicker() {
         appDelegate.settingsWindow.level = .normal
 
