@@ -43,6 +43,8 @@ struct SettingsView: View {
     @State var randomPexelsVideoPreview: NSImage? = nil
     @State var showLargePhotoPreview = false
     @State var showLargeVideoPreview = false
+    @State var lastPhotoPreviewPath: String = ""
+    @State var lastVideoPreviewURL: String = ""
 
     let allKeyNames = Keyboard.keyNames
     let modKeyNames = Keyboard.modKeyNames
@@ -193,6 +195,9 @@ struct SettingsView: View {
                                             .frame(width: 28, height: 18)
                                             .clipped()
                                             .cornerRadius(3)
+                                            .onTapGesture {
+                                                updateRandomPexelsPhotoPreview()
+                                            }
                                             .onHover { isHovering in
                                                 showLargePhotoPreview = isHovering
                                             }
@@ -214,6 +219,9 @@ struct SettingsView: View {
                                             .frame(width: 28, height: 18)
                                             .clipped()
                                             .cornerRadius(3)
+                                            .onTapGesture {
+                                                updateRandomPexelsVideoPreview()
+                                            }
                                             .onHover { isHovering in
                                                 showLargeVideoPreview = isHovering
                                             }
@@ -489,21 +497,38 @@ struct SettingsView: View {
     }
 
     func updateRandomPexelsPhotoPreview() {
-        guard let randomPath = appDelegate.pexelsPhotos.randomElement(),
-              let image = NSImage(contentsOfFile: randomPath) else {
+        guard !appDelegate.pexelsPhotos.isEmpty else {
+            randomPexelsPhotoPreview = nil
+            lastPhotoPreviewPath = ""
+            return
+        }
+        let randomPath = appDelegate.pexelsPhotos.count > 1
+            ? appDelegate.pexelsPhotos.filter { $0 != lastPhotoPreviewPath }.randomElement() ?? appDelegate.pexelsPhotos.randomElement()!
+            : appDelegate.pexelsPhotos[0]
+        guard let image = NSImage(contentsOfFile: randomPath) else {
             randomPexelsPhotoPreview = nil
             return
         }
+        lastPhotoPreviewPath = randomPath
         randomPexelsPhotoPreview = image
     }
 
     func updateRandomPexelsVideoPreview() {
-        guard let randomUrlString = appDelegate.pexelsVideoPreviewImages.filter({ !$0.isEmpty }).randomElement(),
-              let url = URL(string: randomUrlString) else {
+        let validPreviewURLs = appDelegate.pexelsVideoPreviewImages.filter { !$0.isEmpty }
+        guard !validPreviewURLs.isEmpty else {
+            randomPexelsVideoPreview = nil
+            lastVideoPreviewURL = ""
+            return
+        }
+        let randomUrlString = validPreviewURLs.count > 1
+            ? validPreviewURLs.filter { $0 != lastVideoPreviewURL }.randomElement() ?? validPreviewURLs.randomElement()!
+            : validPreviewURLs[0]
+        guard let url = URL(string: randomUrlString) else {
             randomPexelsVideoPreview = nil
             return
         }
 
+        lastVideoPreviewURL = randomUrlString
         URLSession.shared.dataTask(with: url) { data, _, _ in
             guard let data,
                   let image = NSImage(data: data) else {
