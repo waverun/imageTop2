@@ -98,6 +98,86 @@ func getPexelsVideoList(
     let pexelsVideoList = "videoList.txt"
     let pexelsVideoPreviewList = "videoPreviewList.txt"
 
+    func loadVideoNamesAndPreviews(from: URL) -> ([String], [String])? {
+        let videosFileURL = from.appendingPathComponent(pexelsVideoList)
+        let previewsFileURL = from.appendingPathComponent(pexelsVideoPreviewList)
+
+        guard FileManager.default.fileExists(atPath: videosFileURL.path) else {
+            return nil
+        }
+
+        guard let videoNamesList = readFileContents(atPath: videosFileURL.path) else {
+            return nil
+        }
+
+        let videoLinks = videoNamesList
+            .components(separatedBy: "\n")
+            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+
+        guard !videoLinks.isEmpty else {
+            return nil
+        }
+
+        var previewLinks: [String] = []
+        if FileManager.default.fileExists(atPath: previewsFileURL.path),
+           let previewNamesList = readFileContents(atPath: previewsFileURL.path) {
+            previewLinks = previewNamesList
+                .components(separatedBy: "\n")
+                .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        }
+
+        if previewLinks.count < videoLinks.count {
+            previewLinks.append(contentsOf: Array(repeating: "", count: videoLinks.count - previewLinks.count))
+        }
+
+        return (videoLinks, previewLinks)
+    }
+
+    func validateCachedVideoLinks(_ links: [String], completion: @escaping (Bool) -> Void) {
+        let urlsToValidate = links.prefix(2).compactMap { entry -> String? in
+            let components = entry.components(separatedBy: ",")
+            return components.first
+        }
+        guard !urlsToValidate.isEmpty else {
+            completion(false)
+            return
+        }
+
+        let group = DispatchGroup()
+        var allValid = true
+        let resultQueue = DispatchQueue(label: "pexels.cachedVideoValidation.resultQueue")
+        for url in urlsToValidate {
+            group.enter()
+            checkIfURLExists(url: url) { exists in
+                resultQueue.sync {
+                    if !exists {
+                        allValid = false
+                    }
+                }
+                group.leave()
+            }
+        }
+        group.notify(queue: .main) {
+            completion(allValid)
+        }
+    }
+
+    // Keep existing videos between app launches.
+    // Manual mode still forces a fresh fetch.
+    if selectionMode == .automaticNoRepeat,
+       let (videoLinks, previewLinks) = loadVideoNamesAndPreviews(from: pexelsFolder) {
+        validateCachedVideoLinks(videoLinks) { isValid in
+            if isValid {
+                onDone(videoLinks, previewLinks)
+                return
+            }
+            clearPexelVideos(folderURL: pexelsFolder, fileName: pexelsVideoList)
+            clearPexelVideos(folderURL: pexelsFolder, fileName: pexelsVideoPreviewList)
+            getPexelsVideoList(pexelsFolder: pexelsFolder, appDelegate: appDelegate, selectionMode: selectionMode, onDone: onDone)
+        }
+        return
+    }
+
     let category = nextPexelsCategory(mode: selectionMode)
 
     var screenWidth = WindowManager.shared.getMaxScreenWidth()

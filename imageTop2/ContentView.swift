@@ -24,7 +24,7 @@ struct StateObjects {
 
 struct ContentView: View {
     var index: Int
-    var videoFadeTime = 4.0
+    var videoFadeTime = 6.0
     var imageFadeTime = 2.0
 //    let cpuUsage = getCpuUsage()
 
@@ -218,19 +218,53 @@ struct ContentView: View {
 
     @ViewBuilder var videoPlayerView: some View {
         ZStack {
+            let op1 = showVideo && !showSecondVideo ? 1.0 : 0
+            let op2 = showVideo && showSecondVideo ? 1.0 : 0
+
             videoPlayerBuilder(videoPath: firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
-                .opacity(showVideo && !showSecondVideo ? 1 : 0)
-//                .transition(showVideo && !showSecondVideo ? .scale : .slide)
-//            .zIndex(showVideo && !showSecondVideo ? 1 : 0)
-                .animation(.easeIn(duration: showVideo && !showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && !showSecondVideo)
+                .opacity(op1)
+            //                .opacity(showVideo && !showSecondVideo ? 1 : 0)
+            //                .transition(showVideo && !showSecondVideo ? .scale : .slide)
+            //            .zIndex(showVideo && !showSecondVideo ? 1 : 0)
+                .animation(op1 == 1.0
+//                .animation(showVideo && !showSecondVideo
+                           ? .easeIn(duration: videoFadeTime)
+                           : .linear(duration: videoFadeTime),
+                           value: showVideo && !showSecondVideo)
+
             videoPlayerBuilder(videoPath: secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
-                .opacity(showVideo && showSecondVideo ? 1 : 0)
-//            .transition(showVideo && showSecondVideo ? .scale : .slide)
-//            .zIndex(showVideo && showSecondVideo ? 1 : 0)
-                .animation(.easeIn(duration: showVideo && showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && showSecondVideo)
+                .opacity(op2)
+            //                .opacity(showVideo && showSecondVideo ? 1 : 0)
+            //            .transition(showVideo && showSecondVideo ? .scale : .slide)
+            //            .zIndex(showVideo && showSecondVideo ? 1 : 0)
+                .animation(op2 == 1.0
+//                .animation(showVideo && showSecondVideo
+                           ? .easeIn(duration: videoFadeTime)
+                           : .linear(duration: videoFadeTime),
+                           value: showVideo && showSecondVideo)
         }
         .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
     }
+
+//    @ViewBuilder var videoPlayerView: some View {
+//        ZStack {
+//            let op1 = showVideo && !showSecondVideo ? 1.0 : 0
+//            let op2 = showVideo && showSecondVideo ? 1.0 : 0
+//            videoPlayerBuilder(videoPath: firstVideoPath, photographer: firstPhotographer, condition: showVideo && !showSecondVideo)
+//                .opacity(op1)
+////                .opacity(showVideo && !showSecondVideo ? 1 : 0)
+////                .transition(showVideo && !showSecondVideo ? .scale : .slide)
+////            .zIndex(showVideo && !showSecondVideo ? 1 : 0)
+//                .animation(.linear(duration: showVideo && !showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && !showSecondVideo)
+//            videoPlayerBuilder(videoPath: secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
+//                .opacity(op2)
+////                .opacity(showVideo && showSecondVideo ? 1 : 0)
+////            .transition(showVideo && showSecondVideo ? .scale : .slide)
+////            .zIndex(showVideo && showSecondVideo ? 1 : 0)
+//                .animation(.linear(duration: showVideo && showSecondVideo ? videoFadeTime : videoFadeTime), value: showVideo && showSecondVideo)
+//        }
+//        .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
+//    }
 
     func videoPlayerBuilder(videoPath: String, photographer: String, condition: Bool) -> some View {
         if videoPath != "",
