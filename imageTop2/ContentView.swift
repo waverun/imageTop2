@@ -69,6 +69,7 @@ struct ContentView: View {
     @State var pexelsSwapPending = false
     @State var bufferedPexelsPhotos: [String] = []
     @State var bufferedPexelsVideos: [String] = []
+    @State var bufferedPexelsVideoPreviews: [String] = []
     @State var backgroundColor: Color = Color.clear
     @State var imageOrVideoMode = false
     @State var fadeColor: Color = Color.clear
@@ -474,6 +475,7 @@ struct ContentView: View {
         pexelsSwapPending = false
         bufferedPexelsPhotos.removeAll()
         bufferedPexelsVideos.removeAll()
+        bufferedPexelsVideoPreviews.removeAll()
         // If we were showing colors while waiting for downloads, switch immediately.
         if imageOrVideoMode {
             changeScreenImageVideoOrColor()
@@ -1003,12 +1005,14 @@ struct ContentView: View {
         }
         pexelsPrefetchInProgress = true
 
-        clearPexelPhotos(folderPath: bufferUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+        clearPexelPhotos(folderPath: bufferUrl.path, filesToKeep: [".imageTop", "videoList.txt", "videoPreviewList.txt"])
         clearPexelVideos(folderURL: bufferUrl, fileName: "videoList.txt")
+        clearPexelVideos(folderURL: bufferUrl, fileName: "videoPreviewList.txt")
 
         let group = DispatchGroup()
         var prefetchedPhotos: [String] = []
         var prefetchedVideos: [String] = []
+        var prefetchedVideoPreviews: [String] = []
 
         if usePhotosFromPexels {
             group.enter()
@@ -1020,8 +1024,9 @@ struct ContentView: View {
 
         if useVideosFromPexels {
             group.enter()
-            getPexelsVideoList(pexelsFolder: bufferUrl, appDelegate: appDelegate) { videosList, _ in
+            getPexelsVideoList(pexelsFolder: bufferUrl, appDelegate: appDelegate) { videosList, previewList in
                 prefetchedVideos = videosList
+                prefetchedVideoPreviews = previewList
                 group.leave()
             }
         }
@@ -1029,6 +1034,7 @@ struct ContentView: View {
         group.notify(queue: .main) {
             self.bufferedPexelsPhotos = prefetchedPhotos
             self.bufferedPexelsVideos = prefetchedVideos
+            self.bufferedPexelsVideoPreviews = prefetchedVideoPreviews
             self.pexelsBufferReady = (!self.usePhotosFromPexels || !prefetchedPhotos.isEmpty)
                 && (!self.useVideosFromPexels || !prefetchedVideos.isEmpty)
             self.pexelsPrefetchInProgress = false
@@ -1062,19 +1068,24 @@ struct ContentView: View {
 
         if useVideosFromPexels {
             let videoList = bufferedPexelsVideos.joined(separator: "\n")
+            let previewList = bufferedPexelsVideoPreviews.joined(separator: "\n")
             writeFile(directoryURL: pexelsDirectoryUrl, fileName: "videoList.txt", contents: videoList)
+            writeFile(directoryURL: pexelsDirectoryUrl, fileName: "videoPreviewList.txt", contents: previewList)
         }
 
         appDelegate.pexelsPhotos = usePhotosFromPexels ? loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl) : []
         appDelegate.pexelsVideos = useVideosFromPexels ? bufferedPexelsVideos : []
+        appDelegate.pexelsVideoPreviewImages = useVideosFromPexels ? bufferedPexelsVideoPreviews : []
         gImageAndVideoNames = loadImageAndVideoNames()
 
-        clearPexelPhotos(folderPath: bufferUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+        clearPexelPhotos(folderPath: bufferUrl.path, filesToKeep: [".imageTop", "videoList.txt", "videoPreviewList.txt"])
         clearPexelVideos(folderURL: bufferUrl, fileName: "videoList.txt")
+        clearPexelVideos(folderURL: bufferUrl, fileName: "videoPreviewList.txt")
 
         pexelsBufferReady = false
         bufferedPexelsPhotos.removeAll()
         bufferedPexelsVideos.removeAll()
+        bufferedPexelsVideoPreviews.removeAll()
         return true
     }
 
