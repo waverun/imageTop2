@@ -212,7 +212,7 @@ struct SettingsView: View {
                                 }
                                 HStack(spacing: 8) {
                                     Toggle("Videos from Pexels (\(numberOfPexelsVideos))", isOn: $useVideosFromPexelsIsOn)
-                                    if let randomPexelsVideoPreview {
+                                    if useVideosFromPexelsIsOn, let randomPexelsVideoPreview {
                                         Image(nsImage: randomPexelsVideoPreview)
                                             .resizable()
                                             .scaledToFill()
@@ -339,6 +339,11 @@ struct SettingsView: View {
            iPrint("isOn: \(useVideosFromPexelsIsOn)")
             if newValue {
                 appDelegate.clearSettingsError()
+                updateRandomPexelsVideoPreview()
+            } else {
+                randomPexelsVideoPreview = nil
+                lastVideoPreviewURL = ""
+                showLargeVideoPreview = false
             }
             useVideosFromPexels = useVideosFromPexelsIsOn
         }
