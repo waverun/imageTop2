@@ -476,8 +476,8 @@ struct ContentView: View {
         bufferedPexelsPhotos.removeAll()
         bufferedPexelsVideos.removeAll()
         bufferedPexelsVideoPreviews.removeAll()
-        // If we were showing colors while waiting for downloads, switch immediately.
-        if imageOrVideoMode {
+        // If media became available while showing colors, switch immediately.
+        if gImageAndVideoNames.count > 1 {
             changeScreenImageVideoOrColor()
         }
     }
