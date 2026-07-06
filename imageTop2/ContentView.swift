@@ -314,6 +314,7 @@ struct ContentView: View {
 
     func imageViewBuilder(image: NSImage?, photographer: String, condition: Bool) -> some View {
         iPrint("imageViewBuilder: \(index) startShowVideo: \(startShowVideo)")
+        iPrint("imageViewBuilder: condition: \(condition), showVideo: \(showView), imageFadeTime: \(imageFadeTime)")
         if let image = image {
             return AnyView (
                 Image(nsImage: image)
@@ -404,7 +405,7 @@ struct ContentView: View {
 
             default:
                 if let pexelsDirectoryUrl = pexelsDirectoryUrl {
-                    clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+                    clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt", "videoPreviewList.txt"])
                     appDelegate.pexelsPhotos.removeAll()
                     gImageAndVideoNames = loadImageAndVideoNames()
                     //                    appDelegate.loadImages.toggle()
@@ -1057,7 +1058,7 @@ struct ContentView: View {
         }
 
         if usePhotosFromPexels {
-            clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+            clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt", "videoPreviewList.txt"])
             for photoPath in bufferedPexelsPhotos {
                 let sourceUrl = URL(fileURLWithPath: photoPath)
                 let destinationUrl = pexelsDirectoryUrl.appendingPathComponent(sourceUrl.lastPathComponent)
@@ -1098,7 +1099,7 @@ struct ContentView: View {
         pexelsBufferReady = false
 
         if usePhotosFromPexels {
-            clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+            clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt", "videoPreviewList.txt"])
             appDelegate.pexelsPhotos.removeAll()
         }
 
@@ -1252,7 +1253,7 @@ struct ContentView: View {
         iPrint("handlePexelsPhotos: \(index) usePhotosFromPexels: \(usePhotosFromPexels)")
         if usePhotosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
-            clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt"])
+            clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt", "videoPreviewList.txt"])
             appDelegate.pexelsPhotos.removeAll()
             DispatchQueue.global().async {
                 pexelDownloadSemaphore.wait()

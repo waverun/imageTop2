@@ -118,19 +118,20 @@ func getPexelsVideoList(
             return nil
         }
 
-        var previewLinks: [String] = []
-        if FileManager.default.fileExists(atPath: previewsFileURL.path),
-           let previewNamesList = readFileContents(atPath: previewsFileURL.path) {
-            previewLinks = previewNamesList
-                .components(separatedBy: "\n")
-                .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        guard FileManager.default.fileExists(atPath: previewsFileURL.path),
+              let previewNamesList = readFileContents(atPath: previewsFileURL.path) else {
+            return nil
         }
 
-        if previewLinks.count < videoLinks.count {
-            previewLinks.append(contentsOf: Array(repeating: "", count: videoLinks.count - previewLinks.count))
+        let previewLinks = previewNamesList
+            .components(separatedBy: "\n")
+            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+
+        guard previewLinks.count >= videoLinks.count else {
+            return nil
         }
 
-        return (videoLinks, previewLinks)
+        return (videoLinks, Array(previewLinks.prefix(videoLinks.count)))
     }
 
     func validateCachedVideoLinks(_ links: [String], completion: @escaping (Bool) -> Void) {
