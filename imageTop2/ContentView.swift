@@ -1267,9 +1267,7 @@ struct ContentView: View {
                         appDelegate.clearSettingsError()
                     }
                     pexelDownloadSemaphore.signal()
-                    if !useVideosFromPexels {
-                        appDelegate.loadImagesAndVideos.toggle()
-                    }
+                    appDelegate.loadImagesAndVideos.toggle()
                 }
             }
         }
