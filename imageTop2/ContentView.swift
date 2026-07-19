@@ -364,9 +364,8 @@ struct ContentView: View {
             handlePexelsVideos()
         }
 
-        // Start media presentation as early as possible.
+        // Start media presentation from the regular timer.
         DispatchQueue.main.async {
-            changeScreenImageVideoOrColor()
             startChangeTimer()
         }
 #if DEBUG
