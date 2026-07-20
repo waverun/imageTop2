@@ -380,6 +380,9 @@ struct ContentView: View {
 
     func handleUseLocalImagesAndVideosChange(_ newValue: Bool) {
         handleSelectedFolderPathChange()
+        if newValue {
+            gNeedToLoadImageOrVideo[index] = true
+        }
     }
 
     func handleSelectedFolderPathChange(_ newValue: String = "") {
