@@ -64,7 +64,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1401"
             endingLineNumber = "1401"
-            landmarkName = "setImageOrVideoMode(_:)"
+            landmarkName = "loadImageAndVideoNames(fromPexelsPhotos:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -80,7 +80,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1275"
             endingLineNumber = "1275"
-            landmarkName = "stopChangeTimer()"
+            landmarkName = "handlePexelsPhotos(selectionMode:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

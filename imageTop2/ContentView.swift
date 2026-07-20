@@ -1251,6 +1251,16 @@ struct ContentView: View {
         iPrint("handlePexelsPhotos: \(index) usePhotosFromPexels: \(usePhotosFromPexels)")
         if usePhotosFromPexels,
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
+            if selectionMode == .automaticNoRepeat {
+                let existingPhotos = loadImageAndVideoNames(fromPexelsPhotos: pexelsDirectoryUrl)
+                if existingPhotos.count >= 2 {
+                    appDelegate.pexelsPhotos = existingPhotos
+                    appDelegate.clearSettingsError()
+                    appDelegate.loadImagesAndVideos.toggle()
+                    return
+                }
+            }
+
             clearPexelPhotos(folderPath: pexelsDirectoryUrl.path, filesToKeep: [".imageTop", "videoList.txt", "videoPreviewList.txt"])
             appDelegate.pexelsPhotos.removeAll()
             DispatchQueue.global().async {
