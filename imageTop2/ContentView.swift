@@ -380,8 +380,8 @@ struct ContentView: View {
 
     func handleUseLocalImagesAndVideosChange(_ newValue: Bool) {
         handleSelectedFolderPathChange()
-        if newValue {
-            gNeedToLoadImageOrVideo[index] = true
+        if newValue, !appDelegate.showWindow, gImageAndVideoNames.count > 1 {
+            changeScreenImageVideoOrColor()
         }
     }
 
