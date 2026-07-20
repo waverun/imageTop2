@@ -230,7 +230,8 @@ struct ContentView: View {
                 .animation(op1 == 1.0
 //                .animation(showVideo && !showSecondVideo
                            ? .easeIn(duration: videoFadeTime)
-                           : .linear(duration: videoFadeTime),
+                           : .easeOut(duration: videoFadeTime),
+//                           : .linear(duration: videoFadeTime),
                            value: showVideo && !showSecondVideo)
 
             videoPlayerBuilder(videoPath: secondVideoPath, photographer: secondPhotographer, condition: showVideo && showSecondVideo)
@@ -241,7 +242,8 @@ struct ContentView: View {
                 .animation(op2 == 1.0
 //                .animation(showVideo && showSecondVideo
                            ? .easeIn(duration: videoFadeTime)
-                           : .linear(duration: videoFadeTime),
+                           : .easeOut(duration: videoFadeTime),
+//                           : .linear(duration: videoFadeTime),
                            value: showVideo && showSecondVideo)
         }
         .blur(radius: appDelegate.isVideoBlurred ? 20 : 0)
