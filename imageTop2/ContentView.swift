@@ -364,10 +364,6 @@ struct ContentView: View {
             handlePexelsVideos()
         }
 
-        // Start media presentation from the regular timer.
-        DispatchQueue.main.async {
-            startChangeTimer()
-        }
 #if DEBUG
         iPrint("Memory: \(index) onAppear: \(reportMemory())")
 #endif
