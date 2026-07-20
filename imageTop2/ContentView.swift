@@ -206,11 +206,14 @@ struct ContentView: View {
 
     @ViewBuilder var backgroundView: some View {
         ZStack {
-            backgroundColor
+            let activeBackgroundColor = imageOrVideoMode && networkIsReachableOrNotShowingVideos ? Color.gray : backgroundColor
+            let activeFadeColor = imageOrVideoMode && networkIsReachableOrNotShowingVideos ? Color.gray : fadeColor
+
+            activeBackgroundColor
                 .opacity(showFadeColor ? 0 : 1)
                 .animation(.linear(duration: 1), value: showFadeColor)
                 .edgesIgnoringSafeArea(.all)
-            fadeColor
+            activeFadeColor
                 .opacity(showFadeColor ? 1 : 0)
                 .animation(.linear(duration: 1), value: showFadeColor)
                 .edgesIgnoringSafeArea(.all)
