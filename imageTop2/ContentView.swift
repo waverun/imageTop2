@@ -480,9 +480,15 @@ struct ContentView: View {
         bufferedPexelsPhotos.removeAll()
         bufferedPexelsVideos.removeAll()
         bufferedPexelsVideoPreviews.removeAll()
-        // If media became available while showing colors, switch immediately.
+        // If media became available while already showing, switch immediately.
+        // Otherwise defer the first image/video load until showApp() to avoid leaving
+        // a startup image in one of the fade layers.
         if gImageAndVideoNames.count > 1 {
-            changeScreenImageVideoOrColor()
+            if appDelegate.showWindow && appDelegate.isFullScreen {
+                changeScreenImageVideoOrColor()
+            } else {
+                gNeedToLoadImageOrVideo[index] = true
+            }
         }
     }
 
