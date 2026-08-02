@@ -246,14 +246,19 @@ struct VideoPlayerView: NSViewRepresentable {
                     gPausableTimers[index] = nil
                 }
                 gPausableTimers[index] = PausableTimer(index: index)
+                let transitionInterval = TimeInterval(max(0, iDuration - videoFadeLeadTime - videoDurationSafetyMargin))
+                iPrint("video_switch transition_timer_scheduled index: \(index) interval: \(transitionInterval) duration: \(iDuration)")
                 iPrint("startGetVideoLength: \(index) before start: gPausableTimers.count \(gPausableTimers.count)")
-                gPausableTimers[index]?.start(interval: TimeInterval(max(0, iDuration - videoFadeLeadTime - videoDurationSafetyMargin))) { _ in
+                gPausableTimers[index]?.start(interval: transitionInterval) { _ in
                     let playerCurrentTime = CMTimeGetSeconds(player.currentTime())
                     let normalizedCurrentTime = playerCurrentTime.isFinite ? playerCurrentTime : 0
                     let mediaTimeRemaining = iDuration - normalizedCurrentTime - videoFadeLeadTime - videoDurationSafetyMargin
+                    iPrint("video_switch transition_timer_fired index: \(index) currentTime: \(normalizedCurrentTime) duration: \(iDuration) remainingMediaTime: \(mediaTimeRemaining)")
                     if mediaTimeRemaining > 0.15 {
                         iPrint("in PausableTimer: \(index) fired early. currentTime: \(normalizedCurrentTime) duration: \(iDuration) remainingMediaTime: \(mediaTimeRemaining)")
+                        iPrint("video_switch transition_timer_rescheduled index: \(index) interval: \(mediaTimeRemaining)")
                         gPausableTimers[index]?.start(interval: mediaTimeRemaining) { _ in
+                            iPrint("video_switch transition_timer_delayed_fired index: \(index)")
                             iPrint("in PausableTimer: \(index) delayed media-time switch")
                             if let endPlayNotification = gEndPlayNotifications[index] {
                                 NotificationCenter.default.removeObserver(endPlayNotification)
@@ -269,6 +274,8 @@ struct VideoPlayerView: NSViewRepresentable {
                     startNewVideo(player)
                 }
                 iPrint("startGetVideoLength: \(index) afterStart: gPausableTimers.count  \(gPausableTimers.count)")
+            } else {
+                iPrint("video_switch no_transition_timer index: \(index) duration: \(iDuration) threshold: \(videoFadeLeadTime + videoDurationSafetyMargin) isFinite: \(iDuration.isFinite)")
             }
             //                else {
             //                    setEndPlayNotification(player: player)
@@ -306,6 +313,7 @@ struct VideoPlayerView: NSViewRepresentable {
 
         // Check if the player's URL is different from the new URL
         if let currentURL = player.currentItem?.asset as? AVURLAsset, currentURL.url.path != url.path {
+            iPrint("video_switch player_replaced index: \(index)")
             NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
 
             iPrint("updateNSView: \(index) currentURL: \(currentURL)")

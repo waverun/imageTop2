@@ -935,7 +935,20 @@ struct ContentView: View {
 
         gNeedToLoadImageOrVideo[index] = false
         if showVideo && gImageAndVideoNames.count < 2 { // may happen after bad loading of videos
+            iPrint("VIDEO_SWITCH_BLOCKED_EMPTY_LIST index: \(index) gImageAndVideoNames.count: \(gImageAndVideoNames.count) pexelsPrefetchInProgress: \(pexelsPrefetchInProgress) pexelsBufferReady: \(pexelsBufferReady) pexelsRefreshInProgress: \(pexelsRefreshInProgress) firstVideoPath: \(firstVideoPath) secondVideoPath: \(secondVideoPath)")
             startChangeTimer()
+            return
+        }
+
+        if gStateObjects[index]?.unusedPaths.isEmpty == true,
+           pexelsPrefetchInProgress {
+            iPrint("video_switch waiting_for_prefetch index: \(index) pexelsBufferReady: \(pexelsBufferReady)")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                if pexelsBufferReady {
+                    pexelsSwapPending = true
+                }
+                changeScreenImageVideoOrColor()
+            }
             return
         }
 
@@ -1035,6 +1048,7 @@ struct ContentView: View {
         if useVideosFromPexels {
             group.enter()
             getPexelsVideoList(pexelsFolder: bufferUrl, appDelegate: appDelegate) { videosList, previewList in
+                iPrint("video_switch loaded_prefetch_video_list count: \(videosList.count)")
                 prefetchedVideos = videosList
                 prefetchedVideoPreviews = previewList
                 group.leave()
@@ -1130,10 +1144,18 @@ struct ContentView: View {
     }
 
      func shouldRegeneratePath(_ path: String) -> Bool {
+        if isVideo(path) {
+            let normalizedVideoPath = path.components(separatedBy: ",")[0]
+            let fullEqualsFirst = path == gStateObjects[index]!.firstVideoPath
+            let fullEqualsSecond = path == gStateObjects[index]!.secondVideoPath
+            let normalizedEqualsFirst = normalizedVideoPath == gStateObjects[index]!.firstVideoPath
+            let normalizedEqualsSecond = normalizedVideoPath == gStateObjects[index]!.secondVideoPath
+            iPrint("video_switch should_regenerate_compare index: \(index) pathContainsMetadata: \(path != normalizedVideoPath) fullEqualsFirst: \(fullEqualsFirst) fullEqualsSecond: \(fullEqualsSecond) normalizedEqualsFirst: \(normalizedEqualsFirst) normalizedEqualsSecond: \(normalizedEqualsSecond)")
+            return fullEqualsFirst || fullEqualsSecond || normalizedEqualsFirst || normalizedEqualsSecond
+        }
+
         return (path == firstImagePath && !showSecondImage)
         || (path == secondImagePath && showSecondImage)
-        || (path == gStateObjects[index]!.firstVideoPath && !showSecondVideo)
-        || (path == gStateObjects[index]!.secondVideoPath && showSecondVideo)
     }
 
      func isVideo(_ path: String) -> Bool {
@@ -1141,7 +1163,10 @@ struct ContentView: View {
     }
 
      func handleVideo(_ path: String) {
-        iPrint("isVideFile: \(index) newRandomImageOrVideoPath: \(path)")
+        iPrint("isVideFile: \(index)")
+        let remainingVideos = gStateObjects[index]?.unusedPaths.filter { isVideo($0) }.count ?? 0
+        let remainingPexelsVideos = gStateObjects[index]?.unusedPaths.filter { $0.starts(with: "https:") }.count ?? 0
+        iPrint("video_switch showing_video index: \(index) remainingVideos: \(remainingVideos) remainingPexelsVideos: \(remainingPexelsVideos) totalUnusedPaths: \(gStateObjects[index]?.unusedPaths.count ?? 0)")
         let videoComponents = path.components(separatedBy: ",")
          if videoComponents.count > 0 {
              let newVideoPath = videoComponents[0]
@@ -1151,6 +1176,7 @@ struct ContentView: View {
     }
 
      func setNewVideo(path: String, photographer: String) {
+        iPrint("video_switch set_new_video index: \(index) showSecondVideo: \(showSecondVideo) equalsFirst: \(path == firstVideoPath) equalsSecond: \(path == secondVideoPath) stateEqualsFirst: \(path == gStateObjects[index]!.firstVideoPath) stateEqualsSecond: \(path == gStateObjects[index]!.secondVideoPath)")
         if showSecondVideo {
 //            DispatchQueue.main.async {
                 gStateObjects[index]!.firstVideoPath = path
@@ -1173,15 +1199,18 @@ struct ContentView: View {
     }
 
      func manageVideoDisplay() {
+        iPrint("video_switch manage_video_display_before index: \(index) showVideo: \(showVideo) startShowVideo: \(startShowVideo) showSecondVideo: \(showSecondVideo)")
         if !showVideo {
             stopChangeTimer()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 startShowVideo = true
                 showVideo = true
                 showSecondVideo.toggle()
+                iPrint("video_switch manage_video_display_after index: \(index) showVideo: \(showVideo) startShowVideo: \(startShowVideo) showSecondVideo: \(showSecondVideo)")
             }
         } else {
             showSecondVideo.toggle()
+            iPrint("video_switch manage_video_display_after index: \(index) showVideo: \(showVideo) startShowVideo: \(startShowVideo) showSecondVideo: \(showSecondVideo)")
         }
     }
 
@@ -1250,6 +1279,7 @@ struct ContentView: View {
            let pexelsDirectoryUrl = pexelsDirectoryUrl {
             getPexelsVideoList(pexelsFolder: pexelsDirectoryUrl, appDelegate: appDelegate, selectionMode: selectionMode) { videosList, previewList in
                 DispatchQueue.main.async {
+                    iPrint("video_switch loaded_video_list count: \(videosList.count)")
                     appDelegate.pexelsVideos = videosList
                     appDelegate.pexelsVideoPreviewImages = previewList
                     appDelegate.loadImagesAndVideos.toggle()
