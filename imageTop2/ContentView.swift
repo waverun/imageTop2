@@ -599,6 +599,10 @@ struct ContentView: View {
             return false
         }
 
+        guard appDelegate.pexelsVideos.count > 2 else {
+            return false
+        }
+
         let beforeCount = appDelegate.pexelsVideos.count
         appDelegate.pexelsVideos.removeAll { $0 == currentPath || $0.hasPrefix(currentPath + ",") }
         if beforeCount == appDelegate.pexelsVideos.count {
