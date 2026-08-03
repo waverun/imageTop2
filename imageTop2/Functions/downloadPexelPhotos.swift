@@ -38,9 +38,9 @@ func nextPexelsCategory(mode: PexelsCategorySelectionMode) -> String {
 }
 
 private let pexelsPhotoMaxFullPagesByCategory = ThreadSafeDict<String, Int>()
-private let pexelsPhotoPerPage = 80
+private let pexelsPhotoPerPage = 4 // 80
 private let pexelsPhotoRequestTimeout: TimeInterval = 10
-private let pexelsPhotoMaxAttempts = 80
+private let pexelsPhotoMaxAttempts = 4 // 
 
 private struct PexelsPhotosRequestError: Error {
     let userMessage: String

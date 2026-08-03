@@ -631,6 +631,10 @@ struct ContentView: View {
             return false
         }
 
+        guard appDelegate.pexelsPhotos.count > 2 else {
+            return false
+        }
+
         let beforeCount = appDelegate.pexelsPhotos.count
         appDelegate.pexelsPhotos.removeAll { $0 == currentPath }
         if beforeCount == appDelegate.pexelsPhotos.count {
