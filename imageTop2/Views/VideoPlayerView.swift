@@ -219,6 +219,7 @@ struct VideoPlayerView: NSViewRepresentable {
 
     func startGetVideoLength(player: AVPlayer, url: URL) {
         iPrint("startGetVideoLengthTask: \(index) url: \(url)")
+        setEndPlayNotification(player: player)
         if let startGetVideoLengthTask = gVideoLengthTasks[index] {
             startGetVideoLengthTask.cancel()
         }
