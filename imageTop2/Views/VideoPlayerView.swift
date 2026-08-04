@@ -14,7 +14,7 @@ var gEndPlayNotifications = ThreadSafeDict<Int, NSObjectProtocol>()
 //var gEndPlayNotifications: [Int: NSObjectProtocol] = [:]
 var gNeedToLoadImageOrVideo = ThreadSafeDict<Int, Bool>()
 //var gNeedToLoadImageOrVideo: [Int: Bool] = [:]
-let videoFadeLeadTime: TimeInterval = 4.0
+let videoFadeLeadTime: TimeInterval = 0.0
 let videoDurationSafetyMargin: TimeInterval = 1.0
 
 class VideoFailedToPlay {

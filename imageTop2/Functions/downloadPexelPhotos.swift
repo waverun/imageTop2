@@ -17,7 +17,9 @@ private let pexelsUsedCategoriesDefaultsKey = "pexelsUsedCategoriesShared"
 func nextPexelsCategory(mode: PexelsCategorySelectionMode) -> String {
     switch mode {
     case .manualRandom:
-        return pexelsCategories.randomElement() ?? "nature"
+        let selectedCategory = pexelsCategories.randomElement() ?? "nature"
+        iPrint("pexels_category selected mode: manualRandom category: \(selectedCategory)")
+        return selectedCategory
     case .automaticNoRepeat:
         let defaults = UserDefaults.standard
         let usedFromDefaults = Set(defaults.stringArray(forKey: pexelsUsedCategoriesDefaultsKey) ?? [])
@@ -33,14 +35,15 @@ func nextPexelsCategory(mode: PexelsCategorySelectionMode) -> String {
         let selectedCategory = availableCategories.randomElement() ?? "nature"
         usedCategories.insert(selectedCategory)
         defaults.set(Array(usedCategories), forKey: pexelsUsedCategoriesDefaultsKey)
+        iPrint("pexels_category selected mode: automaticNoRepeat category: \(selectedCategory) usedCategories: \(usedCategories.count)/\(pexelsCategories.count)")
         return selectedCategory
     }
 }
 
 private let pexelsPhotoMaxFullPagesByCategory = ThreadSafeDict<String, Int>()
-private let pexelsPhotoPerPage = 4 // 80
+private let pexelsPhotoPerPage = 80
 private let pexelsPhotoRequestTimeout: TimeInterval = 10
-private let pexelsPhotoMaxAttempts = 4 // 
+private let pexelsPhotoMaxAttempts = 80
 
 private struct PexelsPhotosRequestError: Error {
     let userMessage: String
